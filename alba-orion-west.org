@@ -1,0 +1,155 @@
+#+OPTIONS: ^:{}
+
+* Datasets that we will use
+** Dec 2014
+** Dec 2013
+** Feb 2013
+** 2010
+* Making spectral maps
++ The plan is to start with a fine orthogonal RA-dec grid
+  + Place all the slits onto there by looping over slit pixels and painting all the grid pixels that fall in each
+  + Leave grid pixels transparent where no slit falls
++ Then do the multi-resolution thing
+  + As in [[id:E1B9B2C8-1CDE-407B-B9FE-4E31144F328C][Rebinning the maps]] in orion tsquared notes
+  + Which makes use of [[file:~/Work/RubinWFC3/Tsquared/rebin_utils.py][file:~/Work/RubinWFC3/Tsquared/rebin_utils.py]]
++ This should give a map with all the holes filled in at lower resolution
++ To start with we will work sith the original spectra that I already have
+  + Later, we should switch to the bg-subtracted and brightness-corrected ones that ALba has
+** Define the output grid
++ 1 arcsec is
+  + 2.778e-4 deg declination
+  + 2.765e-4 deg RA
++ We will try a grid with 1 arcsec pixels that is 512 x 512, which should fit in all of the slits
++ AR reference of the horizontal slits is 83.6158 +/- 0.0019
+  + AR range of vertical slits is 83.6016 to 83.6205: 68 cos(-5.4150) = 67.7 arcsec
++ Dec reference of vertical slits is -5.4150 +/- 0.0006
+  + Dec range of horizontal slits is -5.4409 to -5.4155 = 91.44 arcsec
++ So we use
+  + CRPIX1 = CRPIX2 = 256.5
+  + CRVAL1 = 83.6158, CRVAL2 = -5.4150
+  + CDELT1 = 2.765e-4, CDELT2 = 2.778e-4
+  + PC1_1 = -1.0, PC1_2 = 0.0
+  + PC2_1 = 0.0, PC2_2 = 1.0
+** Test with the velocity-integrated emission
+
+#+BEGIN_SRC python :var vtab=vertical-slits :results output
+for imname, specname, ra, dec, fac in vtab:
+    print(specname)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+spec253
+spec174
+spec245
+spec241
+spec237
+spec158
+spec220
+spec249
+spec146
+spec215
+spec138
+spec211
+spec102
+spec129
+spec134
+spec207
+spec125
+spec203
+#+end_example
+
+* Coordinates of the slits
++ Data received from Alba [2015-08-11 Tue]
+
+** Description from Alba
+: Todos los datos están en:
+: /fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/0.Datos
+: Diferencio entre especros e imagenes y luego entre los del 2010 (verticales) y
+: 2013 (horizontales)
+: Todos los espectros tienen la sustraccion del continuo (*nc*) y los del 2010
+: además tiene el factor de calidad (aplicado entre ellos y a todos los de esa
+: campaña de observacion, son *cc*fits)
+: 
+: Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
+
+
+
+** Brightness correction factors
++ The 2010 data in =3.CuboWS/0.Datos= are =.nc.cc.= have already had this applied
++ The prior stage (just =.nc.=) is in =2.Datos2010/1.PreparandoDatos/1.SustraccionContinuo=
++ The factors are in [[file:/ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/2.Datos2010/1.PreparandoDatos/2.IgualandoCalidad/intensidades.dat][intensidades.dat]]
+  + Transposed version of this table below
+  + The factors multiply the observed intensities
++ The 2013 data don't seem to have any brightness correction
+
+| Imagen | I. original | I. corregida |  Factor |
+|--------+-------------+--------------+---------|
+|    101 |     2149.52 |      2180.37 | 1.01435 |
+|    124 |     1936.37 |      2180.37 | 1.12601 |
+|    128 |     1567.50 |      2180.37 | 1.39099 |
+|    133 |     1814.61 |      2180.37 | 1.20156 |
+|    137 |     1939.18 |      2180.37 | 1.12438 |
+|    145 |     1361.85 |      2180.37 | 1.60103 |
+|    157 |     1323.03 |      2180.37 | 1.64801 |
+|    173 |     1249.18 |      2180.37 | 1.74544 |
+|    202 |     2170.67 |      2180.37 | 1.00447 |
+|    206 |     2169.70 |      2180.37 | 1.00492 |
+|    210 |     2211.48 |      2180.37 | 0.98594 |
+|    214 |     2231.37 |      2180.37 | 0.97715 |
+|    219 |     2226.34 |      2180.37 | 0.97935 |
+|    236 |     2184.94 |      2180.37 | 0.99791 |
+|    240 |     2186.48 |      2180.37 | 0.99720 |
+|    244 |     2150.31 |      2180.37 | 1.01398 |
+|    248 |     1632.71 |      2180.37 | 1.33543 |
+|    252 |     1816.34 |      2180.37 | 1.20042 |
+
+** HORIZONTALES 2013
+
+#+name: horizontal-slits
+| imagen | Espectro |                 AR |                DEC |
+|--------+----------+--------------------+--------------------|
+| spm165 | spec166  |            83.6141 |            -5.4409 |
+| spm169 | spec170  |            83.6146 |            -5.4382 |
+| spm237 | spec238  |            83.6166 |            -5.4361 |
+| spm232 | spec233  |            83.6157 |            -5.4321 |
+| spm226 | spec227  |            83.6076 |            -5.4294 |
+| spm149 | spec150  |            83.6231 |            -5.4239 |
+| spm154 | spec155  |            83.6237 |            -5.4226 |
+| spm159 | spec160  |            83.6238 |            -5.4201 |
+| spm033 | spec034  |            83.6107 |            -5.4165 |
+| spm029 | spec030  |            83.6084 |            -5.4155 |
+|--------+----------+--------------------+--------------------|
+|        |          | 83.6158 +/- 0.0019 | -5.4275 +/- 0.0029 |
+#+TBLFM: @12$3..@12$4=vmeane(@I..@II);f4
+
+					
+					
+** VERTICALES 2010
++ From the region file [[file:/ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/1.Posiciones/pos_todas.reg][pos_todas.reg]] it looks like the PA = 3.03 deg
+
+#+name: vertical-slits
+| imagen | Espectro |                 AR |                DEC |  Factor |
+|--------+----------+--------------------+--------------------+---------|
+| spm252 | spec253  |            83.6016 |            -5.4149 | 1.20042 |
+| spm173 | spec174  |            83.6020 |            -5.4108 | 1.74544 |
+| spm244 | spec245  |            83.6031 |            -5.4152 | 1.01398 |
+| spm240 | spec241  |            83.6053 |            -5.4153 | 0.99720 |
+| spm236 | spec237  |            83.6071 |            -5.4155 | 0.99791 |
+| spm157 | spec158  |            83.6078 |            -5.4118 | 1.64801 |
+| spm219 | spec220  |            83.6087 |            -5.4163 | 0.97935 |
+| spm248 | spec249  |            83.6091 |            -5.4150 | 1.33543 |
+| spm145 | spec146  |            83.6106 |            -5.4109 | 1.60103 |
+| spm214 | spec215  |            83.6119 |            -5.4160 | 0.97715 |
+| spm137 | spec138  |            83.6133 |            -5.4120 | 1.12438 |
+| spm210 | spec211  |            83.6143 |            -5.4163 | 0.98594 |
+| spm101 | spec102  |            83.6149 |            -5.4177 | 1.01435 |
+| spm128 | spec129  |            83.6156 |            -5.4181 | 1.39099 |
+| spm133 | spec134  |            83.6159 |            -5.4123 | 1.20156 |
+| spm206 | spec207  |            83.6171 |            -5.4165 | 1.00492 |
+| spm124 | spec125  |            83.6184 |            -5.4183 | 1.12601 |
+| spm202 | spec203  |            83.6205 |            -5.4167 | 1.00447 |
+|--------+----------+--------------------+--------------------+---------|
+|        |          | 83.6110 +/- 0.0014 | -5.4150 +/- 0.0006 |         |
+#+TBLFM: @20$3..@20$4=vmeane(@I..@II);f4
+
