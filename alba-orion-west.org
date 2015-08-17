@@ -4,7 +4,163 @@
 ** Dec 2014
 ** Dec 2013
 ** Feb 2013
-** 2010
+** Jan 2010
+:LOGBOOK:
+CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
+:END:
++ Copied files to [[file:~/Dropbox/SPMJAN10/reducciones/][~/Dropbox/SPMJAN10/reducciones/]]
++ Looking at which ones to use to see if I agree with Tere
+*** WCS values
++ Alba's coordinates seem to be for the center of the slit in the image+slit
++ dWav = 0.043752133846283 Ang (2 km/s)
++ dy = 
+
+#+BEGIN_SRC python :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones
+import glob
+import numpy as np
+from astropy.io import fits
+table = []
+filenames = glob.glob('spm*-ardec.fits')
+for fn in filenames:
+    hdu, = fits.open(fn)
+    dy = np.hypot(hdu.header['CD1_2'], hdu.header['CD2_2'])*3600
+    table.append([fn, dy])
+#+END_SRC
+
+#+RESULTS:
+|-------------------+--------------------|
+| spm078-ardec.fits | 0.6220549447029587 |
+| spm085-ardec.fits |   0.62317890413072 |
+| spm101-ardec.fits | 0.6225012571392761 |
+| spm124-ardec.fits |  0.622218813434036 |
+| spm128-ardec.fits | 0.6231553370701498 |
+| spm133-ardec.fits | 0.6231132792993379 |
+| spm137-ardec.fits | 0.6231781063982743 |
+| spm142-ardec.fits | 0.6213593488421689 |
+| spm145-ardec.fits | 0.6217816676948823 |
+| spm150-ardec.fits | 0.6230107112022361 |
+| spm154-ardec.fits | 0.6238157549497414 |
+| spm157-ardec.fits | 0.6210909967040036 |
+| spm161-ardec.fits | 0.6211967486825171 |
+| spm173-ardec.fits | 0.6217768871176305 |
+| spm202-ardec.fits | 0.6246067241053639 |
+| spm206-ardec.fits | 0.6227428493141918 |
+| spm210-ardec.fits | 0.6229020762040736 |
+| spm214-ardec.fits | 0.6247439611155685 |
+| spm219-ardec.fits | 0.6227397401317721 |
+| spm224-ardec.fits | 0.6232438303524672 |
+| spm231-ardec.fits | 0.6226380945762506 |
+| spm236-ardec.fits |  0.623354528585781 |
+| spm240-ardec.fits | 0.6235692800557356 |
+| spm244-ardec.fits | 0.6248870675138735 |
+| spm248-ardec.fits | 0.6231268468158696 |
+| spm252-ardec.fits | 0.6229126819583328 |
+|-------------------+--------------------|
+|                   |  0.6229 +/- 0.0002 |
+#+TBLFM: @27$2=vmeane(@I..@II);f4
+
+**** Offset along slit
++ spm124
+  + Star position is y = 270.5
+  + Same star position in spec125-ha is y = 325
+  + Shift of 325 - 270.5 = 54.5 pixels
++ spm137
+  + Star position is y = 291
+  + In spec138-ha it is y = 351
+  + Shift of = 351 - 291 = 60
+
+| spm124 | 270.5 | spec125 |   325 | 54.5 |
+| spm202 |   359 | spec203 | 411.5 | 52.5 |
+| spm206 |   104 | spec207 |   158 |   54 |
+| spm137 |   291 | spec138 |   351 |   60 |
+| spm219 | 320.5 | spec220 |   378 | 57.5 |
+#+TBLFM: $5=$4 - $2
+
++ Unfortunately, the offset varies from spectrum to spectrum, which is odd  
+*** Which to use
+**** Positions in Alba's set that are acceptable
+202, 124, 206, 133(+), 210, 137, 214, 248(+), 219, 236, 240, 244, 252
+
+|  ID | Bright |  Norm | Inverse |
+|-----+--------+-------+---------|
+| 202 |   2087 | 0.972 |   1.029 |
+| 124 |   1879 | 0.875 |   1.143 |
+| 206 |   2101 | 0.979 |   1.021 |
+| 133 |   1780 | 0.829 |   1.206 |
+| 210 |   2141 | 0.997 |   1.003 |
+| 137 |   1913 | 0.891 |   1.122 |
+| 214 |   2125 | 0.990 |   1.010 |
+| 248 |   1615 | 0.752 |   1.330 |
+| 219 |   2124 | 0.989 |   1.011 |
+| 236 |   2070 | 0.964 |   1.037 |
+| 240 |   2147 |     1 |       1 |
+| 244 |   2017 | 0.939 |   1.065 |
+| 252 |   1792 | 0.835 |   1.198 |
+#+TBLFM: $3=$-1/2147;f3::$4=1/$-1;f3
+
+The Inverse column agrees closely with Alba's values 
+
+**** Positions in Alba's set that are bad
+128, 101, 145, 157, 173
+**** Positions over to the NE
+spm078, spm085
+**** Other positions omitted ny Alba
++ spm142 - no spectrum
++ spm150 - ha spec exists, but looks weak and Tere says no
++ spm154 - no spectrum
++ spm161 - same as 150 but even worse
++ spm224 - has sii spec but no ha
++ spm231 - no spectrum
+*** Message from Teresa [2010-02-18 Thu]
+: Acabo de terminar las reducciones de las observaciones de Enero. Al
+: final nos quedamos con 16 posiciones, eliminé 7 posiciones
+: porque las observé con muchas nubes por lo que no obtuve buenos
+: resultados, lo bueno fué que en la siguiente noche pude obtener
+: estas posiciones o cercanas a ellas. De cualquier manera las reduje
+: por si decidimos incluirlas.
+: 
+: Las reducciones estan en: /fs/tungol/home0/LEEDS/teresa/SPMENE10/reducciones
+: 
+: incluyo también la bitacora en pdf. Las posiciones que no tomé en
+: cuenta para hacer los mapas fueron:
+: 
+: No incluidas        Slit cercana o casi en la misma posición que la anterior
+: spm128                   spm133 (se ve mucho mejor que spm128)
+: spm231                   spm248
+: spm150                   spm224
+: spm157                   spm236
+: spm173                   spm252
+: spm161
+: spm129                   spm133
+: 
+: Hice la astrometría, las imagen+slit corregidas están en el directorio
+: llamado "posiciones" adentro del direcotorio "reducciones"
+: También hice dos posiciones al Este de la región observada. Están la
+: oeste de HH 505, las observé en Halpha y [S II]:
+: spm078 (image+slit), spm085 (image+slit). Podemos obtener la densidad
+: en estas posiciones.
+: 
+: Para la posición de spm219 tomé los espectros en Ha (spm220,221),
+: [SII] (spm225,226) y [OIII] (spm228,229)
+: Los espectros corregidos en longitud de onda los puse en:
+: 
+: /fs/tungol/home0/LEEDS/teresa/SPMENE10/observaciones/SPM{ha,nii,siis,siil,oiii}
+: 
+: Después de hacer todo el trabajo hice el primer intento de los mapas
+: de momentos de Halpha y [NII] :D a ver que te parecen,
+: todos los archivos  estan en
+: /fs/tungol/home0/LEEDS/teresa/SPMENE10/observaciones:
+: 
+: {ha,nii}_{-100-040,-060+000,+000+060,+060+140,-020+040).wisomom-sum-fake.fits
+: 
+: haciendo un smooth:
+: 
+: {ha,nii}_{-100-040,-060+000,+000+060,+060+140,-020+040).wisomom-sum-smooth2d.fits
+: 
+: Hice también en rangos de 20 km/s para poder hacer los mapas a color
+: (no me quedarón también como a ti!)
+: que son los que anexo a este email.
+
 * Making spectral maps
 + The plan is to start with a fine orthogonal RA-dec grid
   + Place all the slits onto there by looping over slit pixels and painting all the grid pixels that fall in each
@@ -13,7 +169,7 @@
   + As in [[id:E1B9B2C8-1CDE-407B-B9FE-4E31144F328C][Rebinning the maps]] in orion tsquared notes
   + Which makes use of [[file:~/Work/RubinWFC3/Tsquared/rebin_utils.py][file:~/Work/RubinWFC3/Tsquared/rebin_utils.py]]
 + This should give a map with all the holes filled in at lower resolution
-+ To start with we will work sith the original spectra that I already have
++ To start with we will work with the original spectra that I already have
   + Later, we should switch to the bg-subtracted and brightness-corrected ones that ALba has
 ** Define the output grid
 + 1 arcsec is
@@ -30,6 +186,7 @@
   + CDELT1 = 2.765e-4, CDELT2 = 2.778e-4
   + PC1_1 = -1.0, PC1_2 = 0.0
   + PC2_1 = 0.0, PC2_2 = 1.0
+
 ** Test with the velocity-integrated emission
 
 #+BEGIN_SRC python :var vtab=vertical-slits :results output
