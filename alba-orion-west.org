@@ -1,5 +1,102 @@
 #+OPTIONS: ^:{}
 
+* Dealing with the offset between image and spectrum
++ It seems that this is not as constant as I had hoped
+  + In the [[id:8685D060-12A9-4E73-B069-11D5315ED8EB][vertical slits]] it varies from 52 to 60 pixels
+  + And some slits do not have a reference star to use
++ One solution will be to compare the brightness profiles of the spectrum with that of the slit image
+  + For the spectrum, we can sum in wavelength for the entire ha+nii range
+  + For the image, we would sum a short width across the slit
++ Then we could either use the cross-correlation, or simple hunting, to find the best offset
++ At the same time, this would give the brightness factor between image and spec
+  + We could use this to refine the brightness correction factors
+
+
+** Application to the vertical slits
+:PROPERTIES:
+:dir:      ~/Dropbox/SPMJAN10/reducciones
+:END:
+#+name: vertical-image-and-fullspec
+| image |    spec | islit | ishift |  fac |  bfac |
+|-------+---------+-------+--------+------+-------|
+|   202 | 203-204 | 233.6 |   52.5 |  3.9 | 1.029 |
+|   124 | 125-127 | 235.5 |   54.5 | 2.45 | 1.143 |
+|   206 | 207-208 | 234.6 |     54 |  4.4 | 1.021 |
+|   133 | 134-135 | 239.4 |     58 |    5 | 1.206 |
+|   210 | 211-212 | 236.4 |     55 |  4.4 | 1.003 |
+|   137 | 138-139 | 241.3 |     60 |  2.8 | 1.122 |
+|   214 | 215-216 | 238.4 |     55 |  4.1 | 1.010 |
+|   248 | 249-250 | 254.9 |     68 | 5.85 | 1.330 |
+|   219 | 220-221 | 240.0 |   57.5 | 4.35 | 1.011 |
+|   236 | 237-238 | 247.0 |     63 |  4.2 | 1.037 |
+|   240 | 241-242 | 249.5 |     65 |  3.1 |     1 |
+|   244 | 245-246 | 251.6 |     64 |  2.7 | 1.065 |
+|   252 | 253-254 | 258.2 |     69 |  5.4 | 1.198 |
+
++ Pixel positions of slits (islit in table above) also vary between positions, so I have had to measure all of these
+  + They are FITS style 1-based indices
+  + The slit width is about 4 pixels
+  + But the slit center does not fall on an integer pixel
+  + To be safe, we take the 5 pixels: [int(islit) - 3 : int(islit) + 3] 
++ First stab:
+  + Read in the images and spectra, and overplot the profiles
+  + There are 12 positions, so we can use a 4 x 3 grid
+  + The =bfac= factors are the inter-position image brightness correction factors, calculated below - they multiply all the brightnesses
+  + The =fac= factors are the image-to-spectrum brightness factors - they multiply the image profile so that it matches the spectrum profile
+    + So larger factors mean better spectra (compared to what is expected from the image)
+    + The most common factor /should/ correspond to equal conditions between image and spectrum. But in general =fac= could be larger or smaller than this.
+    + I am assuing that =fac = 4.4= is the default value, and dividing all of them by this when I print the info on the plot
+      + Interestingly for pos #248 we get fac of 1.33, which exactly cancels its value of bfac.  This means that the clouds that were there for the image had disappeared when te spectrum was taken!
+
+#+header: :var table=vertical-image-and-fullspec
+#+BEGIN_SRC python :return figfile :results file
+  from astropy.io import fits
+  import numpy as np
+  import matplotlib.pyplot as plt
+  import seaborn as sns
+
+  nspec = 12
+  ny = 512
+  figfile = 'image-spec-offsets.pdf'
+  yarray = np.arange(ny)
+  fig, axgrid = plt.subplots(3, 5, sharex=True, sharey=True)
+
+  for (imid, specid, islit, ishift, factor, bfac), ax in zip(table, axgrid.flat):
+      imfile = 'posiciones/spm{}-ardec.fits'.format(imid)
+      specfile = 'spm{}h.fits'.format(specid)
+      islit = int(float(islit))
+      ishift = float(ishift)
+      factor = float(factor)
+      bfac = float(bfac)
+
+      imhdu, = fits.open(imfile)
+      spechdu, = fits.open(specfile)
+
+      imhdu.data -= 1170.0  # remove bias
+      improfile = imhdu.data[:, islit-2:islit+2].sum(axis=1)
+      specprofile = spechdu.data.sum(axis=1)
+
+      ax.plot(yarray+ishift, bfac*factor*improfile/1e5, label='image', lw=2,
+              alpha=0.3, c='r')
+      ax.plot(yarray, bfac*specprofile/1e5, label='spectrum', lw=0.6, c='k')
+   
+      text = 'pos #{} shift = {:.1f} factor = {:.2f}'.format(imid, ishift, factor/4.4)
+      ax.text(300, 0.1, text, ha='center', fontsize='xx-small')
+
+  axgrid[0, 0].legend(fontsize='xx-small', loc='upper left')
+  axgrid[0, 0].set_ylim(0.0, 2.1)
+  axgrid[-1, 2].set_xlabel('pixel')
+  axgrid[1, 0].set_ylabel('intensity')
+  fig.suptitle('Alignment of vertical slits')
+  fig.set_size_inches(11, 8.5)
+  fig.savefig(figfile)
+
+
+#+END_SRC
+
+#+RESULTS:
+[[file:/Users/will/Dropbox/SPMJAN10/reducciones/image-spec-offsets.pdf]]
+
 * Datasets that we will use
 ** Dec 2014
 ** Dec 2013
@@ -60,6 +157,9 @@ for fn in filenames:
 #+TBLFM: @27$2=vmeane(@I..@II);f4
 
 **** Offset along slit
+:PROPERTIES:
+:ID:       8685D060-12A9-4E73-B069-11D5315ED8EB
+:END:
 + spm124
   + Star position is y = 270.5
   + Same star position in spec125-ha is y = 325
@@ -170,7 +270,7 @@ spm078, spm085
   + Which makes use of [[file:~/Work/RubinWFC3/Tsquared/rebin_utils.py][file:~/Work/RubinWFC3/Tsquared/rebin_utils.py]]
 + This should give a map with all the holes filled in at lower resolution
 + To start with we will work with the original spectra that I already have
-  + Later, we should switch to the bg-subtracted and brightness-corrected ones that ALba has
+  + Later, we should switch to the bg-subtracted and brightness-corrected ones that Alba has
 ** Define the output grid
 + 1 arcsec is
   + 2.778e-4 deg declination
