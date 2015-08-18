@@ -15,23 +15,27 @@
 ** Application to the vertical slits
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
+:ID:       0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B
 :END:
 #+name: vertical-image-and-fullspec
-| image |    spec | islit | ishift |  fac |  bfac |
-|-------+---------+-------+--------+------+-------|
-|   202 | 203-204 | 233.6 |   52.5 |  3.9 | 1.029 |
-|   124 | 125-127 | 235.5 |   54.5 | 2.45 | 1.143 |
-|   206 | 207-208 | 234.6 |     54 |  4.4 | 1.021 |
-|   133 | 134-135 | 239.4 |     58 |    5 | 1.206 |
-|   210 | 211-212 | 236.4 |     55 |  4.4 | 1.003 |
-|   137 | 138-139 | 241.3 |     60 |  2.8 | 1.122 |
-|   214 | 215-216 | 238.4 |     55 |  4.1 | 1.010 |
-|   248 | 249-250 | 254.9 |     68 | 5.85 | 1.330 |
-|   219 | 220-221 | 240.0 |   57.5 | 4.35 | 1.011 |
-|   236 | 237-238 | 247.0 |     63 |  4.2 | 1.037 |
-|   240 | 241-242 | 249.5 |     65 |  3.1 |     1 |
-|   244 | 245-246 | 251.6 |     64 |  2.7 | 1.065 |
-|   252 | 253-254 | 258.2 |     69 |  5.4 | 1.198 |
+| image |    spec | islit | jshift |  fac |    bfac |
+|-------+---------+-------+--------+------+---------|
+|   202 | 203-204 | 233.6 |   52.5 |  3.9 |   1.143 | 
+|   124 | 125-127 | 235.5 |   54.5 | 2.45 |   1.431 |
+|   206 | 207-208 | 234.6 |     54 |  4.4 |   1.136 |
+|   128 | 129-130 | 237.5 |     57 |  4.4 |   2.688 |
+|   133 | 134-135 | 239.4 |     58 |    5 |   1.608 |
+|   210 | 211-212 | 236.4 |     55 |  4.4 |   1.021 |
+|   137 | 138-139 | 241.3 |     60 |  2.8 |   1.550 |
+|   214 | 215-216 | 238.4 |     55 |  4.1 |   1.067 |
+|   145 | 146-147 | 244.3 |     58 |  2.0 |   5.181 |
+|   248 | 249-250 | 254.9 |     68 | 5.85 |   2.222 |
+|   219 | 220-221 | 240.0 |   57.5 | 4.35 |       1 |
+|   157 | 158-159 | 252.2 |     65 |  7.0 |   6.757 |
+|   236 | 237-238 | 247.0 |     63 |  4.2 |   1.122 |
+|   240 | 241-242 | 249.5 |     65 |  3.1 |   1.073 |
+|   244 | 245-246 | 251.6 |     64 |  2.7 |   1.147 |
+|   252 | 253-254 | 258.2 |     69 |  5.4 |   1.678 |
 
 + Pixel positions of slits (islit in table above) also vary between positions, so I have had to measure all of these
   + They are FITS style 1-based indices
@@ -40,54 +44,68 @@
   + To be safe, we take the 5 pixels: [int(islit) - 3 : int(islit) + 3] 
 + First stab:
   + Read in the images and spectra, and overplot the profiles
-  + There are 12 positions, so we can use a 4 x 3 grid
+  + There are 16 positions now, so we can use a 4 x 4 grid
   + The =bfac= factors are the inter-position image brightness correction factors, calculated below - they multiply all the brightnesses
+    + On the graphs, I print out =bright = 1/bfac=
   + The =fac= factors are the image-to-spectrum brightness factors - they multiply the image profile so that it matches the spectrum profile
     + So larger factors mean better spectra (compared to what is expected from the image)
     + The most common factor /should/ correspond to equal conditions between image and spectrum. But in general =fac= could be larger or smaller than this.
     + I am assuing that =fac = 4.4= is the default value, and dividing all of them by this when I print the info on the plot
-      + Interestingly for pos #248 we get fac of 1.33, which exactly cancels its value of bfac.  This means that the clouds that were there for the image had disappeared when te spectrum was taken!
+      + There are 4 spectra that have the optimum value of =bfac=:
+        + 206, 128, 210, 219
+      + Most of the other values are lower
+        + This make sense if conditions were deteriorating during the night
+        + Then each spectrum is worse than its preceding image
+      + But a few are higher, implying improvements since the image:
+        + 133, 248, 157, 252
+        + These tend to have high values of bfac
 
 #+header: :var table=vertical-image-and-fullspec
 #+BEGIN_SRC python :return figfile :results file
   from astropy.io import fits
   import numpy as np
   import matplotlib.pyplot as plt
-  import seaborn as sns
+  import seaborn as sns; sns.set()
+  sns.set_color_codes()
 
   nspec = 12
   ny = 512
   figfile = 'image-spec-offsets.pdf'
   yarray = np.arange(ny)
-  fig, axgrid = plt.subplots(3, 5, sharex=True, sharey=True)
-
-  for (imid, specid, islit, ishift, factor, bfac), ax in zip(table, axgrid.flat):
+  layout = {'left': 0.05, 'bottom': 0.07, 'right': 0.99, 'top': 0.95,
+            'wspace': 0.02, 'hspace': 0.02}
+  fig, axgrid = plt.subplots(4, 4, sharex=True, sharey=True, gridspec_kw=layout)
+  tweak = 1.2
+  for (imid, specid, islit, jshift, factor, bfac), ax in zip(table, axgrid.flat):
       imfile = 'posiciones/spm{}-ardec.fits'.format(imid)
       specfile = 'spm{}h.fits'.format(specid)
       islit = int(float(islit))
-      ishift = float(ishift)
+      jshift = float(jshift)
       factor = float(factor)
       bfac = float(bfac)
 
       imhdu, = fits.open(imfile)
       spechdu, = fits.open(specfile)
-
+  
       imhdu.data -= 1170.0  # remove bias
-      improfile = imhdu.data[:, islit-2:islit+2].sum(axis=1)
+      improfile = imhdu.data[:, islit-3:islit+3].sum(axis=1)
       specprofile = spechdu.data.sum(axis=1)
+ 
+      ax.plot(yarray+jshift, bfac*improfile/(1e4*tweak), label='image',
+              c='r', lw=2, alpha=0.3)
+      ax.plot(yarray, bfac*specprofile/(1e4*factor), label='spectrum',
+              c='k', lw=0.6)
 
-      ax.plot(yarray+ishift, bfac*factor*improfile/1e5, label='image', lw=2,
-              alpha=0.3, c='r')
-      ax.plot(yarray, bfac*specprofile/1e5, label='spectrum', lw=0.6, c='k')
-   
-      text = 'pos #{} shift = {:.1f} factor = {:.2f}'.format(imid, ishift, factor/4.4)
-      ax.text(300, 0.1, text, ha='center', fontsize='xx-small')
+      text_pattern = 'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'
+      text = text_pattern.format(imid, jshift, factor/4.4, 1.0/bfac)
+      ax.text(300, 0.1, text, ha='center', va='bottom', fontsize=7)
 
   axgrid[0, 0].legend(fontsize='xx-small', loc='upper left')
-  axgrid[0, 0].set_ylim(0.0, 2.1)
+  axgrid[0, 0].set_xlim(0.0, 640)
+  axgrid[0, 0].set_ylim(0.0, 5.5)
   axgrid[-1, 2].set_xlabel('pixel')
   axgrid[1, 0].set_ylabel('intensity')
-  fig.suptitle('Alignment of vertical slits')
+  fig.suptitle('Alignment and flux calibration of vertical slits')
   fig.set_size_inches(11, 8.5)
   fig.savefig(figfile)
 
@@ -107,54 +125,93 @@ CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 :END:
 + Copied files to [[file:~/Dropbox/SPMJAN10/reducciones/][~/Dropbox/SPMJAN10/reducciones/]]
 + Looking at which ones to use to see if I agree with Tere
-*** WCS values
+*** WCS values and per-slit weighting
 + Alba's coordinates seem to be for the center of the slit in the image+slit
 + dWav = 0.043752133846283 Ang (2 km/s)
-+ dy = 
++ dy = 0.6229 arcsec (see table below)
+  + range is 0.6211 to 0.6249
++ PA does vary from slit to slit: 3.13 to 3.18
++ In both cases, over 512 pixels, the variation in PA and dy correspond to only a couple of pixels
++ Now we gather all the needed information into the following table
+  + We calculate the (RA0, Dec0) of the 
 
+#+name: vertical-all-parameters
+#+header: :var intable=vertical-image-and-fullspec
 #+BEGIN_SRC python :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones
-import glob
-import numpy as np
-from astropy.io import fits
-table = []
-filenames = glob.glob('spm*-ardec.fits')
-for fn in filenames:
-    hdu, = fits.open(fn)
-    dy = np.hypot(hdu.header['CD1_2'], hdu.header['CD2_2'])*3600
-    table.append([fn, dy])
+  import numpy as np
+  from astropy.io import fits
+  from astropy.wcs import WCS
+
+  table = [['image', 'spectrum', 'RA0', 'Dec0', 'dy', 'PA', 'weight'], None]
+  for imid, specid, islit, jshift, fac, bfac in intable:
+      fn = 'spm{}-ardec.fits'.format(imid)
+      hdu, = fits.open(fn)
+
+      #
+      # Find pixel scale along slit and position angle of slit
+      #
+      dRA_arcsec = hdu.header['CD1_2']*3600*np.cos(np.radians(hdu.header['CRVAL2']))
+      dDEC_arcsec = hdu.header['CD2_2']*3600
+      dy = np.hypot(dRA_arcsec, dDEC_arcsec)
+      PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
+
+      #
+      # Find the RA and Dec of the spectral slit center
+      #
+
+      # Pixel coords of spectrum slit center on image (in FITS 1-based convention)
+      i0, j0 = islit, 0.5*(1 + hdu.header['NAXIS2']) - jshift
+
+      # Convert to world coordinates
+      wcs = WCS(hdu.header)
+      # Crazy packing/unpacking required to use single scalar coords
+      (RA0, Dec0), = wcs.all_pix2world([[i0, j0]], 1)
+
+      # Test it by hand using small-patch-of-sky approximation
+      c = 1./np.cos(np.radians(-5.42))
+      RA1 = (hdu.header['CRVAL1']
+             + c*hdu.header['CD1_1']*(i0 - hdu.header['CRPIX1'])
+             + c*hdu.header['CD1_2']*(j0 - hdu.header['CRPIX2']))
+      Dec1 = (hdu.header['CRVAL2']
+              + hdu.header['CD2_1']*(i0 - hdu.header['CRPIX1'])
+              + hdu.header['CD2_2']*(j0 - hdu.header['CRPIX2']))
+      assert(abs(RA1 - RA0) < 1e-6 )
+      assert(abs(Dec1 - Dec0) < 1e-6 )
+
+      #
+      # Find total weight factor, combining inter-image factor with the
+      # image-to-spectrum factor
+      #
+      weight = (fac/4.4)/bfac
+ 
+      table.append([imid, int(imid)+1,
+                    '{:.5f}'.format(RA0),
+                    '{:.5f}'.format(Dec0),
+                    '{:.4f}'.format(dy), '{:.3f}'.format(PA),
+                    '{:.4f}'.format(weight),
+      ])
 #+END_SRC
 
-#+RESULTS:
-|-------------------+--------------------|
-| spm078-ardec.fits | 0.6220549447029587 |
-| spm085-ardec.fits |   0.62317890413072 |
-| spm101-ardec.fits | 0.6225012571392761 |
-| spm124-ardec.fits |  0.622218813434036 |
-| spm128-ardec.fits | 0.6231553370701498 |
-| spm133-ardec.fits | 0.6231132792993379 |
-| spm137-ardec.fits | 0.6231781063982743 |
-| spm142-ardec.fits | 0.6213593488421689 |
-| spm145-ardec.fits | 0.6217816676948823 |
-| spm150-ardec.fits | 0.6230107112022361 |
-| spm154-ardec.fits | 0.6238157549497414 |
-| spm157-ardec.fits | 0.6210909967040036 |
-| spm161-ardec.fits | 0.6211967486825171 |
-| spm173-ardec.fits | 0.6217768871176305 |
-| spm202-ardec.fits | 0.6246067241053639 |
-| spm206-ardec.fits | 0.6227428493141918 |
-| spm210-ardec.fits | 0.6229020762040736 |
-| spm214-ardec.fits | 0.6247439611155685 |
-| spm219-ardec.fits | 0.6227397401317721 |
-| spm224-ardec.fits | 0.6232438303524672 |
-| spm231-ardec.fits | 0.6226380945762506 |
-| spm236-ardec.fits |  0.623354528585781 |
-| spm240-ardec.fits | 0.6235692800557356 |
-| spm244-ardec.fits | 0.6248870675138735 |
-| spm248-ardec.fits | 0.6231268468158696 |
-| spm252-ardec.fits | 0.6229126819583328 |
-|-------------------+--------------------|
-|                   |  0.6229 +/- 0.0002 |
-#+TBLFM: @27$2=vmeane(@I..@II);f4
+#+RESULTS: vertical-all-parameters
+| image | spectrum |      RA0 |     Dec0 |     dy |    PA | weight |
+|-------+----------+----------+----------+--------+-------+--------|
+|   202 |      203 | 83.62012 | -5.42575 | 0.6246 | 3.132 | 0.7755 |
+|   124 |      125 | 83.61775 | -5.42765 | 0.6222 | 3.379 | 0.3891 |
+|   206 |      207 | 83.61646 | -5.42573 | 0.6227 | 3.300 | 0.8803 |
+|   128 |      129 | 83.61513 | -5.42787 | 0.6231 | 3.322 | 0.3720 |
+|   133 |      134 | 83.61537 | -5.42226 | 0.6231 | 3.259 | 0.7067 |
+|   210 |      211 | 83.61386 | -5.42573 | 0.6229 | 3.283 | 0.9794 |
+|   137 |      138 | 83.61278 | -5.42226 | 0.6232 | 3.270 | 0.4106 |
+|   214 |      215 | 83.61140 | -5.42547 | 0.6247 | 3.132 | 0.8733 |
+|   145 |      146 | 83.61005 | -5.42080 | 0.6218 | 3.358 | 0.0877 |
+|   248 |      249 | 83.60913 | -5.42673 | 0.6231 | 3.218 | 0.5984 |
+|   219 |      220 | 83.60811 | -5.42615 | 0.6227 | 3.331 | 0.9886 |
+|   157 |      158 | 83.60713 | -5.42289 | 0.6211 | 3.373 | 0.2354 |
+|   236 |      237 | 83.60653 | -5.42631 | 0.6233 | 3.220 | 0.8508 |
+|   240 |      241 | 83.60476 | -5.42649 | 0.6236 | 3.256 | 0.6566 |
+|   244 |      245 | 83.60297 | -5.42626 | 0.6249 | 3.201 | 0.5350 |
+|   252 |      253 | 83.60148 | -5.42675 | 0.6229 | 3.335 | 0.7314 |
+
 
 **** Offset along slit
 :PROPERTIES:
@@ -176,32 +233,47 @@ for fn in filenames:
 | spm219 | 320.5 | spec220 |   378 | 57.5 |
 #+TBLFM: $5=$4 - $2
 
-+ Unfortunately, the offset varies from spectrum to spectrum, which is odd  
++ Unfortunately, the offset varies from spectrum to spectrum, which is odd
++ [2015-08-18 Tue] This is now calculated more rigorously [[id:0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B][above]]
+
 *** Which to use
 **** Positions in Alba's set that are acceptable
 202, 124, 206, 133(+), 210, 137, 214, 248(+), 219, 236, 240, 244, 252
 
-|  ID | Bright |  Norm | Inverse |
-|-----+--------+-------+---------|
-| 202 |   2087 | 0.972 |   1.029 |
-| 124 |   1879 | 0.875 |   1.143 |
-| 206 |   2101 | 0.979 |   1.021 |
-| 133 |   1780 | 0.829 |   1.206 |
-| 210 |   2141 | 0.997 |   1.003 |
-| 137 |   1913 | 0.891 |   1.122 |
-| 214 |   2125 | 0.990 |   1.010 |
-| 248 |   1615 | 0.752 |   1.330 |
-| 219 |   2124 | 0.989 |   1.011 |
-| 236 |   2070 | 0.964 |   1.037 |
-| 240 |   2147 |     1 |       1 |
-| 244 |   2017 | 0.939 |   1.065 |
-| 252 |   1792 | 0.835 |   1.198 |
-#+TBLFM: $3=$-1/2147;f3::$4=1/$-1;f3
+|  ID |      |  Norm | Inverse | Bright |   Norm | Inverse |
+|-----+------+-------+---------+--------+--------+---------|
+| 202 | 2083 | 0.875 |   1.143 |   2087 |  0.939 |   1.065 |
+| 124 | 1900 | 0.699 |   1.431 |   1879 |  0.726 |   1.377 |
+| 206 | 2089 | 0.880 |   1.136 |   2101 |  0.953 |   1.049 |
+| 128 | 1558 | 0.372 |   2.688 |    nan |    nan |     nan |
+| 133 | 1819 | 0.622 |   1.608 |   1780 |  0.624 |   1.603 |
+| 210 | 2192 | 0.979 |   1.021 |   2141 |  0.994 |   1.006 |
+| 137 | 1843 | 0.645 |   1.550 |   1913 |  0.760 |   1.316 |
+| 214 | 2148 | 0.937 |   1.067 |   2125 |  0.977 |   1.024 |
+| 145 | 1372 | 0.193 |   5.181 |   nan  |    nan |     nan |
+| 248 | 1640 | 0.450 |   2.222 |   1615 |  0.455 |   2.198 |
+| 219 | 2214 |     1 |       1 |   2124 |  0.976 |   1.025 |
+| 157 | 1324 | 0.148 |   6.757 |   nan  |    nan |     nan |
+| 236 | 2100 | 0.891 |   1.122 |   2070 |  0.921 |   1.086 |
+| 240 | 2143 | 0.932 |   1.073 |   2147 |      1 |       1 |
+| 244 | 2080 | 0.872 |   1.147 |   2017 |  0.867 |   1.153 |
+| 252 | 1792 | 0.596 |   1.678 |   1792 |  0.637 |   1.570 |
+#+TBLFM: $3=($-1 - 1170)/(2214 - 1170);f3::$4=1/$-1;f3::$6=($-1 - 1170)/(2147 - 1170);f3::$7=1/$-1;f3
 
-The Inverse column agrees closely with Alba's values 
++ The Inverse column /used/ to agree closely with Alba's values
++ But now it does not, because I realised that the radec images have not had the bias subtracted!
++ [2015-08-17 Mon] Dones it again to include more positions - new version is in columns 2 to 4
 
 **** Positions in Alba's set that are bad
-128, 101, 145, 157, 173
+128(+), 101, 145, 157, 173
+***** Rehabilitation of some of these positions
++ From my experience with the image-spectrum calibration, there is often a big difference between the quality of the image and that of hte spectrum
++ So we shouldn't rule out a position, just based on a poor image
++ Worth saving:
+  + 128 :: slots in right next to 133
+  + 145 :: goes just before 248
+  + 157 :: goes before 236
++ Still terrible: 101 (no spectrum), 173 (just bad)
 **** Positions over to the NE
 spm078, spm085
 **** Other positions omitted ny Alba
