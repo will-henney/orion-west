@@ -18,24 +18,24 @@
 :ID:       0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B
 :END:
 #+name: vertical-image-and-fullspec
-| image |    spec | islit | jshift |  fac |    bfac |
-|-------+---------+-------+--------+------+---------|
-|   202 | 203-204 | 233.6 |   52.5 |  3.9 |   1.143 | 
-|   124 | 125-127 | 235.5 |   54.5 | 2.45 |   1.431 |
-|   206 | 207-208 | 234.6 |     54 |  4.4 |   1.136 |
-|   128 | 129-130 | 237.5 |     57 |  4.4 |   2.688 |
-|   133 | 134-135 | 239.4 |     58 |    5 |   1.608 |
-|   210 | 211-212 | 236.4 |     55 |  4.4 |   1.021 |
-|   137 | 138-139 | 241.3 |     60 |  2.8 |   1.550 |
-|   214 | 215-216 | 238.4 |     55 |  4.1 |   1.067 |
-|   145 | 146-147 | 244.3 |     58 |  2.0 |   5.181 |
-|   248 | 249-250 | 254.9 |     68 | 5.85 |   2.222 |
-|   219 | 220-221 | 240.0 |   57.5 | 4.35 |       1 |
-|   157 | 158-159 | 252.2 |     65 |  7.0 |   6.757 |
-|   236 | 237-238 | 247.0 |     63 |  4.2 |   1.122 |
-|   240 | 241-242 | 249.5 |     65 |  3.1 |   1.073 |
-|   244 | 245-246 | 251.6 |     64 |  2.7 |   1.147 |
-|   252 | 253-254 | 258.2 |     69 |  5.4 |   1.678 |
+| image |    spec | islit | jshift |  fac |  bfac |
+|-------+---------+-------+--------+------+-------|
+|   202 | 203-204 | 233.6 |   52.5 |  3.9 | 1.143 |
+|   124 | 125-127 | 235.5 |   54.5 |  2.7 | 1.431 |
+|   206 | 207-208 | 234.6 |     54 |  4.4 | 1.136 |
+|   128 | 129-130 | 237.5 |     57 |  4.4 | 2.688 |
+|   133 | 134-135 | 239.4 |     58 |    5 | 1.608 |
+|   210 | 211-212 | 236.4 |     55 |  4.4 | 1.021 |
+|   137 | 138-139 | 241.3 |     60 |  2.8 | 1.550 |
+|   214 | 215-216 | 238.4 |     55 |  4.1 | 1.067 |
+|   145 | 146-147 | 244.3 |     58 |  2.0 | 5.181 |
+|   248 | 249-250 | 254.9 |     68 |  5.4 | 2.222 |
+|   219 | 220-221 | 240.0 |   57.5 | 4.35 |     1 |
+|   157 | 158-159 | 252.2 |     65 |  7.0 | 6.757 |
+|   236 | 237-238 | 247.0 |     63 |  4.2 | 1.122 |
+|   240 | 241-242 | 249.5 |     65 |  3.1 | 1.073 |
+|   244 | 245-246 | 251.6 |     64 |  2.7 | 1.147 |
+|   252 | 253-254 | 258.2 |     69 |  5.4 | 1.678 |
 
 + Pixel positions of slits (islit in table above) also vary between positions, so I have had to measure all of these
   + They are FITS style 1-based indices
@@ -196,7 +196,7 @@ CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 | image | spectrum |      RA0 |     Dec0 |     dy |    PA | weight |
 |-------+----------+----------+----------+--------+-------+--------|
 |   202 |      203 | 83.62012 | -5.42575 | 0.6246 | 3.132 | 0.7755 |
-|   124 |      125 | 83.61775 | -5.42765 | 0.6222 | 3.379 | 0.3891 |
+|   124 |      125 | 83.61775 | -5.42765 | 0.6222 | 3.379 | 0.4288 |
 |   206 |      207 | 83.61646 | -5.42573 | 0.6227 | 3.300 | 0.8803 |
 |   128 |      129 | 83.61513 | -5.42787 | 0.6231 | 3.322 | 0.3720 |
 |   133 |      134 | 83.61537 | -5.42226 | 0.6231 | 3.259 | 0.7067 |
@@ -204,7 +204,7 @@ CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 |   137 |      138 | 83.61278 | -5.42226 | 0.6232 | 3.270 | 0.4106 |
 |   214 |      215 | 83.61140 | -5.42547 | 0.6247 | 3.132 | 0.8733 |
 |   145 |      146 | 83.61005 | -5.42080 | 0.6218 | 3.358 | 0.0877 |
-|   248 |      249 | 83.60913 | -5.42673 | 0.6231 | 3.218 | 0.5984 |
+|   248 |      249 | 83.60913 | -5.42673 | 0.6231 | 3.218 | 0.5523 |
 |   219 |      220 | 83.60811 | -5.42615 | 0.6227 | 3.331 | 0.9886 |
 |   157 |      158 | 83.60713 | -5.42289 | 0.6211 | 3.373 | 0.2354 |
 |   236 |      237 | 83.60653 | -5.42631 | 0.6233 | 3.220 | 0.8508 |
@@ -360,33 +360,174 @@ spm078, spm085
   + PC2_1 = 0.0, PC2_2 = 1.0
 
 ** Test with the velocity-integrated emission
+:PROPERTIES:
+:dir:      ~/Dropbox/SPMJAN10/reducciones
+:END:
 
-#+BEGIN_SRC python :var vtab=vertical-slits :results output
-for imname, specname, ra, dec, fac in vtab:
-    print(specname)
+Some positions are a bit problematic - try missing them out:
+#+name: positions-to-drop
++ 248
+
+
+#+header: :var ignore=positions-to-drop
+#+header: :var vtab=vertical-all-parameters
+#+BEGIN_SRC python :results output
+  import numpy as np
+  from astropy.io import fits
+  from astropy.wcs import WCS
+
+  #
+  # First set up WCS for the output image
+  #
+
+  NX, NY = 1024, 1024
+  dRA, dDec = -0.5/3600., 0.5/3600.
+  RA0, Dec0 = 83.61, -5.423
+  w = WCS(naxis=2)
+  w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
+  w.wcs.cdelt = [dRA, dDec]
+  w.wcs.crval = [RA0, Dec0]
+  w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
+
+  outimage = np.zeros((NY, NX))
+  outweights = np.zeros((NY, NX))
+
+  # Create world coord arrays for output image
+  II, JJ = np.meshgrid(np.arange(NX), np.arange(NY))
+  RA, Dec = w.all_pix2world(II, JJ, 0)
+
+  slit_width = 2.0                # width in arcsec of 150 micron slit
+
+  for imid, specid, ra0, dec0, dy, PA, weight in vtab:
+      if int(imid) in ignore:
+          continue  # drop some positions
+      # Unpack floats from strings in table row
+      ra0, dec0, dy, PA, weight = [float(_) for _ in (ra0, dec0, dy, PA, weight)]
+      # Open H alpha slit spectrum
+      spechdu, = fits.open('spec{}-ha.fits'.format(specid))
+      # Sum spectrum over all wavelengths
+      profile = spechdu.data.sum(axis=1)
+
+      # Transform output grid coords into slit frame offsets in arcsec
+      # XX, YY are intermediate offset coordinates along RA, Dec axes
+      XX = 3600*(RA - ra0)*np.cos(np.radians(Dec))
+      YY = 3600*(Dec - dec0)
+      # Precalculate geometric factors for rotation to slit frame
+      c, s = np.cos(np.radians(PA)), np.sin(np.radians(PA))
+      # X is ordinate perpendicular to slit
+      X = XX*c - YY*s
+      # Y is ordinate along slit
+      Y = YY*c - XX*s
+
+      # Mask for all output pixels that fall in the slit
+      slitmask = abs(X) <= 0.5*slit_width
+      # cycle over all slit y pixels
+      for j, intensity in enumerate(profile):
+          # Offset from slit center
+          y = (j - 255.5)*dy
+          # Mask for output pixels that fall in this slit pixel
+          pixmask = slitmask & (abs(Y - y) <= 0.5*dy)
+          # Fill in the output intensity and weight arrays
+          outimage[pixmask] += intensity
+          outweights[pixmask] += weight
+
+  # Save everything as different images in a single fits file:
+  # 1. The sum of the raw slits 
+  # 2. The weights
+  # 3. The slits normalized by the weights
+  fits.HDUList([
+      fits.PrimaryHDU(),
+      fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
+      fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
+      fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
+      ]).writeto('all-vert-sum.fits', clobber=True)
+    
+
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-spec253
-spec174
-spec245
-spec241
-spec237
-spec158
-spec220
-spec249
-spec146
-spec215
-spec138
-spec211
-spec102
-spec129
-spec134
-spec207
-spec125
-spec203
-#+end_example
+
++ The first image in the file is what can be used to combine with more data, for instance the horizontal slits
++ The third image is what should be used in the rebinning process (together with the second image, the weights)
+
+This shows the scaled image in ds9
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
+#+END_SRC
+
+
+
+* The multigrid smoothing method
+:PROPERTIES:
+:dir:      ~/Dropbox/SPMJAN10/reducciones
+:END:
+
+#+BEGIN_SRC python :results output
+  import sys
+  sys.path.append('/Users/will/Work/RubinWFC3/Tsquared')
+  from rebin_utils import downsample, oversample
+  from astropy.io import fits
+
+  nlist = [1, 2, 4, 8, 16, 32]
+  infile = 'all-vert-sum.fits'
+
+  hdulist = fits.open(infile)
+  hdr = hdulist['scaled'].header
+  im = hdulist['scaled'].data
+  w = hdulist['weight'].data
+  m = w > 0.0
+
+  for n in nlist:
+      im[~m] = 0.0
+      outfile = infile.replace('.fits', '-bin{:03d}.fits'.format(n))
+      print('Saving', outfile)
+      # Save both the scaled image and the weights, but at the full resolution
+      fits.HDUList([
+          fits.PrimaryHDU(),
+          fits.ImageHDU(data=oversample(im, n), header=hdr, name='scaled'),
+          fits.ImageHDU(data=oversample(w, n), header=hdr, name='weight'),
+      ]).writeto(outfile, clobber=True)
+      # Now do the rebinning by a factor of two
+      [im,], m, w = downsample([im,], m, weights=w)
+
+#+END_SRC
+
+#+RESULTS:
+: Saving all-vert-sum-bin001.fits
+: Saving all-vert-sum-bin002.fits
+: Saving all-vert-sum-bin004.fits
+: Saving all-vert-sum-bin008.fits
+: Saving all-vert-sum-bin016.fits
+: Saving all-vert-sum-bin032.fits
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/all-vert-sum-bin016.fits['scaled']
+#+END_SRC
+
++ Unfortunately, the weights increase a lot with the binning - more than they ought to.
++ The problem is that the pixels at the finest grid levels are not independent, since many of them come from the same pixel of the slit spectrum
++ However, the algorithm does not know this and so adds them up when it rebins to the next coarser grid
++ This will be a problem if we want to combine the different levels and impose a minimum weight
+  + An easy solution would be to have the minimum weight vary per level
+
+#+BEGIN_SRC python :results output
+  from astropy.io import fits
+  import numpy as np
+  nlist = [1, 2, 4, 8, 16]
+  minweights = [1.0, 1.0, 2.0, 2.0, 2.0, 2.0]
+  outim = np.zeros((1024, 1024))
+  for n, minw in reversed(list(zip(nlist, minweights))):
+      fn = 'all-vert-sum-bin{:03d}.fits'.format(n)
+      hdulist = fits.open(fn)
+      im = hdulist['scaled'].data
+      hdr = hdulist['scaled'].header
+      w = hdulist['weight'].data
+      m = w*im >= minw*1e5
+      outim[m] = im[m]
+  fits.PrimaryHDU(header=hdr, data=outim).writeto('all-vert-sum-multibin.fits', clobber=True)
+#+END_SRC
+
+#+RESULTS:
 
 * Coordinates of the slits
 + Data received from Alba [2015-08-11 Tue]
