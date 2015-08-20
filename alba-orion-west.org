@@ -1,4 +1,15 @@
-#+OPTIONS: ^:{}
+#+OPTIONS: ':nil *:t -:t ::t <:t H:4 \n:nil ^:{} arch:headline
+#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+TITLE: Notes on creating spectral maps from Orion West slit spectra
+#+AUTHOR: William Henney
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+
+#+PROPERTY: header-args    :exports both
+
 
 * Dealing with the offset between image and spectrum
 + It seems that this is not as constant as I had hoped
@@ -133,11 +144,13 @@ CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 + PA does vary from slit to slit: 3.13 to 3.18
 + In both cases, over 512 pixels, the variation in PA and dy correspond to only a couple of pixels
 + Now we gather all the needed information into the following table
-  + We calculate the (RA0, Dec0) of the 
+  + We calculate the (RA0, Dec0) of the slit center (taking into account the =jshift= values)
+  + We calculate the pixel scale and PA of the slit
+  + We calculate a total weight by multiplying together the inter-position and the image-to-spectrum values
 
 #+name: vertical-all-parameters
 #+header: :var intable=vertical-image-and-fullspec
-#+BEGIN_SRC python :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones
+#+BEGIN_SRC python :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones :exports both
   import numpy as np
   from astropy.io import fits
   from astropy.wcs import WCS
@@ -213,7 +226,7 @@ CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 |   252 |      253 | 83.60148 | -5.42675 | 0.6229 | 3.335 | 0.7314 |
 
 
-**** Offset along slit
+**** Offset along slit                                             :noexport:
 :PROPERTIES:
 :ID:       8685D060-12A9-4E73-B069-11D5315ED8EB
 :END:
@@ -240,24 +253,24 @@ CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 **** Positions in Alba's set that are acceptable
 202, 124, 206, 133(+), 210, 137, 214, 248(+), 219, 236, 240, 244, 252
 
-|  ID |      |  Norm | Inverse | Bright |   Norm | Inverse |
-|-----+------+-------+---------+--------+--------+---------|
-| 202 | 2083 | 0.875 |   1.143 |   2087 |  0.939 |   1.065 |
-| 124 | 1900 | 0.699 |   1.431 |   1879 |  0.726 |   1.377 |
-| 206 | 2089 | 0.880 |   1.136 |   2101 |  0.953 |   1.049 |
-| 128 | 1558 | 0.372 |   2.688 |    nan |    nan |     nan |
-| 133 | 1819 | 0.622 |   1.608 |   1780 |  0.624 |   1.603 |
-| 210 | 2192 | 0.979 |   1.021 |   2141 |  0.994 |   1.006 |
-| 137 | 1843 | 0.645 |   1.550 |   1913 |  0.760 |   1.316 |
-| 214 | 2148 | 0.937 |   1.067 |   2125 |  0.977 |   1.024 |
-| 145 | 1372 | 0.193 |   5.181 |   nan  |    nan |     nan |
-| 248 | 1640 | 0.450 |   2.222 |   1615 |  0.455 |   2.198 |
-| 219 | 2214 |     1 |       1 |   2124 |  0.976 |   1.025 |
-| 157 | 1324 | 0.148 |   6.757 |   nan  |    nan |     nan |
-| 236 | 2100 | 0.891 |   1.122 |   2070 |  0.921 |   1.086 |
-| 240 | 2143 | 0.932 |   1.073 |   2147 |      1 |       1 |
-| 244 | 2080 | 0.872 |   1.147 |   2017 |  0.867 |   1.153 |
-| 252 | 1792 | 0.596 |   1.678 |   1792 |  0.637 |   1.570 |
+|  ID |      |  Norm | Inverse | Bright |  Norm | Inverse |
+|-----+------+-------+---------+--------+-------+---------|
+| 202 | 2083 | 0.875 |   1.143 |   2087 | 0.939 |   1.065 |
+| 124 | 1900 | 0.699 |   1.431 |   1879 | 0.726 |   1.377 |
+| 206 | 2089 | 0.880 |   1.136 |   2101 | 0.953 |   1.049 |
+| 128 | 1558 | 0.372 |   2.688 |    nan |   nan |     nan |
+| 133 | 1819 | 0.622 |   1.608 |   1780 | 0.624 |   1.603 |
+| 210 | 2192 | 0.979 |   1.021 |   2141 | 0.994 |   1.006 |
+| 137 | 1843 | 0.645 |   1.550 |   1913 | 0.760 |   1.316 |
+| 214 | 2148 | 0.937 |   1.067 |   2125 | 0.977 |   1.024 |
+| 145 | 1372 | 0.193 |   5.181 |    nan |   nan |     nan |
+| 248 | 1640 | 0.450 |   2.222 |   1615 | 0.455 |   2.198 |
+| 219 | 2214 |     1 |       1 |   2124 | 0.976 |   1.025 |
+| 157 | 1324 | 0.148 |   6.757 |    nan |   nan |     nan |
+| 236 | 2100 | 0.891 |   1.122 |   2070 | 0.921 |   1.086 |
+| 240 | 2143 | 0.932 |   1.073 |   2147 |     1 |       1 |
+| 244 | 2080 | 0.872 |   1.147 |   2017 | 0.867 |   1.153 |
+| 252 | 1792 | 0.596 |   1.678 |   1792 | 0.637 |   1.570 |
 #+TBLFM: $3=($-1 - 1170)/(2214 - 1170);f3::$4=1/$-1;f3::$6=($-1 - 1170)/(2147 - 1170);f3::$7=1/$-1;f3
 
 + The Inverse column /used/ to agree closely with Alba's values
@@ -347,17 +360,19 @@ spm078, spm085
 + 1 arcsec is
   + 2.778e-4 deg declination
   + 2.765e-4 deg RA
-+ We will try a grid with 1 arcsec pixels that is 512 x 512, which should fit in all of the slits
++ We will try a grid with 0.5 arcsec pixels that is 1024 x 1024, which should comfortably enclose all of the slits
 + AR reference of the horizontal slits is 83.6158 +/- 0.0019
   + AR range of vertical slits is 83.6016 to 83.6205: 68 cos(-5.4150) = 67.7 arcsec
 + Dec reference of vertical slits is -5.4150 +/- 0.0006
   + Dec range of horizontal slits is -5.4409 to -5.4155 = 91.44 arcsec
+  + Actually Dec value of the vertical slits is a bit lower now that I have taken into account the image-spectrum shift 
 + So we use
   + CRPIX1 = CRPIX2 = 256.5
-  + CRVAL1 = 83.6158, CRVAL2 = -5.4150
-  + CDELT1 = 2.765e-4, CDELT2 = 2.778e-4
-  + PC1_1 = -1.0, PC1_2 = 0.0
+  + CRVAL1 = 83.61, CRVAL2 = -5.423
+  + CDELT1 = -0.5/3600, CDELT2 = 0.5/3600
+  + PC1_1 = 1.0, PC1_2 = 0.0
   + PC2_1 = 0.0, PC2_2 = 1.0
++ Note that the WCS matrix should be given in arcdegrees - the translation to degrees of RA is done automatically (and it doesn't matter much anyway, since we are near the equator)
 
 ** Test with the velocity-integrated emission
 :PROPERTIES:
@@ -441,7 +456,7 @@ Some positions are a bit problematic - try missing them out:
       fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
       fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
       ]).writeto('all-vert-sum.fits', clobber=True)
-    
+
 
 #+END_SRC
 
@@ -514,7 +529,7 @@ xpaset -p ds9 fits $PWD/all-vert-sum-bin016.fits['scaled']
   from astropy.io import fits
   import numpy as np
   nlist = [1, 2, 4, 8, 16]
-  minweights = [1.0, 1.0, 2.0, 2.0, 2.0, 2.0]
+  minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
   outim = np.zeros((1024, 1024))
   for n, minw in reversed(list(zip(nlist, minweights))):
       fn = 'all-vert-sum-bin{:03d}.fits'.format(n)
@@ -622,4 +637,144 @@ xpaset -p ds9 fits $PWD/all-vert-sum-bin016.fits['scaled']
 |--------+----------+--------------------+--------------------+---------|
 |        |          | 83.6110 +/- 0.0014 | -5.4150 +/- 0.0006 |         |
 #+TBLFM: @20$3..@20$4=vmeane(@I..@II);f4
+
+
+
+* Modifying org export to include header arguments                 :noexport:
+Based on http://kitchingroup.cheme.cmu.edu/blog/2014/09/22/Showing-what-data-went-into-a-code-block-on-export/
+
+
+** This is all copied from John Kitchin's page
+Here is how we can get a list of the table-names indicating their name or that they are results (results are enclosed in ()).
+
+#+BEGIN_SRC emacs-lisp :results list
+(org-element-map (org-element-parse-buffer) 'table
+  (lambda (element)     
+    (or (org-element-property :name element) (org-element-property :results element))))
+#+END_SRC
+
+#+RESULTS:
+- vertical-image-and-fullspec
+- ("vertical-all-parameters")
+- horizontal-slits
+- vertical-slits
+- ("")
+
+Similarly, here is the list of parameters for each block.
+
+#+BEGIN_SRC emacs-lisp :results list
+(org-element-map (org-element-parse-buffer) 'src-block
+  (lambda (element)     
+    (org-element-property :parameters element)))
+#+END_SRC
+
+#+RESULTS:
+- :return figfile :results file
+- :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones :exports both
+- :results output
+- :results silent
+- :results output
+- :results silent
+- :results output
+- :results list
+
+
+** My attempt to extend it to '#+header:' elements
+#+BEGIN_SRC emacs-lisp :results list
+  (org-element-map (org-element-parse-buffer) 'src-block
+    (lambda (element)
+    (org-element-property :header element)))
+#+END_SRC
+
+#+RESULTS:
+- (":var table=vertical-image-and-fullspec")
+- (":var intable=vertical-image-and-fullspec")
+- (":var vtab=vertical-all-parameters" ":var ignore=positions-to-drop")
+
+
+
+** And to named plain lists
+#+BEGIN_SRC emacs-lisp :results list
+(org-element-map (org-element-parse-buffer) 'plain-list
+  (lambda (element)     
+    (or (org-element-property :name element) (org-element-property :results element))))
+#+END_SRC
+
+#+RESULTS:
+- positions-to-drop
+- ("")
+- ("")
+- ("")
+
+
+** Now my version of Kitchin's output filters
+
+#+BEGIN_SRC emacs-lisp
+  (defun ox-mrkup-filter-table (text back-end info)
+    (let ((tblname (pop tblnames)))
+      (message "tblname is \"%s\"" tblname)
+      ; pop does not remove nil from the list, so we do it here.
+      (when (null tblname) (setq tblnames (cdr tblnames)))
+      (cond
+       ((listp tblname)  ; from results
+        (concat (format "<br><pre class=\"example\">Results table name: %s</pre>" (car tblname)) text))
+       ((null tblname)   ; no name
+        text)
+       (t ; everything else
+        (concat (format "<br><pre class=\"example\">Table name: %s</pre>" tblname) text)))))
+
+  (defun ox-mrkup-filter-plain-list (text back-end info)
+    (let ((listname (pop listnames)))
+      (message "listname is \"%s\"" listname)
+      ; pop does not remove nil from the list, so we do it here.
+      (when (null listname) (setq listnames (cdr listnames)))
+      (cond
+       ((null listname)   ; no name
+        text)
+       (t ; everything else
+        (concat (format "<br><pre class=\"example\">List name: %s</pre>" listname) text)))))
+
+  (defun ox-mrkup-filter-src-block (text back-end info)
+    (let ((params (pop src-params))
+          (hparams (pop hdr-params))
+          (lang (pop src-langs)))
+      (when (null params) (setq src-params (cdr src-params)))
+      (when (null hparams) (setq hdr-params (cdr hdr-params)))
+      (if params  
+          (concat (format "<pre class=\"example\">Language = %s\nParameters = %s\nHeader = %s</pre>" lang params hparams) text)
+        text)))
+
+  ;; preprocess to get table names, src parameters and languages.
+  (let ((tblnames (org-element-map (org-element-parse-buffer) 'table
+                    (lambda (element)     
+                      (or (org-element-property :name element)                    
+                          (org-element-property :results element)))))
+
+        (listnames (org-element-map (org-element-parse-buffer) 'plain-list
+                    (lambda (element)     
+                      (org-element-property :name element))))
+      
+        (src-params (org-element-map (org-element-parse-buffer) 'src-block
+                      (lambda (element)     
+                        (org-element-property :parameters element))))
+
+        (hdr-params (org-element-map (org-element-parse-buffer) 'src-block
+                      (lambda (element)     
+                        (org-element-property :header element))))
+
+        (src-langs (org-element-map (org-element-parse-buffer) 'src-block
+                     (lambda (element)     
+                       (org-element-property :language element))))
+
+        ;; register the filters
+        (org-export-filter-table-functions '(ox-mrkup-filter-table))
+        (org-export-filter-plain-list-functions '(ox-mrkup-filter-plain-list))
+        (org-export-filter-src-block-functions '(ox-mrkup-filter-src-block)))
+
+    ;; and export the result
+    (browse-url (org-export-to-file 'html "alba-orion-west.html")))
+#+END_SRC
+
+#+RESULTS:
+: #<process open alba-orion-west.html>
 

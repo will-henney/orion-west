@@ -1,0 +1,1896 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2015-08-19 Wed 14:48 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notes on creating spectral maps from Orion West slit spectra</title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="William Henney" />
+<style type="text/css">
+<!--/*--><![CDATA[/*><!--*/
+html {
+    font-family: Lucida Grande, Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    /* color:  rgb(224, 224, 224); */
+    /* background: rgb(48, 48, 48); */
+}
+
+/* Links */
+a:link {color: #333399; }
+a:visited {color: #777788; }
+a:hover {color: #2222ff; }
+
+
+/* 08 Mar 2015 - we want more definite distinguishing of blockquotes */
+blockquote {
+    background: #E3E3E3;
+    font-size: 90%
+}
+
+/* Added by Will 03 Sep 2007 */
+li {padding: 4px; }
+
+/* Added by Will 08 Oct 2007 */ 
+
+/* Headings shamelessly copied from MoinMoin theme "sinorca4moin" by David Linke*/
+
+h1, h2, h3, h4, h5 {
+	margin: 1em 0 0.5em 0;
+	padding: 0.5em 0.5em 0.5em 0.5em;
+        font-weight: bold;
+	/* Why did I remove the color? */
+	/* background-color: #fafada; */
+	line-height: 1.2em;
+}	
+
+/* h5, h6 { */
+/*     border-bottom: 1px dashed rgb(135,135,135); */
+/* }   */
+/* h1, h2, h3, h4 { */
+/*     /\* border-left: 1px solid rgb(135,135,135); *\/ */
+/*     border-bottom: 2px solid rgb(135,135,135); */
+/* }   */
+
+h1, h2, h3, h4 {
+    color: #f0f0f0;
+    background-color: #404040;
+}
+h4 {
+    color: #f0f0f0;
+    background-color: #606060;
+}
+h5, h6 {
+    color: #f0f0f0;
+    background-color: #808080;
+}
+h1 {font-size: 140%;}
+h2 {font-size: 120%;}
+h3, h4, h5, h6 {font-size: 100%;}
+h6 {font-style: italic;}
+
+p {margin: 0.5em 0.0em;}
+/* .src:before {  */
+/*     background: #3F3F3F; */
+/*     border-right: 1px solid #DCDCDC; border-bottom: 1px solid #DCDCDC; */
+/* } */
+
+.src {
+    background: #4F4F4F;
+    color: #ECECEC;
+}
+.example, thead {
+    background: #E3E3E3;
+}
+
+pre.src:before {
+    color: black;
+}
+
+pre.src {
+    overflow: auto;
+}
+
+/* pre.src-python:before { content: 'Python'; } */
+
+.wjhfig {
+    background-color: #eee;
+    padding: 10pt;
+    margin: 10pt;
+}
+.figure, img {
+    padding: 0pt;
+    margin: 0pt;
+}
+
+/* Make sure paragraphs are no thinner than a certain width, even if
+   there is a floating div eating up their space - based on this tip:
+   http://css-tricks.com/minimum-paragraph-widths */ 
+/* p:before { */
+/*   content: ""; */
+/*   width: 20em; */
+/*   display: block; */
+/*   overflow: hidden; */
+/*   /\* For Demonstration *\/ */
+/*   /\* border: 1px solid green; *\/ */
+/* } */
+
+/* ul { */
+/*     /\* try and fix item indentation when the list is to the right pf a */
+/*        "float:left" div.  Initially inspired by advice from */
+/*        http://wordpress.org/support/topic/left-float-and-bullet-lists-not-playing-well-together */
+/*        although in the end I had to do things differently*\/ */
+/*     list-style: inside; */
+/*     text-indent: 10pt; */
+/* } */
+/* ul > li > ul { text-indent: 20pt; } */
+/* ul > li > ul > li > ul { text-indent: 30pt; } */
+
+.src, .example, table {
+    font-size: 80%;
+}
+
+tbody {
+    background-color: #fafada;
+    /* background-color: rgb(250, 250, 200); */
+}
+
+
+#table-of-contents {
+    background-color: #f0f0f0;
+}
+
+
+
+
+/*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Notes on creating spectral maps from Orion West slit spectra</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline2">1. Dealing with the offset between image and spectrum</a>
+<ul>
+<li><a href="#orgheadline1">1.1. Application to the vertical slits</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline15">2. Datasets that we will use</a>
+<ul>
+<li><a href="#orgheadline3">2.1. Dec 2014</a></li>
+<li><a href="#orgheadline4">2.2. Dec 2013</a></li>
+<li><a href="#orgheadline5">2.3. Feb 2013</a></li>
+<li><a href="#orgheadline14">2.4. Jan 2010</a>
+<ul>
+<li><a href="#orgheadline6">2.4.1. WCS values and per-slit weighting</a></li>
+<li><a href="#orgheadline12">2.4.2. Which to use</a>
+<ul>
+<li><a href="#orgheadline7">2.4.2.1. Positions in Alba's set that are acceptable</a></li>
+<li><a href="#orgheadline9">2.4.2.2. Positions in Alba's set that are bad</a></li>
+<li><a href="#orgheadline10">2.4.2.3. Positions over to the NE</a></li>
+<li><a href="#orgheadline11">2.4.2.4. Other positions omitted ny Alba</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline13">2.4.3. Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgheadline18">3. Making spectral maps</a>
+<ul>
+<li><a href="#orgheadline16">3.1. Define the output grid</a></li>
+<li><a href="#orgheadline17">3.2. Test with the velocity-integrated emission</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline19">4. The multigrid smoothing method</a></li>
+<li><a href="#orgheadline24">5. Coordinates of the slits</a>
+<ul>
+<li><a href="#orgheadline20">5.1. Description from Alba</a></li>
+<li><a href="#orgheadline21">5.2. Brightness correction factors</a></li>
+<li><a href="#orgheadline22">5.3. HORIZONTALES 2013</a></li>
+<li><a href="#orgheadline23">5.4. VERTICALES 2010</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2"><span class="section-number-2">1</span> Dealing with the offset between image and spectrum</h2>
+<div class="outline-text-2" id="text-1">
+<br><pre class="example">List name: ()</pre><ul class="org-ul">
+<li>It seems that this is not as constant as I had hoped
+<br><pre class="example">List name: positions-to-drop</pre><ul class="org-ul">
+<li>In the <a href="alba-orion-west.html#ID-8685D060-12A9-4E73-B069-11D5315ED8EB">vertical slits</a> it varies from 52 to 60 pixels</li>
+<li>And some slits do not have a reference star to use</li>
+</ul></li>
+<li>One solution will be to compare the brightness profiles of the spectrum with that of the slit image
+<br><pre class="example">List name: ()</pre><ul class="org-ul">
+<li>For the spectrum, we can sum in wavelength for the entire ha+nii range</li>
+<li>For the image, we would sum a short width across the slit</li>
+</ul></li>
+<li>Then we could either use the cross-correlation, or simple hunting, to find the best offset</li>
+<li>At the same time, this would give the brightness factor between image and spec
+<br><pre class="example">List name: ()</pre><ul class="org-ul">
+<li>We could use this to refine the brightness correction factors</li>
+</ul></li>
+</ul>
+</div>
+
+
+<div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><a id="ID-0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B"></a><span class="section-number-3">1.1</span> Application to the vertical slits</h3>
+<div class="outline-text-3" id="text-1-1">
+<br><pre class="example">Table name: vertical-image-and-fullspec</pre><table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">image</th>
+<th scope="col" class="org-right">spec</th>
+<th scope="col" class="org-right">islit</th>
+<th scope="col" class="org-right">jshift</th>
+<th scope="col" class="org-right">fac</th>
+<th scope="col" class="org-right">bfac</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">202</td>
+<td class="org-right">203-204</td>
+<td class="org-right">233.6</td>
+<td class="org-right">52.5</td>
+<td class="org-right">3.9</td>
+<td class="org-right">1.143</td>
+</tr>
+
+<tr>
+<td class="org-right">124</td>
+<td class="org-right">125-127</td>
+<td class="org-right">235.5</td>
+<td class="org-right">54.5</td>
+<td class="org-right">2.7</td>
+<td class="org-right">1.431</td>
+</tr>
+
+<tr>
+<td class="org-right">206</td>
+<td class="org-right">207-208</td>
+<td class="org-right">234.6</td>
+<td class="org-right">54</td>
+<td class="org-right">4.4</td>
+<td class="org-right">1.136</td>
+</tr>
+
+<tr>
+<td class="org-right">128</td>
+<td class="org-right">129-130</td>
+<td class="org-right">237.5</td>
+<td class="org-right">57</td>
+<td class="org-right">4.4</td>
+<td class="org-right">2.688</td>
+</tr>
+
+<tr>
+<td class="org-right">133</td>
+<td class="org-right">134-135</td>
+<td class="org-right">239.4</td>
+<td class="org-right">58</td>
+<td class="org-right">5</td>
+<td class="org-right">1.608</td>
+</tr>
+
+<tr>
+<td class="org-right">210</td>
+<td class="org-right">211-212</td>
+<td class="org-right">236.4</td>
+<td class="org-right">55</td>
+<td class="org-right">4.4</td>
+<td class="org-right">1.021</td>
+</tr>
+
+<tr>
+<td class="org-right">137</td>
+<td class="org-right">138-139</td>
+<td class="org-right">241.3</td>
+<td class="org-right">60</td>
+<td class="org-right">2.8</td>
+<td class="org-right">1.550</td>
+</tr>
+
+<tr>
+<td class="org-right">214</td>
+<td class="org-right">215-216</td>
+<td class="org-right">238.4</td>
+<td class="org-right">55</td>
+<td class="org-right">4.1</td>
+<td class="org-right">1.067</td>
+</tr>
+
+<tr>
+<td class="org-right">145</td>
+<td class="org-right">146-147</td>
+<td class="org-right">244.3</td>
+<td class="org-right">58</td>
+<td class="org-right">2.0</td>
+<td class="org-right">5.181</td>
+</tr>
+
+<tr>
+<td class="org-right">248</td>
+<td class="org-right">249-250</td>
+<td class="org-right">254.9</td>
+<td class="org-right">68</td>
+<td class="org-right">5.4</td>
+<td class="org-right">2.222</td>
+</tr>
+
+<tr>
+<td class="org-right">219</td>
+<td class="org-right">220-221</td>
+<td class="org-right">240.0</td>
+<td class="org-right">57.5</td>
+<td class="org-right">4.35</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">157</td>
+<td class="org-right">158-159</td>
+<td class="org-right">252.2</td>
+<td class="org-right">65</td>
+<td class="org-right">7.0</td>
+<td class="org-right">6.757</td>
+</tr>
+
+<tr>
+<td class="org-right">236</td>
+<td class="org-right">237-238</td>
+<td class="org-right">247.0</td>
+<td class="org-right">63</td>
+<td class="org-right">4.2</td>
+<td class="org-right">1.122</td>
+</tr>
+
+<tr>
+<td class="org-right">240</td>
+<td class="org-right">241-242</td>
+<td class="org-right">249.5</td>
+<td class="org-right">65</td>
+<td class="org-right">3.1</td>
+<td class="org-right">1.073</td>
+</tr>
+
+<tr>
+<td class="org-right">244</td>
+<td class="org-right">245-246</td>
+<td class="org-right">251.6</td>
+<td class="org-right">64</td>
+<td class="org-right">2.7</td>
+<td class="org-right">1.147</td>
+</tr>
+
+<tr>
+<td class="org-right">252</td>
+<td class="org-right">253-254</td>
+<td class="org-right">258.2</td>
+<td class="org-right">69</td>
+<td class="org-right">5.4</td>
+<td class="org-right">1.678</td>
+</tr>
+</tbody>
+</table>
+
+<ul class="org-ul">
+<li>Pixel positions of slits (islit in table above) also vary between positions, so I have had to measure all of these
+<br><pre class="example">List name: ()</pre><ul class="org-ul">
+<li>They are FITS style 1-based indices</li>
+<li>The slit width is about 4 pixels</li>
+<li>But the slit center does not fall on an integer pixel</li>
+<li>To be safe, we take the 5 pixels: [int(islit) - 3 : int(islit) + 3]</li>
+</ul></li>
+<li>First stab:
+<ul class="org-ul">
+<li>Read in the images and spectra, and overplot the profiles</li>
+<li>There are 16 positions now, so we can use a 4 x 4 grid</li>
+<li>The <code>bfac</code> factors are the inter-position image brightness correction factors, calculated below - they multiply all the brightnesses
+<ul class="org-ul">
+<li>On the graphs, I print out <code>bright = 1/bfac</code></li>
+</ul></li>
+<li>The <code>fac</code> factors are the image-to-spectrum brightness factors - they multiply the image profile so that it matches the spectrum profile
+<ul class="org-ul">
+<li>So larger factors mean better spectra (compared to what is expected from the image)</li>
+<li>The most common factor <i>should</i> correspond to equal conditions between image and spectrum. But in general <code>fac</code> could be larger or smaller than this.</li>
+<li>I am assuing that <code>fac = 4.4</code> is the default value, and dividing all of them by this when I print the info on the plot
+<ul class="org-ul">
+<li>There are 4 spectra that have the optimum value of <code>bfac</code>:
+<ul class="org-ul">
+<li>206, 128, 210, 219</li>
+</ul></li>
+<li>Most of the other values are lower
+<ul class="org-ul">
+<li>This make sense if conditions were deteriorating during the night</li>
+<li>Then each spectrum is worse than its preceding image</li>
+</ul></li>
+<li>But a few are higher, implying improvements since the image:
+<ul class="org-ul">
+<li>133, 248, 157, 252</li>
+<li>These tend to have high values of bfac</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre class="example">Language = python
+Parameters = :return figfile :results file
+Header = (:var table=vertical-image-and-fullspec)</pre><div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
+<span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
+<span style="color: #b9d3ee;">import</span> matplotlib.pyplot <span style="color: #b9d3ee;">as</span> plt
+<span style="color: #b9d3ee;">import</span> seaborn <span style="color: #b9d3ee;">as</span> sns; sns.<span style="color: #DCDCCC; font-weight: bold;">set</span>()
+sns.set_color_codes()
+
+<span style="color: #dfaf8f;">nspec</span> = 12
+<span style="color: #dfaf8f;">ny</span> = 512
+<span style="color: #dfaf8f;">figfile</span> = <span style="color: #eee8aa; font-style: italic;">'image-spec-offsets.pdf'</span>
+<span style="color: #dfaf8f;">yarray</span> = np.arange(ny)
+<span style="color: #dfaf8f;">layout</span> = {<span style="color: #eee8aa; font-style: italic;">'left'</span>: 0.05, <span style="color: #eee8aa; font-style: italic;">'bottom'</span>: 0.07, <span style="color: #eee8aa; font-style: italic;">'right'</span>: 0.99, <span style="color: #eee8aa; font-style: italic;">'top'</span>: 0.95,
+          <span style="color: #eee8aa; font-style: italic;">'wspace'</span>: 0.02, <span style="color: #eee8aa; font-style: italic;">'hspace'</span>: 0.02}
+<span style="color: #dfaf8f;">fig</span>, <span style="color: #dfaf8f;">axgrid</span> = plt.subplots(4, 4, sharex=<span style="color: #cFfBcF;">True</span>, sharey=<span style="color: #cFfBcF;">True</span>, gridspec_kw=layout)
+<span style="color: #dfaf8f;">tweak</span> = 1.2
+<span style="color: #b9d3ee;">for</span> (imid, specid, islit, jshift, factor, bfac), ax <span style="color: #b9d3ee;">in</span> <span style="color: #DCDCCC; font-weight: bold;">zip</span>(table, axgrid.flat):
+    <span style="color: #dfaf8f;">imfile</span> = <span style="color: #eee8aa; font-style: italic;">'posiciones/spm{}-ardec.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(imid)
+    <span style="color: #dfaf8f;">specfile</span> = <span style="color: #eee8aa; font-style: italic;">'spm{}h.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(specid)
+    <span style="color: #dfaf8f;">islit</span> = <span style="color: #DCDCCC; font-weight: bold;">int</span>(<span style="color: #DCDCCC; font-weight: bold;">float</span>(islit))
+    <span style="color: #dfaf8f;">jshift</span> = <span style="color: #DCDCCC; font-weight: bold;">float</span>(jshift)
+    <span style="color: #dfaf8f;">factor</span> = <span style="color: #DCDCCC; font-weight: bold;">float</span>(factor)
+    <span style="color: #dfaf8f;">bfac</span> = <span style="color: #DCDCCC; font-weight: bold;">float</span>(bfac)
+
+    imhdu, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(imfile)
+    spechdu, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(specfile)
+
+    <span style="color: #dfaf8f;">imhdu.data</span> -= 1170.0  <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">remove bias</span>
+    <span style="color: #dfaf8f;">improfile</span> = imhdu.data[:, islit-3:islit+3].<span style="color: #DCDCCC; font-weight: bold;">sum</span>(axis=1)
+    <span style="color: #dfaf8f;">specprofile</span> = spechdu.data.<span style="color: #DCDCCC; font-weight: bold;">sum</span>(axis=1)
+
+    ax.plot(yarray+jshift, bfac*improfile/(1e4*tweak), label=<span style="color: #eee8aa; font-style: italic;">'image'</span>,
+            c=<span style="color: #eee8aa; font-style: italic;">'r'</span>, lw=2, alpha=0.3)
+    ax.plot(yarray, bfac*specprofile/(1e4*factor), label=<span style="color: #eee8aa; font-style: italic;">'spectrum'</span>,
+            c=<span style="color: #eee8aa; font-style: italic;">'k'</span>, lw=0.6)
+
+    <span style="color: #dfaf8f;">text_pattern</span> = <span style="color: #eee8aa; font-style: italic;">'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'</span>
+    <span style="color: #dfaf8f;">text</span> = text_pattern.<span style="color: #DCDCCC; font-weight: bold;">format</span>(imid, jshift, factor/4.4, 1.0/bfac)
+    ax.text(300, 0.1, text, ha=<span style="color: #eee8aa; font-style: italic;">'center'</span>, va=<span style="color: #eee8aa; font-style: italic;">'bottom'</span>, fontsize=7)
+
+axgrid[0, 0].legend(fontsize=<span style="color: #eee8aa; font-style: italic;">'xx-small'</span>, loc=<span style="color: #eee8aa; font-style: italic;">'upper left'</span>)
+axgrid[0, 0].set_xlim(0.0, 640)
+axgrid[0, 0].set_ylim(0.0, 5.5)
+axgrid[-1, 2].set_xlabel(<span style="color: #eee8aa; font-style: italic;">'pixel'</span>)
+axgrid[1, 0].set_ylabel(<span style="color: #eee8aa; font-style: italic;">'intensity'</span>)
+fig.suptitle(<span style="color: #eee8aa; font-style: italic;">'Alignment and flux calibration of vertical slits'</span>)
+fig.set_size_inches(11, 8.5)
+fig.savefig(figfile)
+</pre>
+</div>
+
+<p>
+<a href="file:///Users/will/Dropbox/SPMJAN10/reducciones/image-spec-offsets.pdf">file:///Users/will/Dropbox/SPMJAN10/reducciones/image-spec-offsets.pdf</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline15" class="outline-2">
+<h2 id="orgheadline15"><span class="section-number-2">2</span> Datasets that we will use</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">2.1</span> Dec 2014</h3>
+</div>
+<div id="outline-container-orgheadline4" class="outline-3">
+<h3 id="orgheadline4"><span class="section-number-3">2.2</span> Dec 2013</h3>
+</div>
+<div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5"><span class="section-number-3">2.3</span> Feb 2013</h3>
+</div>
+<div id="outline-container-orgheadline14" class="outline-3">
+<h3 id="orgheadline14"><span class="section-number-3">2.4</span> Jan 2010</h3>
+<div class="outline-text-3" id="text-2-4">
+<ul class="org-ul">
+<li>Copied files to <a href="file:///Users/will/Dropbox/SPMJAN10/reducciones/">~/Dropbox/SPMJAN10/reducciones/</a></li>
+<li>Looking at which ones to use to see if I agree with Tere</li>
+</ul>
+</div>
+<div id="outline-container-orgheadline6" class="outline-4">
+<h4 id="orgheadline6"><span class="section-number-4">2.4.1</span> WCS values and per-slit weighting</h4>
+<div class="outline-text-4" id="text-2-4-1">
+<ul class="org-ul">
+<li>Alba's coordinates seem to be for the center of the slit in the image+slit</li>
+<li>dWav = 0.043752133846283 Ang (2 km/s)</li>
+<li>dy = 0.6229 arcsec (see table below)
+<ul class="org-ul">
+<li>range is 0.6211 to 0.6249</li>
+</ul></li>
+<li>PA does vary from slit to slit: 3.13 to 3.18</li>
+<li>In both cases, over 512 pixels, the variation in PA and dy correspond to only a couple of pixels</li>
+<li>Now we gather all the needed information into the following table
+<ul class="org-ul">
+<li>We calculate the (RA0, Dec0) of the slit center (taking into account the <code>jshift</code> values)</li>
+<li>We calculate the pixel scale and PA of the slit</li>
+<li>We calculate a total weight by multiplying together the inter-position and the image-to-spectrum values</li>
+</ul></li>
+</ul>
+
+<pre class="example">Language = python
+Parameters = :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones :exports both
+Header = (:var intable=vertical-image-and-fullspec)</pre><div class="org-src-container">
+
+<pre class="src src-python" id="orgsrcblock1"><span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
+<span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
+<span style="color: #b9d3ee;">from</span> astropy.wcs <span style="color: #b9d3ee;">import</span> WCS
+
+<span style="color: #dfaf8f;">table</span> = [[<span style="color: #eee8aa; font-style: italic;">'image'</span>, <span style="color: #eee8aa; font-style: italic;">'spectrum'</span>, <span style="color: #eee8aa; font-style: italic;">'RA0'</span>, <span style="color: #eee8aa; font-style: italic;">'Dec0'</span>, <span style="color: #eee8aa; font-style: italic;">'dy'</span>, <span style="color: #eee8aa; font-style: italic;">'PA'</span>, <span style="color: #eee8aa; font-style: italic;">'weight'</span>], <span style="color: #cFfBcF;">None</span>]
+<span style="color: #b9d3ee;">for</span> imid, specid, islit, jshift, fac, bfac <span style="color: #b9d3ee;">in</span> intable:
+    <span style="color: #dfaf8f;">fn</span> = <span style="color: #eee8aa; font-style: italic;">'spm{}-ardec.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(imid)
+    hdu, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(fn)
+
+    <span style="color: #5F7F5F;">#</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Find pixel scale along slit and position angle of slit</span>
+    <span style="color: #5F7F5F;">#</span>
+    <span style="color: #dfaf8f;">dRA_arcsec</span> = hdu.header[<span style="color: #eee8aa; font-style: italic;">'CD1_2'</span>]*3600*np.cos(np.radians(hdu.header[<span style="color: #eee8aa; font-style: italic;">'CRVAL2'</span>]))
+    <span style="color: #dfaf8f;">dDEC_arcsec</span> = hdu.header[<span style="color: #eee8aa; font-style: italic;">'CD2_2'</span>]*3600
+    <span style="color: #dfaf8f;">dy</span> = np.hypot(dRA_arcsec, dDEC_arcsec)
+    <span style="color: #dfaf8f;">PA</span> = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
+
+    <span style="color: #5F7F5F;">#</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Find the RA and Dec of the spectral slit center</span>
+    <span style="color: #5F7F5F;">#</span>
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Pixel coords of spectrum slit center on image (in FITS 1-based convention)</span>
+    <span style="color: #dfaf8f;">i0</span>, <span style="color: #dfaf8f;">j0</span> = islit, 0.5*(1 + hdu.header[<span style="color: #eee8aa; font-style: italic;">'NAXIS2'</span>]) - jshift
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Convert to world coordinates</span>
+    <span style="color: #dfaf8f;">wcs</span> = WCS(hdu.header)
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Crazy packing/unpacking required to use single scalar coords</span>
+    (RA0, Dec0), = wcs.all_pix2world([[i0, j0]], 1)
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Test it by hand using small-patch-of-sky approximation</span>
+    <span style="color: #dfaf8f;">c</span> = 1./np.cos(np.radians(-5.42))
+    <span style="color: #dfaf8f;">RA1</span> = (hdu.header[<span style="color: #eee8aa; font-style: italic;">'CRVAL1'</span>]
+           + c*hdu.header[<span style="color: #eee8aa; font-style: italic;">'CD1_1'</span>]*(i0 - hdu.header[<span style="color: #eee8aa; font-style: italic;">'CRPIX1'</span>])
+           + c*hdu.header[<span style="color: #eee8aa; font-style: italic;">'CD1_2'</span>]*(j0 - hdu.header[<span style="color: #eee8aa; font-style: italic;">'CRPIX2'</span>]))
+    <span style="color: #dfaf8f;">Dec1</span> = (hdu.header[<span style="color: #eee8aa; font-style: italic;">'CRVAL2'</span>]
+            + hdu.header[<span style="color: #eee8aa; font-style: italic;">'CD2_1'</span>]*(i0 - hdu.header[<span style="color: #eee8aa; font-style: italic;">'CRPIX1'</span>])
+            + hdu.header[<span style="color: #eee8aa; font-style: italic;">'CD2_2'</span>]*(j0 - hdu.header[<span style="color: #eee8aa; font-style: italic;">'CRPIX2'</span>]))
+    <span style="color: #b9d3ee;">assert</span>(<span style="color: #DCDCCC; font-weight: bold;">abs</span>(RA1 - RA0) &lt; 1e-6 )
+    <span style="color: #b9d3ee;">assert</span>(<span style="color: #DCDCCC; font-weight: bold;">abs</span>(Dec1 - Dec0) &lt; 1e-6 )
+
+    <span style="color: #5F7F5F;">#</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Find total weight factor, combining inter-image factor with the</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">image-to-spectrum factor</span>
+    <span style="color: #5F7F5F;">#</span>
+    <span style="color: #dfaf8f;">weight</span> = (fac/4.4)/bfac
+
+    table.append([imid, <span style="color: #DCDCCC; font-weight: bold;">int</span>(imid)+1,
+                  <span style="color: #eee8aa; font-style: italic;">'{:.5f}'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(RA0),
+                  <span style="color: #eee8aa; font-style: italic;">'{:.5f}'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(Dec0),
+                  <span style="color: #eee8aa; font-style: italic;">'{:.4f}'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(dy), <span style="color: #eee8aa; font-style: italic;">'{:.3f}'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(PA),
+                  <span style="color: #eee8aa; font-style: italic;">'{:.4f}'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(weight),
+    ])
+</pre>
+</div>
+
+<br><pre class="example">Results table name: vertical-all-parameters</pre><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">image</th>
+<th scope="col" class="org-right">spectrum</th>
+<th scope="col" class="org-right">RA0</th>
+<th scope="col" class="org-right">Dec0</th>
+<th scope="col" class="org-right">dy</th>
+<th scope="col" class="org-right">PA</th>
+<th scope="col" class="org-right">weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">202</td>
+<td class="org-right">203</td>
+<td class="org-right">83.62012</td>
+<td class="org-right">-5.42575</td>
+<td class="org-right">0.6246</td>
+<td class="org-right">3.132</td>
+<td class="org-right">0.7755</td>
+</tr>
+
+<tr>
+<td class="org-right">124</td>
+<td class="org-right">125</td>
+<td class="org-right">83.61775</td>
+<td class="org-right">-5.42765</td>
+<td class="org-right">0.6222</td>
+<td class="org-right">3.379</td>
+<td class="org-right">0.4288</td>
+</tr>
+
+<tr>
+<td class="org-right">206</td>
+<td class="org-right">207</td>
+<td class="org-right">83.61646</td>
+<td class="org-right">-5.42573</td>
+<td class="org-right">0.6227</td>
+<td class="org-right">3.300</td>
+<td class="org-right">0.8803</td>
+</tr>
+
+<tr>
+<td class="org-right">128</td>
+<td class="org-right">129</td>
+<td class="org-right">83.61513</td>
+<td class="org-right">-5.42787</td>
+<td class="org-right">0.6231</td>
+<td class="org-right">3.322</td>
+<td class="org-right">0.3720</td>
+</tr>
+
+<tr>
+<td class="org-right">133</td>
+<td class="org-right">134</td>
+<td class="org-right">83.61537</td>
+<td class="org-right">-5.42226</td>
+<td class="org-right">0.6231</td>
+<td class="org-right">3.259</td>
+<td class="org-right">0.7067</td>
+</tr>
+
+<tr>
+<td class="org-right">210</td>
+<td class="org-right">211</td>
+<td class="org-right">83.61386</td>
+<td class="org-right">-5.42573</td>
+<td class="org-right">0.6229</td>
+<td class="org-right">3.283</td>
+<td class="org-right">0.9794</td>
+</tr>
+
+<tr>
+<td class="org-right">137</td>
+<td class="org-right">138</td>
+<td class="org-right">83.61278</td>
+<td class="org-right">-5.42226</td>
+<td class="org-right">0.6232</td>
+<td class="org-right">3.270</td>
+<td class="org-right">0.4106</td>
+</tr>
+
+<tr>
+<td class="org-right">214</td>
+<td class="org-right">215</td>
+<td class="org-right">83.61140</td>
+<td class="org-right">-5.42547</td>
+<td class="org-right">0.6247</td>
+<td class="org-right">3.132</td>
+<td class="org-right">0.8733</td>
+</tr>
+
+<tr>
+<td class="org-right">145</td>
+<td class="org-right">146</td>
+<td class="org-right">83.61005</td>
+<td class="org-right">-5.42080</td>
+<td class="org-right">0.6218</td>
+<td class="org-right">3.358</td>
+<td class="org-right">0.0877</td>
+</tr>
+
+<tr>
+<td class="org-right">248</td>
+<td class="org-right">249</td>
+<td class="org-right">83.60913</td>
+<td class="org-right">-5.42673</td>
+<td class="org-right">0.6231</td>
+<td class="org-right">3.218</td>
+<td class="org-right">0.5523</td>
+</tr>
+
+<tr>
+<td class="org-right">219</td>
+<td class="org-right">220</td>
+<td class="org-right">83.60811</td>
+<td class="org-right">-5.42615</td>
+<td class="org-right">0.6227</td>
+<td class="org-right">3.331</td>
+<td class="org-right">0.9886</td>
+</tr>
+
+<tr>
+<td class="org-right">157</td>
+<td class="org-right">158</td>
+<td class="org-right">83.60713</td>
+<td class="org-right">-5.42289</td>
+<td class="org-right">0.6211</td>
+<td class="org-right">3.373</td>
+<td class="org-right">0.2354</td>
+</tr>
+
+<tr>
+<td class="org-right">236</td>
+<td class="org-right">237</td>
+<td class="org-right">83.60653</td>
+<td class="org-right">-5.42631</td>
+<td class="org-right">0.6233</td>
+<td class="org-right">3.220</td>
+<td class="org-right">0.8508</td>
+</tr>
+
+<tr>
+<td class="org-right">240</td>
+<td class="org-right">241</td>
+<td class="org-right">83.60476</td>
+<td class="org-right">-5.42649</td>
+<td class="org-right">0.6236</td>
+<td class="org-right">3.256</td>
+<td class="org-right">0.6566</td>
+</tr>
+
+<tr>
+<td class="org-right">244</td>
+<td class="org-right">245</td>
+<td class="org-right">83.60297</td>
+<td class="org-right">-5.42626</td>
+<td class="org-right">0.6249</td>
+<td class="org-right">3.201</td>
+<td class="org-right">0.5350</td>
+</tr>
+
+<tr>
+<td class="org-right">252</td>
+<td class="org-right">253</td>
+<td class="org-right">83.60148</td>
+<td class="org-right">-5.42675</td>
+<td class="org-right">0.6229</td>
+<td class="org-right">3.335</td>
+<td class="org-right">0.7314</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgheadline12" class="outline-4">
+<h4 id="orgheadline12"><span class="section-number-4">2.4.2</span> Which to use</h4>
+<div class="outline-text-4" id="text-2-4-2">
+</div><div id="outline-container-orgheadline7" class="outline-5">
+<h5 id="orgheadline7"><span class="section-number-5">2.4.2.1</span> Positions in Alba's set that are acceptable</h5>
+<div class="outline-text-5" id="text-2-4-2-1">
+<p>
+202, 124, 206, 133(+), 210, 137, 214, 248(+), 219, 236, 240, 244, 252
+</p>
+
+<br><pre class="example">Table name: horizontal-slits</pre><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">ID</th>
+<th scope="col" class="org-right">&#xa0;</th>
+<th scope="col" class="org-right">Norm</th>
+<th scope="col" class="org-right">Inverse</th>
+<th scope="col" class="org-right">Bright</th>
+<th scope="col" class="org-right">Norm</th>
+<th scope="col" class="org-right">Inverse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">202</td>
+<td class="org-right">2083</td>
+<td class="org-right">0.875</td>
+<td class="org-right">1.143</td>
+<td class="org-right">2087</td>
+<td class="org-right">0.939</td>
+<td class="org-right">1.065</td>
+</tr>
+
+<tr>
+<td class="org-right">124</td>
+<td class="org-right">1900</td>
+<td class="org-right">0.699</td>
+<td class="org-right">1.431</td>
+<td class="org-right">1879</td>
+<td class="org-right">0.726</td>
+<td class="org-right">1.377</td>
+</tr>
+
+<tr>
+<td class="org-right">206</td>
+<td class="org-right">2089</td>
+<td class="org-right">0.880</td>
+<td class="org-right">1.136</td>
+<td class="org-right">2101</td>
+<td class="org-right">0.953</td>
+<td class="org-right">1.049</td>
+</tr>
+
+<tr>
+<td class="org-right">128</td>
+<td class="org-right">1558</td>
+<td class="org-right">0.372</td>
+<td class="org-right">2.688</td>
+<td class="org-right">nan</td>
+<td class="org-right">nan</td>
+<td class="org-right">nan</td>
+</tr>
+
+<tr>
+<td class="org-right">133</td>
+<td class="org-right">1819</td>
+<td class="org-right">0.622</td>
+<td class="org-right">1.608</td>
+<td class="org-right">1780</td>
+<td class="org-right">0.624</td>
+<td class="org-right">1.603</td>
+</tr>
+
+<tr>
+<td class="org-right">210</td>
+<td class="org-right">2192</td>
+<td class="org-right">0.979</td>
+<td class="org-right">1.021</td>
+<td class="org-right">2141</td>
+<td class="org-right">0.994</td>
+<td class="org-right">1.006</td>
+</tr>
+
+<tr>
+<td class="org-right">137</td>
+<td class="org-right">1843</td>
+<td class="org-right">0.645</td>
+<td class="org-right">1.550</td>
+<td class="org-right">1913</td>
+<td class="org-right">0.760</td>
+<td class="org-right">1.316</td>
+</tr>
+
+<tr>
+<td class="org-right">214</td>
+<td class="org-right">2148</td>
+<td class="org-right">0.937</td>
+<td class="org-right">1.067</td>
+<td class="org-right">2125</td>
+<td class="org-right">0.977</td>
+<td class="org-right">1.024</td>
+</tr>
+
+<tr>
+<td class="org-right">145</td>
+<td class="org-right">1372</td>
+<td class="org-right">0.193</td>
+<td class="org-right">5.181</td>
+<td class="org-right">nan</td>
+<td class="org-right">nan</td>
+<td class="org-right">nan</td>
+</tr>
+
+<tr>
+<td class="org-right">248</td>
+<td class="org-right">1640</td>
+<td class="org-right">0.450</td>
+<td class="org-right">2.222</td>
+<td class="org-right">1615</td>
+<td class="org-right">0.455</td>
+<td class="org-right">2.198</td>
+</tr>
+
+<tr>
+<td class="org-right">219</td>
+<td class="org-right">2214</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+<td class="org-right">2124</td>
+<td class="org-right">0.976</td>
+<td class="org-right">1.025</td>
+</tr>
+
+<tr>
+<td class="org-right">157</td>
+<td class="org-right">1324</td>
+<td class="org-right">0.148</td>
+<td class="org-right">6.757</td>
+<td class="org-right">nan</td>
+<td class="org-right">nan</td>
+<td class="org-right">nan</td>
+</tr>
+
+<tr>
+<td class="org-right">236</td>
+<td class="org-right">2100</td>
+<td class="org-right">0.891</td>
+<td class="org-right">1.122</td>
+<td class="org-right">2070</td>
+<td class="org-right">0.921</td>
+<td class="org-right">1.086</td>
+</tr>
+
+<tr>
+<td class="org-right">240</td>
+<td class="org-right">2143</td>
+<td class="org-right">0.932</td>
+<td class="org-right">1.073</td>
+<td class="org-right">2147</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">244</td>
+<td class="org-right">2080</td>
+<td class="org-right">0.872</td>
+<td class="org-right">1.147</td>
+<td class="org-right">2017</td>
+<td class="org-right">0.867</td>
+<td class="org-right">1.153</td>
+</tr>
+
+<tr>
+<td class="org-right">252</td>
+<td class="org-right">1792</td>
+<td class="org-right">0.596</td>
+<td class="org-right">1.678</td>
+<td class="org-right">1792</td>
+<td class="org-right">0.637</td>
+<td class="org-right">1.570</td>
+</tr>
+</tbody>
+</table>
+
+<ul class="org-ul">
+<li>The Inverse column <i>used</i> to agree closely with Alba's values</li>
+<li>But now it does not, because I realised that the radec images have not had the bias subtracted!</li>
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-17 Mon] </span></span> Dones it again to include more positions - new version is in columns 2 to 4</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline9" class="outline-5">
+<h5 id="orgheadline9"><span class="section-number-5">2.4.2.2</span> Positions in Alba's set that are bad</h5>
+<div class="outline-text-5" id="text-2-4-2-2">
+<p>
+128(+), 101, 145, 157, 173
+</p>
+</div>
+<ol class="org-ol"><li><a id="orgheadline8"></a>Rehabilitation of some of these positions<br  /><div class="outline-text-6" id="text-2-4-2-2-1">
+<ul class="org-ul">
+<li>From my experience with the image-spectrum calibration, there is often a big difference between the quality of the image and that of hte spectrum</li>
+<li>So we shouldn't rule out a position, just based on a poor image</li>
+<li>Worth saving:
+<dl class="org-dl">
+<dt>128</dt><dd>slots in right next to 133</dd>
+<dt>145</dt><dd>goes just before 248</dd>
+<dt>157</dt><dd>goes before 236</dd>
+</dl></li>
+<li>Still terrible: 101 (no spectrum), 173 (just bad)</li>
+</ul>
+</div></li></ol>
+</div>
+<div id="outline-container-orgheadline10" class="outline-5">
+<h5 id="orgheadline10"><span class="section-number-5">2.4.2.3</span> Positions over to the NE</h5>
+<div class="outline-text-5" id="text-2-4-2-3">
+<p>
+spm078, spm085
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline11" class="outline-5">
+<h5 id="orgheadline11"><span class="section-number-5">2.4.2.4</span> Other positions omitted ny Alba</h5>
+<div class="outline-text-5" id="text-2-4-2-4">
+<ul class="org-ul">
+<li>spm142 - no spectrum</li>
+<li>spm150 - ha spec exists, but looks weak and Tere says no</li>
+<li>spm154 - no spectrum</li>
+<li>spm161 - same as 150 but even worse</li>
+<li>spm224 - has sii spec but no ha</li>
+<li>spm231 - no spectrum</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline13" class="outline-4">
+<h4 id="orgheadline13"><span class="section-number-4">2.4.3</span> Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></h4>
+<div class="outline-text-4" id="text-2-4-3">
+<pre class="example">
+Acabo de terminar las reducciones de las observaciones de Enero. Al
+final nos quedamos con 16 posiciones, eliminé 7 posiciones
+porque las observé con muchas nubes por lo que no obtuve buenos
+resultados, lo bueno fué que en la siguiente noche pude obtener
+estas posiciones o cercanas a ellas. De cualquier manera las reduje
+por si decidimos incluirlas.
+
+Las reducciones estan en: /fs/tungol/home0/LEEDS/teresa/SPMENE10/reducciones
+
+incluyo también la bitacora en pdf. Las posiciones que no tomé en
+cuenta para hacer los mapas fueron:
+
+No incluidas        Slit cercana o casi en la misma posición que la anterior
+spm128                   spm133 (se ve mucho mejor que spm128)
+spm231                   spm248
+spm150                   spm224
+spm157                   spm236
+spm173                   spm252
+spm161
+spm129                   spm133
+
+Hice la astrometría, las imagen+slit corregidas están en el directorio
+llamado "posiciones" adentro del direcotorio "reducciones"
+También hice dos posiciones al Este de la región observada. Están la
+oeste de HH 505, las observé en Halpha y [S II]:
+spm078 (image+slit), spm085 (image+slit). Podemos obtener la densidad
+en estas posiciones.
+
+Para la posición de spm219 tomé los espectros en Ha (spm220,221),
+[SII] (spm225,226) y [OIII] (spm228,229)
+Los espectros corregidos en longitud de onda los puse en:
+
+/fs/tungol/home0/LEEDS/teresa/SPMENE10/observaciones/SPM{ha,nii,siis,siil,oiii}
+
+Después de hacer todo el trabajo hice el primer intento de los mapas
+de momentos de Halpha y [NII] :D a ver que te parecen,
+todos los archivos  estan en
+/fs/tungol/home0/LEEDS/teresa/SPMENE10/observaciones:
+
+{ha,nii}_{-100-040,-060+000,+000+060,+060+140,-020+040).wisomom-sum-fake.fits
+
+haciendo un smooth:
+
+{ha,nii}_{-100-040,-060+000,+000+060,+060+140,-020+040).wisomom-sum-smooth2d.fits
+
+Hice también en rangos de 20 km/s para poder hacer los mapas a color
+(no me quedarón también como a ti!)
+que son los que anexo a este email.
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline18" class="outline-2">
+<h2 id="orgheadline18"><span class="section-number-2">3</span> Making spectral maps</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>The plan is to start with a fine orthogonal RA-dec grid
+<ul class="org-ul">
+<li>Place all the slits onto there by looping over slit pixels and painting all the grid pixels that fall in each</li>
+<li>Leave grid pixels transparent where no slit falls</li>
+</ul></li>
+<li>Then do the multi-resolution thing
+<ul class="org-ul">
+<li>As in <a href="../../Work/RubinWFC3/Tsquared/orion-t2.html#ID-E1B9B2C8-1CDE-407B-B9FE-4E31144F328C">Rebinning the maps</a> in orion tsquared notes</li>
+<li>Which makes use of <a href="file:///Users/will/Work/RubinWFC3/Tsquared/rebin_utils.py"><a href="file:///Users/will/Work/RubinWFC3/Tsquared/rebin_utils.py">file:///Users/will/Work/RubinWFC3/Tsquared/rebin_utils.py</a></a></li>
+</ul></li>
+<li>This should give a map with all the holes filled in at lower resolution</li>
+<li>To start with we will work with the original spectra that I already have
+<ul class="org-ul">
+<li>Later, we should switch to the bg-subtracted and brightness-corrected ones that Alba has</li>
+</ul></li>
+</ul>
+</div>
+<div id="outline-container-orgheadline16" class="outline-3">
+<h3 id="orgheadline16"><span class="section-number-3">3.1</span> Define the output grid</h3>
+<div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li>1 arcsec is
+<ul class="org-ul">
+<li>2.778e-4 deg declination</li>
+<li>2.765e-4 deg RA</li>
+</ul></li>
+<li>We will try a grid with 0.5 arcsec pixels that is 1024 x 1024, which should comfortably enclose all of the slits</li>
+<li>AR reference of the horizontal slits is 83.6158 +/- 0.0019
+<ul class="org-ul">
+<li>AR range of vertical slits is 83.6016 to 83.6205: 68 cos(-5.4150) = 67.7 arcsec</li>
+</ul></li>
+<li>Dec reference of vertical slits is -5.4150 +/- 0.0006
+<ul class="org-ul">
+<li>Dec range of horizontal slits is -5.4409 to -5.4155 = 91.44 arcsec</li>
+<li>Actually Dec value of the vertical slits is a bit lower now that I have taken into account the image-spectrum shift</li>
+</ul></li>
+<li>So we use
+<ul class="org-ul">
+<li>CRPIX1 = CRPIX2 = 256.5</li>
+<li>CRVAL1 = 83.61, CRVAL2 = -5.423</li>
+<li>CDELT1 = -0.5/3600, CDELT2 = 0.5/3600</li>
+<li>PC1_1 = 1.0, PC1_2 = 0.0</li>
+<li>PC2_1 = 0.0, PC2_2 = 1.0</li>
+</ul></li>
+<li>Note that the WCS matrix should be given in arcdegrees - the translation to degrees of RA is done automatically (and it doesn't matter much anyway, since we are near the equator)</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline17" class="outline-3">
+<h3 id="orgheadline17"><span class="section-number-3">3.2</span> Test with the velocity-integrated emission</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Some positions are a bit problematic - try missing them out:
+</p>
+<ul class="org-ul">
+<li>248</li>
+</ul>
+
+
+<pre class="example">Language = python
+Parameters = :results output
+Header = (:var vtab=vertical-all-parameters :var ignore=positions-to-drop)</pre><div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
+<span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
+<span style="color: #b9d3ee;">from</span> astropy.wcs <span style="color: #b9d3ee;">import</span> WCS
+
+<span style="color: #5F7F5F;">#</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">First set up WCS for the output image</span>
+<span style="color: #5F7F5F;">#</span>
+
+<span style="color: #dfaf8f;">NX</span>, <span style="color: #dfaf8f;">NY</span> = 1024, 1024
+<span style="color: #dfaf8f;">dRA</span>, <span style="color: #dfaf8f;">dDec</span> = -0.5/3600., 0.5/3600.
+<span style="color: #dfaf8f;">RA0</span>, <span style="color: #dfaf8f;">Dec0</span> = 83.61, -5.423
+<span style="color: #dfaf8f;">w</span> = WCS(naxis=2)
+<span style="color: #dfaf8f;">w.wcs.crpix</span> = [0.5*(1 + NX), 0.5*(1 + NY)]
+<span style="color: #dfaf8f;">w.wcs.cdelt</span> = [dRA, dDec]
+<span style="color: #dfaf8f;">w.wcs.crval</span> = [RA0, Dec0]
+<span style="color: #dfaf8f;">w.wcs.ctype</span> = [<span style="color: #eee8aa; font-style: italic;">'RA---TAN'</span>, <span style="color: #eee8aa; font-style: italic;">'DEC--TAN'</span>]
+
+<span style="color: #dfaf8f;">outimage</span> = np.zeros((NY, NX))
+<span style="color: #dfaf8f;">outweights</span> = np.zeros((NY, NX))
+
+<span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Create world coord arrays for output image</span>
+<span style="color: #dfaf8f;">II</span>, <span style="color: #dfaf8f;">JJ</span> = np.meshgrid(np.arange(NX), np.arange(NY))
+<span style="color: #dfaf8f;">RA</span>, <span style="color: #dfaf8f;">Dec</span> = w.all_pix2world(II, JJ, 0)
+
+<span style="color: #dfaf8f;">slit_width</span> = 2.0                <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">width in arcsec of 150 micron slit</span>
+
+<span style="color: #b9d3ee;">for</span> imid, specid, ra0, dec0, dy, PA, weight <span style="color: #b9d3ee;">in</span> vtab:
+    <span style="color: #b9d3ee;">if</span> <span style="color: #DCDCCC; font-weight: bold;">int</span>(imid) <span style="color: #b9d3ee;">in</span> ignore:
+        <span style="color: #b9d3ee;">continue</span>  <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">drop some positions</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Unpack floats from strings in table row</span>
+    <span style="color: #dfaf8f;">ra0</span>, <span style="color: #dfaf8f;">dec0</span>, <span style="color: #dfaf8f;">dy</span>, <span style="color: #dfaf8f;">PA</span>, <span style="color: #dfaf8f;">weight</span> = [<span style="color: #DCDCCC; font-weight: bold;">float</span>(_) <span style="color: #b9d3ee;">for</span> _ <span style="color: #b9d3ee;">in</span> (ra0, dec0, dy, PA, weight)]
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Open H alpha slit spectrum</span>
+    spechdu, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(<span style="color: #eee8aa; font-style: italic;">'spec{}-ha.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(specid))
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Sum spectrum over all wavelengths</span>
+    <span style="color: #dfaf8f;">profile</span> = spechdu.data.<span style="color: #DCDCCC; font-weight: bold;">sum</span>(axis=1)
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Transform output grid coords into slit frame offsets in arcsec</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">XX, YY are intermediate offset coordinates along RA, Dec axes</span>
+    <span style="color: #dfaf8f;">XX</span> = 3600*(RA - ra0)*np.cos(np.radians(Dec))
+    <span style="color: #dfaf8f;">YY</span> = 3600*(Dec - dec0)
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Precalculate geometric factors for rotation to slit frame</span>
+    <span style="color: #dfaf8f;">c</span>, <span style="color: #dfaf8f;">s</span> = np.cos(np.radians(PA)), np.sin(np.radians(PA))
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">X is ordinate perpendicular to slit</span>
+    <span style="color: #dfaf8f;">X</span> = XX*c - YY*s
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Y is ordinate along slit</span>
+    <span style="color: #dfaf8f;">Y</span> = YY*c - XX*s
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Mask for all output pixels that fall in the slit</span>
+    <span style="color: #dfaf8f;">slitmask</span> = <span style="color: #DCDCCC; font-weight: bold;">abs</span>(X) &lt;= 0.5*slit_width
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">cycle over all slit y pixels</span>
+    <span style="color: #b9d3ee;">for</span> j, intensity <span style="color: #b9d3ee;">in</span> <span style="color: #DCDCCC; font-weight: bold;">enumerate</span>(profile):
+        <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Offset from slit center</span>
+        <span style="color: #dfaf8f;">y</span> = (j - 255.5)*dy
+        <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Mask for output pixels that fall in this slit pixel</span>
+        <span style="color: #dfaf8f;">pixmask</span> = slitmask &amp; (<span style="color: #DCDCCC; font-weight: bold;">abs</span>(Y - y) &lt;= 0.5*dy)
+        <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Fill in the output intensity and weight arrays</span>
+        <span style="color: #dfaf8f;">outimage</span>[pixmask] += intensity
+        <span style="color: #dfaf8f;">outweights</span>[pixmask] += weight
+
+<span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Save everything as different images in a single fits file:</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1. The sum of the raw slits </span>
+<span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">2. The weights</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">3. The slits normalized by the weights</span>
+fits.HDUList([
+    fits.PrimaryHDU(),
+    fits.ImageHDU(header=w.to_header(), data=outimage, name=<span style="color: #eee8aa; font-style: italic;">'slits'</span>),
+    fits.ImageHDU(header=w.to_header(), data=outweights, name=<span style="color: #eee8aa; font-style: italic;">'weight'</span>),
+    fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name=<span style="color: #eee8aa; font-style: italic;">'scaled'</span>),
+    ]).writeto(<span style="color: #eee8aa; font-style: italic;">'all-vert-sum.fits'</span>, clobber=<span style="color: #cFfBcF;">True</span>)
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>The first image in the file is what can be used to combine with more data, for instance the horizontal slits</li>
+<li>The third image is what should be used in the rebinning process (together with the second image, the weights)</li>
+</ul>
+
+<p>
+This shows the scaled image in ds9
+</p>
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
+
+<pre class="src src-sh">xpaset -p ds9 fits $<span style="color: #dfaf8f;">PWD</span>/all-vert-sum.fits[3]
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgheadline19" class="outline-2">
+<h2 id="orgheadline19"><span class="section-number-2">4</span> The multigrid smoothing method</h2>
+<div class="outline-text-2" id="text-4">
+<pre class="example">Language = python
+Parameters = :results output
+Header = nil</pre><div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">import</span> sys
+sys.path.append(<span style="color: #eee8aa; font-style: italic;">'/Users/will/Work/RubinWFC3/Tsquared'</span>)
+<span style="color: #b9d3ee;">from</span> rebin_utils <span style="color: #b9d3ee;">import</span> downsample, oversample
+<span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
+
+<span style="color: #dfaf8f;">nlist</span> = [1, 2, 4, 8, 16, 32]
+<span style="color: #dfaf8f;">infile</span> = <span style="color: #eee8aa; font-style: italic;">'all-vert-sum.fits'</span>
+
+<span style="color: #dfaf8f;">hdulist</span> = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(infile)
+<span style="color: #dfaf8f;">hdr</span> = hdulist[<span style="color: #eee8aa; font-style: italic;">'scaled'</span>].header
+<span style="color: #dfaf8f;">im</span> = hdulist[<span style="color: #eee8aa; font-style: italic;">'scaled'</span>].data
+<span style="color: #dfaf8f;">w</span> = hdulist[<span style="color: #eee8aa; font-style: italic;">'weight'</span>].data
+<span style="color: #dfaf8f;">m</span> = w &gt; 0.0
+
+<span style="color: #b9d3ee;">for</span> n <span style="color: #b9d3ee;">in</span> nlist:
+    <span style="color: #dfaf8f;">im</span>[~m] = 0.0
+    <span style="color: #dfaf8f;">outfile</span> = infile.replace(<span style="color: #eee8aa; font-style: italic;">'.fits'</span>, <span style="color: #eee8aa; font-style: italic;">'-bin{:03d}.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(n))
+    <span style="color: #b9d3ee;">print</span>(<span style="color: #eee8aa; font-style: italic;">'Saving'</span>, outfile)
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Save both the scaled image and the weights, but at the full resolution</span>
+    fits.HDUList([
+        fits.PrimaryHDU(),
+        fits.ImageHDU(data=oversample(im, n), header=hdr, name=<span style="color: #eee8aa; font-style: italic;">'scaled'</span>),
+        fits.ImageHDU(data=oversample(w, n), header=hdr, name=<span style="color: #eee8aa; font-style: italic;">'weight'</span>),
+    ]).writeto(outfile, clobber=<span style="color: #cFfBcF;">True</span>)
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Now do the rebinning by a factor of two</span>
+    [im,], <span style="color: #dfaf8f;">m</span>, <span style="color: #dfaf8f;">w</span> = downsample([im,], m, weights=w)
+</pre>
+</div>
+
+<pre class="example">
+Saving all-vert-sum-bin001.fits
+Saving all-vert-sum-bin002.fits
+Saving all-vert-sum-bin004.fits
+Saving all-vert-sum-bin008.fits
+Saving all-vert-sum-bin016.fits
+Saving all-vert-sum-bin032.fits
+</pre>
+
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
+
+<pre class="src src-sh">xpaset -p ds9 fits $<span style="color: #dfaf8f;">PWD</span>/all-vert-sum-bin016.fits[<span style="color: #eee8aa; font-style: italic;">'scaled'</span>]
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Unfortunately, the weights increase a lot with the binning - more than they ought to.</li>
+<li>The problem is that the pixels at the finest grid levels are not independent, since many of them come from the same pixel of the slit spectrum</li>
+<li>However, the algorithm does not know this and so adds them up when it rebins to the next coarser grid</li>
+<li>This will be a problem if we want to combine the different levels and impose a minimum weight
+<ul class="org-ul">
+<li>An easy solution would be to have the minimum weight vary per level</li>
+</ul></li>
+</ul>
+
+<pre class="example">Language = python
+Parameters = :results output
+Header = nil</pre><div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
+<span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
+<span style="color: #dfaf8f;">nlist</span> = [1, 2, 4, 8, 16]
+<span style="color: #dfaf8f;">minweights</span> = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
+<span style="color: #dfaf8f;">outim</span> = np.zeros((1024, 1024))
+<span style="color: #b9d3ee;">for</span> n, minw <span style="color: #b9d3ee;">in</span> <span style="color: #DCDCCC; font-weight: bold;">reversed</span>(<span style="color: #DCDCCC; font-weight: bold;">list</span>(<span style="color: #DCDCCC; font-weight: bold;">zip</span>(nlist, minweights))):
+    <span style="color: #dfaf8f;">fn</span> = <span style="color: #eee8aa; font-style: italic;">'all-vert-sum-bin{:03d}.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(n)
+    <span style="color: #dfaf8f;">hdulist</span> = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(fn)
+    <span style="color: #dfaf8f;">im</span> = hdulist[<span style="color: #eee8aa; font-style: italic;">'scaled'</span>].data
+    <span style="color: #dfaf8f;">hdr</span> = hdulist[<span style="color: #eee8aa; font-style: italic;">'scaled'</span>].header
+    <span style="color: #dfaf8f;">w</span> = hdulist[<span style="color: #eee8aa; font-style: italic;">'weight'</span>].data
+    <span style="color: #dfaf8f;">m</span> = w*im &gt;= minw*1e5
+    <span style="color: #dfaf8f;">outim</span>[m] = im[m]
+fits.PrimaryHDU(header=hdr, data=outim).writeto(<span style="color: #eee8aa; font-style: italic;">'all-vert-sum-multibin.fits'</span>, clobber=<span style="color: #cFfBcF;">True</span>)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline24" class="outline-2">
+<h2 id="orgheadline24"><span class="section-number-2">5</span> Coordinates of the slits</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>Data received from Alba <span class="timestamp-wrapper"><span class="timestamp">[2015-08-11 Tue]</span></span></li>
+</ul>
+</div>
+
+<div id="outline-container-orgheadline20" class="outline-3">
+<h3 id="orgheadline20"><span class="section-number-3">5.1</span> Description from Alba</h3>
+<div class="outline-text-3" id="text-5-1">
+<pre class="example">
+Todos los datos están en:
+/fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/0.Datos
+Diferencio entre especros e imagenes y luego entre los del 2010 (verticales) y
+2013 (horizontales)
+Todos los espectros tienen la sustraccion del continuo (*nc*) y los del 2010
+además tiene el factor de calidad (aplicado entre ellos y a todos los de esa
+campaña de observacion, son *cc*fits)
+
+Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
+</pre>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgheadline21" class="outline-3">
+<h3 id="orgheadline21"><span class="section-number-3">5.2</span> Brightness correction factors</h3>
+<div class="outline-text-3" id="text-5-2">
+<ul class="org-ul">
+<li>The 2010 data in <code>3.CuboWS/0.Datos</code> are <code>.nc.cc.</code> have already had this applied</li>
+<li>The prior stage (just <code>.nc.</code>) is in <code>2.Datos2010/1.PreparandoDatos/1.SustraccionContinuo</code></li>
+<li>The factors are in <a href="file://ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/2.Datos2010/1.PreparandoDatos/2.IgualandoCalidad/intensidades.dat">intensidades.dat</a>
+<ul class="org-ul">
+<li>Transposed version of this table below</li>
+<li>The factors multiply the observed intensities</li>
+</ul></li>
+<li>The 2013 data don't seem to have any brightness correction</li>
+</ul>
+
+<br><pre class="example">Table name: vertical-slits</pre><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">Imagen</th>
+<th scope="col" class="org-right">I. original</th>
+<th scope="col" class="org-right">I. corregida</th>
+<th scope="col" class="org-right">Factor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">101</td>
+<td class="org-right">2149.52</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.01435</td>
+</tr>
+
+<tr>
+<td class="org-right">124</td>
+<td class="org-right">1936.37</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.12601</td>
+</tr>
+
+<tr>
+<td class="org-right">128</td>
+<td class="org-right">1567.50</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.39099</td>
+</tr>
+
+<tr>
+<td class="org-right">133</td>
+<td class="org-right">1814.61</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.20156</td>
+</tr>
+
+<tr>
+<td class="org-right">137</td>
+<td class="org-right">1939.18</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.12438</td>
+</tr>
+
+<tr>
+<td class="org-right">145</td>
+<td class="org-right">1361.85</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.60103</td>
+</tr>
+
+<tr>
+<td class="org-right">157</td>
+<td class="org-right">1323.03</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.64801</td>
+</tr>
+
+<tr>
+<td class="org-right">173</td>
+<td class="org-right">1249.18</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.74544</td>
+</tr>
+
+<tr>
+<td class="org-right">202</td>
+<td class="org-right">2170.67</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.00447</td>
+</tr>
+
+<tr>
+<td class="org-right">206</td>
+<td class="org-right">2169.70</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.00492</td>
+</tr>
+
+<tr>
+<td class="org-right">210</td>
+<td class="org-right">2211.48</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">0.98594</td>
+</tr>
+
+<tr>
+<td class="org-right">214</td>
+<td class="org-right">2231.37</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">0.97715</td>
+</tr>
+
+<tr>
+<td class="org-right">219</td>
+<td class="org-right">2226.34</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">0.97935</td>
+</tr>
+
+<tr>
+<td class="org-right">236</td>
+<td class="org-right">2184.94</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">0.99791</td>
+</tr>
+
+<tr>
+<td class="org-right">240</td>
+<td class="org-right">2186.48</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">0.99720</td>
+</tr>
+
+<tr>
+<td class="org-right">244</td>
+<td class="org-right">2150.31</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.01398</td>
+</tr>
+
+<tr>
+<td class="org-right">248</td>
+<td class="org-right">1632.71</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.33543</td>
+</tr>
+
+<tr>
+<td class="org-right">252</td>
+<td class="org-right">1816.34</td>
+<td class="org-right">2180.37</td>
+<td class="org-right">1.20042</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgheadline22" class="outline-3">
+<h3 id="orgheadline22"><span class="section-number-3">5.3</span> HORIZONTALES 2013</h3>
+<div class="outline-text-3" id="text-5-3">
+<br><pre class="example">Results table name: nil</pre><table id="orgtable2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">imagen</th>
+<th scope="col" class="org-left">Espectro</th>
+<th scope="col" class="org-right">AR</th>
+<th scope="col" class="org-right">DEC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">spm165</td>
+<td class="org-left">spec166</td>
+<td class="org-right">83.6141</td>
+<td class="org-right">-5.4409</td>
+</tr>
+
+<tr>
+<td class="org-left">spm169</td>
+<td class="org-left">spec170</td>
+<td class="org-right">83.6146</td>
+<td class="org-right">-5.4382</td>
+</tr>
+
+<tr>
+<td class="org-left">spm237</td>
+<td class="org-left">spec238</td>
+<td class="org-right">83.6166</td>
+<td class="org-right">-5.4361</td>
+</tr>
+
+<tr>
+<td class="org-left">spm232</td>
+<td class="org-left">spec233</td>
+<td class="org-right">83.6157</td>
+<td class="org-right">-5.4321</td>
+</tr>
+
+<tr>
+<td class="org-left">spm226</td>
+<td class="org-left">spec227</td>
+<td class="org-right">83.6076</td>
+<td class="org-right">-5.4294</td>
+</tr>
+
+<tr>
+<td class="org-left">spm149</td>
+<td class="org-left">spec150</td>
+<td class="org-right">83.6231</td>
+<td class="org-right">-5.4239</td>
+</tr>
+
+<tr>
+<td class="org-left">spm154</td>
+<td class="org-left">spec155</td>
+<td class="org-right">83.6237</td>
+<td class="org-right">-5.4226</td>
+</tr>
+
+<tr>
+<td class="org-left">spm159</td>
+<td class="org-left">spec160</td>
+<td class="org-right">83.6238</td>
+<td class="org-right">-5.4201</td>
+</tr>
+
+<tr>
+<td class="org-left">spm033</td>
+<td class="org-left">spec034</td>
+<td class="org-right">83.6107</td>
+<td class="org-right">-5.4165</td>
+</tr>
+
+<tr>
+<td class="org-left">spm029</td>
+<td class="org-left">spec030</td>
+<td class="org-right">83.6084</td>
+<td class="org-right">-5.4155</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">83.6158 +/- 0.0019</td>
+<td class="org-right">-5.4275 +/- 0.0029</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgheadline23" class="outline-3">
+<h3 id="orgheadline23"><span class="section-number-3">5.4</span> VERTICALES 2010</h3>
+<div class="outline-text-3" id="text-5-4">
+<ul class="org-ul">
+<li>From the region file <a href="file://ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/1.Posiciones/pos_todas.reg">pos_todas.reg</a> it looks like the PA = 3.03 deg</li>
+</ul>
+
+<br><pre class="example">Results table name: nil</pre><table id="orgtable3" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">imagen</th>
+<th scope="col" class="org-left">Espectro</th>
+<th scope="col" class="org-right">AR</th>
+<th scope="col" class="org-right">DEC</th>
+<th scope="col" class="org-right">Factor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">spm252</td>
+<td class="org-left">spec253</td>
+<td class="org-right">83.6016</td>
+<td class="org-right">-5.4149</td>
+<td class="org-right">1.20042</td>
+</tr>
+
+<tr>
+<td class="org-left">spm173</td>
+<td class="org-left">spec174</td>
+<td class="org-right">83.6020</td>
+<td class="org-right">-5.4108</td>
+<td class="org-right">1.74544</td>
+</tr>
+
+<tr>
+<td class="org-left">spm244</td>
+<td class="org-left">spec245</td>
+<td class="org-right">83.6031</td>
+<td class="org-right">-5.4152</td>
+<td class="org-right">1.01398</td>
+</tr>
+
+<tr>
+<td class="org-left">spm240</td>
+<td class="org-left">spec241</td>
+<td class="org-right">83.6053</td>
+<td class="org-right">-5.4153</td>
+<td class="org-right">0.99720</td>
+</tr>
+
+<tr>
+<td class="org-left">spm236</td>
+<td class="org-left">spec237</td>
+<td class="org-right">83.6071</td>
+<td class="org-right">-5.4155</td>
+<td class="org-right">0.99791</td>
+</tr>
+
+<tr>
+<td class="org-left">spm157</td>
+<td class="org-left">spec158</td>
+<td class="org-right">83.6078</td>
+<td class="org-right">-5.4118</td>
+<td class="org-right">1.64801</td>
+</tr>
+
+<tr>
+<td class="org-left">spm219</td>
+<td class="org-left">spec220</td>
+<td class="org-right">83.6087</td>
+<td class="org-right">-5.4163</td>
+<td class="org-right">0.97935</td>
+</tr>
+
+<tr>
+<td class="org-left">spm248</td>
+<td class="org-left">spec249</td>
+<td class="org-right">83.6091</td>
+<td class="org-right">-5.4150</td>
+<td class="org-right">1.33543</td>
+</tr>
+
+<tr>
+<td class="org-left">spm145</td>
+<td class="org-left">spec146</td>
+<td class="org-right">83.6106</td>
+<td class="org-right">-5.4109</td>
+<td class="org-right">1.60103</td>
+</tr>
+
+<tr>
+<td class="org-left">spm214</td>
+<td class="org-left">spec215</td>
+<td class="org-right">83.6119</td>
+<td class="org-right">-5.4160</td>
+<td class="org-right">0.97715</td>
+</tr>
+
+<tr>
+<td class="org-left">spm137</td>
+<td class="org-left">spec138</td>
+<td class="org-right">83.6133</td>
+<td class="org-right">-5.4120</td>
+<td class="org-right">1.12438</td>
+</tr>
+
+<tr>
+<td class="org-left">spm210</td>
+<td class="org-left">spec211</td>
+<td class="org-right">83.6143</td>
+<td class="org-right">-5.4163</td>
+<td class="org-right">0.98594</td>
+</tr>
+
+<tr>
+<td class="org-left">spm101</td>
+<td class="org-left">spec102</td>
+<td class="org-right">83.6149</td>
+<td class="org-right">-5.4177</td>
+<td class="org-right">1.01435</td>
+</tr>
+
+<tr>
+<td class="org-left">spm128</td>
+<td class="org-left">spec129</td>
+<td class="org-right">83.6156</td>
+<td class="org-right">-5.4181</td>
+<td class="org-right">1.39099</td>
+</tr>
+
+<tr>
+<td class="org-left">spm133</td>
+<td class="org-left">spec134</td>
+<td class="org-right">83.6159</td>
+<td class="org-right">-5.4123</td>
+<td class="org-right">1.20156</td>
+</tr>
+
+<tr>
+<td class="org-left">spm206</td>
+<td class="org-left">spec207</td>
+<td class="org-right">83.6171</td>
+<td class="org-right">-5.4165</td>
+<td class="org-right">1.00492</td>
+</tr>
+
+<tr>
+<td class="org-left">spm124</td>
+<td class="org-left">spec125</td>
+<td class="org-right">83.6184</td>
+<td class="org-right">-5.4183</td>
+<td class="org-right">1.12601</td>
+</tr>
+
+<tr>
+<td class="org-left">spm202</td>
+<td class="org-left">spec203</td>
+<td class="org-right">83.6205</td>
+<td class="org-right">-5.4167</td>
+<td class="org-right">1.00447</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-right">83.6110 +/- 0.0014</td>
+<td class="org-right">-5.4150 +/- 0.0006</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: William Henney</p>
+<p class="date">Created: 2015-08-19 Wed 14:48</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
