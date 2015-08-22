@@ -384,8 +384,10 @@ Some positions are a bit problematic - try missing them out:
 + 248
 
 
+#+name: create-slit-map
 #+header: :var ignore=positions-to-drop
 #+header: :var vtab=vertical-all-parameters
+#+header: :var vmin=-1000 vmax=1000 label="sum"
 #+BEGIN_SRC python :results output
   import numpy as np
   from astropy.io import fits
@@ -413,6 +415,10 @@ Some positions are a bit problematic - try missing them out:
 
   slit_width = 2.0                # width in arcsec of 150 micron slit
 
+  light_speed = 2.99792458e5
+  wavrest = 6562.7910
+  heliocentric_correction = 0.0   # I need to find this
+  vmin, vmax = float(vmin), float(vmax)
   for imid, specid, ra0, dec0, dy, PA, weight in vtab:
       if int(imid) in ignore:
           continue  # drop some positions
@@ -420,8 +426,19 @@ Some positions are a bit problematic - try missing them out:
       ra0, dec0, dy, PA, weight = [float(_) for _ in (ra0, dec0, dy, PA, weight)]
       # Open H alpha slit spectrum
       spechdu, = fits.open('spec{}-ha.fits'.format(specid))
+
+      # Create velocity array from header
+      nwav, k0, wav0, dwav = [spechdu.header[kwd+'1']
+                              for kwd in ('NAXIS', 'CRPIX', 'CRVAL', 'CDELT')]
+      wavs = wav0 + (np.arange(nwav) - k0 + 1)*dwav
+      vels = heliocentric_correction + light_speed*(wavs - wavrest)/wavrest
+      # Find indices corresponding to velocity limits
+      k1 = (vels < vmin).sum()
+      k2 = (vels <= vmax).sum()
+      print('Velocities used', vels[k1:k2])
+
       # Sum spectrum over all wavelengths
-      profile = spechdu.data.sum(axis=1)
+      profile = spechdu.data[:, k1:k2].sum(axis=1)
 
       # Transform output grid coords into slit frame offsets in arcsec
       # XX, YY are intermediate offset coordinates along RA, Dec axes
@@ -455,7 +472,7 @@ Some positions are a bit problematic - try missing them out:
       fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
       fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
       fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
-      ]).writeto('all-vert-sum.fits', clobber=True)
+      ]).writeto('all-vert-{}.fits'.format(label), clobber=True)
 
 
 #+END_SRC
@@ -471,20 +488,124 @@ xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 #+END_SRC
 
 
+** Try to use different velocity ranges
+:PROPERTIES:
+:dir:      ~/Dropbox/SPMJAN10/reducciones
+:END:
+
++ It would be more efficient to do these all at the sane time, but for the time being I will do them separately
++ Although the noisiest slit looked fine on the integrated maps, it makes a mess of the velocity channels where the emission is faint
+
+#+name: noisy-slits
++ 145
+
+#+call: create-slit-map(vmin=-200, vmax=-50, label="blue", ignore=noisy-slits) :results silent
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/all-vert-blue.fits[3]
+#+END_SRC
+
++ Try some blue wing 20 km/s channels
+
+#+call: create-slit-map(vmin="-40", vmax="-20", label="b30", ignore=noisy-slits) :results silent
+#+call: create-slit-map(vmin="-60", vmax="-40", label="b50", ignore=noisy-slits) :results silent
+#+call: create-slit-map(vmin="-80", vmax="-60", label="b70", ignore=noisy-slits) :results silent
+
++ And some line core channels
+#+call: create-slit-map(vmin="20", vmax="40", label="r30", ignore=noisy-slits) :results silent
+#+call: create-slit-map(vmin="0", vmax="20", label="r10", ignore=noisy-slits) :results silent
+#+call: create-slit-map(vmin="-20", vmax="0", label="b10", ignore=noisy-slits) :results silent
+
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 rgb new
+xpaset -p ds9 fits $PWD/all-vert-b30.fits[3]
+xpaset -p ds9 rgb green
+xpaset -p ds9 fits $PWD/all-vert-b50.fits[3]
+xpaset -p ds9 rgb blue
+xpaset -p ds9 fits $PWD/all-vert-b70.fits[3]
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 rgb new
+xpaset -p ds9 fits $PWD/all-vert-r30.fits[3]
+xpaset -p ds9 scale linear
+xpaset -p ds9 scale limits 0 50000
+xpaset -p ds9 rgb green
+xpaset -p ds9 fits $PWD/all-vert-r10.fits[3]
+xpaset -p ds9 scale linear
+xpaset -p ds9 scale limits 0 15000
+xpaset -p ds9 rgb blue
+xpaset -p ds9 fits $PWD/all-vert-b10.fits[3]
+xpaset -p ds9 scale linear
+xpaset -p ds9 scale limits 0 6000
+#+END_SRC
+
+
+#+call: multi-smooth(label="b30") :results silent 
+#+call: multi-smooth(label="b50") :results silent 
+#+call: multi-smooth(label="b70") :results silent 
+
+#+call: multi-smooth(label="r30") :results silent 
+#+call: multi-smooth(label="r10") :results silent 
+#+call: multi-smooth(label="b10") :results silent 
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 rgb new
+xpaset -p ds9 fits $PWD/all-vert-b30-bin016.fits['scaled']
+xpaset -p ds9 rgb green
+xpaset -p ds9 fits $PWD/all-vert-b50-bin016.fits['scaled']
+xpaset -p ds9 rgb blue
+xpaset -p ds9 fits $PWD/all-vert-b70-bin016.fits['scaled']
+#+END_SRC
+
+
++ Display the multigrid smoothed channel maps
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 rgb new
+xpaset -p ds9 fits $PWD/all-vert-b30-multibin.fits
+xpaset -p ds9 scale linear
+xpaset -p ds9 rgb green
+xpaset -p ds9 fits $PWD/all-vert-b50-multibin.fits
+xpaset -p ds9 scale linear
+xpaset -p ds9 rgb blue
+xpaset -p ds9 fits $PWD/all-vert-b70-multibin.fits
+xpaset -p ds9 scale linear
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 rgb new
+xpaset -p ds9 fits $PWD/all-vert-r30-multibin.fits
+xpaset -p ds9 scale linear
+xpaset -p ds9 scale limits 0 50000
+xpaset -p ds9 rgb green
+xpaset -p ds9 fits $PWD/all-vert-r10-multibin.fits
+xpaset -p ds9 scale linear
+xpaset -p ds9 scale limits 0 15000
+xpaset -p ds9 rgb blue
+xpaset -p ds9 fits $PWD/all-vert-b10-multibin.fits
+xpaset -p ds9 scale linear
+xpaset -p ds9 scale limits 0 6000
+#+END_SRC
+
+
+
 
 * The multigrid smoothing method
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
 :END:
 
-#+BEGIN_SRC python :results output
+#+name: multi-smooth
+#+BEGIN_SRC python :var label="sum" :results output
   import sys
   sys.path.append('/Users/will/Work/RubinWFC3/Tsquared')
   from rebin_utils import downsample, oversample
   from astropy.io import fits
 
   nlist = [1, 2, 4, 8, 16, 32]
-  infile = 'all-vert-sum.fits'
+
+  infile = 'all-vert-{}.fits'.format(label)
 
   hdulist = fits.open(infile)
   hdr = hdulist['scaled'].header
@@ -507,7 +628,7 @@ xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: multi-smooth
 : Saving all-vert-sum-bin001.fits
 : Saving all-vert-sum-bin002.fits
 : Saving all-vert-sum-bin004.fits
@@ -525,7 +646,7 @@ xpaset -p ds9 fits $PWD/all-vert-sum-bin016.fits['scaled']
 + This will be a problem if we want to combine the different levels and impose a minimum weight
   + An easy solution would be to have the minimum weight vary per level
 
-#+BEGIN_SRC python :results output
+#+BEGIN_SRC python :results silent
   from astropy.io import fits
   import numpy as np
   nlist = [1, 2, 4, 8, 16]
@@ -542,7 +663,49 @@ xpaset -p ds9 fits $PWD/all-vert-sum-bin016.fits['scaled']
   fits.PrimaryHDU(header=hdr, data=outim).writeto('all-vert-sum-multibin.fits', clobber=True)
 #+END_SRC
 
-#+RESULTS:
+
+And here is a version for the velocity channels
+
+#+name: vel-channels
++ r30
++ r10
++ b10
++ b30
++ b50
++ b70
+
+
+#+name: multigrid-combine
+#+BEGIN_SRC python :var labels = vel-channels :results silent
+  from astropy.io import fits
+  import numpy as np
+  nlist = [1, 2, 4, 8, 16]
+  minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
+  outim = np.zeros((1024, 1024))
+  for label in labels:
+      for n, minw in reversed(list(zip(nlist, minweights))):
+          fn = 'all-vert-{}-bin{:03d}.fits'.format(label, n)
+          hdulist = fits.open(fn)
+          im = hdulist['scaled'].data
+          hdr = hdulist['scaled'].header
+          w = hdulist['weight'].data
+          m = w*im >= minw*1000
+          outim[m] = im[m]
+      fits.PrimaryHDU(header=hdr, data=outim).writeto(
+          'all-vert-{}-multibin.fits'.format(label), clobber=True)
+#+END_SRC
+
+
+
+* T diagnostics from linewidths
++ We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum
++ For the jet knots, assuming they are kinematically homogeneous, we should be able to measure the T from
++ Compact knot in slit spec166
+  + FWHM in [N II] = 12.76 km/s
+  + FWHM in Ha = 23.77 km/s
+  + => thermal FWHM = sqrt((23.77**2 - 12.76**2) (14/13)) = 20.8 km/s
+  + So basically 1e4 K, which is not surprising
+
 
 * Coordinates of the slits
 + Data received from Alba [2015-08-11 Tue]
