@@ -126,6 +126,106 @@
 #+RESULTS:
 [[file:/Users/will/Dropbox/SPMJAN10/reducciones/image-spec-offsets.pdf]]
 
+
+** Repeat for the horizontal slits
+:PROPERTIES:
+:dir:      ~/Dropbox/SPMFEB13/WesternShocks
+:END:
+
+#+name: horizontal-image-and-fullspec
+| image |    slit |  night | jslit | dj | ishift | fac | bfac |
+|-------+---------+--------+-------+----+--------+-----+------|
+|   165 | 166-167 | 160213 | 468.5 | 12 |     67 | 5.5 |    1 |
+|   169 | 170-171 | 160213 | 468.5 | 12 |     65 | 5.3 |    1 |
+|   237 | 238-239 | 160213 | 467.0 | 12 |     74 | 5.5 |    1 |
+|   232 | 233-234 | 160213 | 468.5 | 12 |     75 | 5.8 |    1 |
+|   226 | 227-228 | 160213 | 468.5 | 12 |     75 | 6.0 |    1 |
+|   149 | 150-151 | 160213 | 468.0 | 12 |     70 | 5.0 |    1 |
+|   154 | 155-156 | 160213 | 467.2 | 12 |     67 | 5.2 |    1 |
+|   159 | 160-161 | 160213 | 467.5 | 12 |     67 | 5.4 |    1 |
+|   033 | 034-035 | 150213 | 467.0 | 12 |     67 | 5.5 |    1 |
+|   029 | 030-031 | 150213 | 465.2 |  6 |     76 | 6.0 |    1 |
+
++ [2015-08-21 Fri] I have measured the y-pixel position of the slit (=jslit=) on the images - it is roughly constant, but not quite
+  + We have to be careful to use the "Image" coordinate, not the "Physical" one
++ The slit width is 150 micron for all exept =029= where it is 70 micron
+  + This is reflected in the nominal pixel width of the slit, which is given in the =dj= column
+  + The slit profile is not rectangular - looks more triangular, or perhaps an ellipse
++ The bias seems to have been removed, but there is a residual signal in the image+slits of 6 to 12 counts, which varies in J but not in I
+  + At the J of the slit it looks to be about 9
++ It is hard to tell whether there is anything that should be removed from the spectra
+  + But looking at the x-profiles of the line-free parts of the PV image, as compared with the Ha line, I think there is a residual bias of about 3
+  + When multiplied by NY=1017, this gives 3051 as the value that should be subtracted from the y-summed profile
++ I have found a better way to extract the slit profile from the image:
+  + Sum over a wide window that includes the /entire/ slit profile
+  + But then subtract off the average of the two rows above and below this window, multiplied by the window width
+  + This is equivalent to interpolating the bg underneath the slit profile
+  + It seems to give better results than the previous method
+
+#+header: :var table=horizontal-image-and-fullspec
+#+BEGIN_SRC python :return figfile :results file
+  from astropy.io import fits
+  import numpy as np
+  import matplotlib.pyplot as plt
+  import seaborn as sns; sns.set()
+  sns.set_color_codes()
+
+  nspec = 10
+  nx = 625
+  figfile = 'image-spec-offsets.pdf'
+  xarray = np.arange(nx)
+  layout = {'left': 0.05, 'bottom': 0.07, 'right': 0.99, 'top': 0.95,
+            'wspace': 0.02, 'hspace': 0.02}
+  fig, axgrid = plt.subplots(2, 5, sharex=True, sharey=True, gridspec_kw=layout)
+  tweak = 1.0
+  for (imid, specid, night, jslit, dj, ishift, factor, bfac), ax in zip(table, axgrid.flat):
+      imfile = 'spm{:03d}_ardec.fits'.format(imid)
+      specfile = '../{}/reducciones/spm{}_bcr.fits'.format(night, specid)
+      jslit = int(float(jslit))
+      dj = int(dj)
+      ishift = float(ishift)
+      factor = float(factor)
+      bfac = float(bfac)
+
+      imhdu, = fits.open(imfile)
+      spechdu, = fits.open(specfile)
+  
+      imhdu.data -= 9.0  # remove residual bias
+      spechdu.data -= 5.5
+      # limits of slit (FWZI)
+      j1, j2 = jslit-dj//2, jslit+dj//2
+      improfile = imhdu.data[j1:j2, :].sum(axis=0)
+      # take average profile either side of the slit
+      offprofile = 0.5*(imhdu.data[j1-1, :] + imhdu.data[j2, :])
+      # and subtract (multiplied by slit width) to get the pure slit profile
+      improfile -= dj*offprofile
+      specprofile = spechdu.data.sum(axis=0)
+ 
+      ax.plot(xarray-ishift, (12.0/dj)*bfac*improfile/(1e4*tweak), label='image',
+      c='r', lw=2, alpha=0.3)
+      ax.plot(xarray, bfac*specprofile/(1e4*factor), label='spectrum',
+              c='k', lw=0.6)
+
+      text_pattern = 'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'
+      text = text_pattern.format(imid, ishift, factor/5.5, 1.0/bfac)
+      ax.text(300, 0.1, text, ha='center', va='bottom', fontsize=7)
+
+  axgrid[0, 0].legend(fontsize='xx-small', loc='upper left')
+  axgrid[0, 0].set_xlim(-80, 640)
+  axgrid[0, 0].set_ylim(0.0, 1.5)
+  axgrid[-1, 2].set_xlabel('pixel')
+  axgrid[1, 0].set_ylabel('intensity')
+  fig.suptitle('Alignment and flux calibration of horizontal slits')
+  fig.set_size_inches(11, 8.5)
+  fig.savefig(figfile)
+
+
+#+END_SRC
+
+#+RESULTS:
+[[file:/Users/will/Dropbox/SPMFEB13/WesternShocks/image-spec-offsets.pdf]]
+
+
 * Datasets that we will use
 ** Dec 2014
 ** Dec 2013
