@@ -230,6 +230,49 @@
 ** Dec 2014
 ** Dec 2013
 ** Feb 2013
+:LOGBOOK:
+CLOCK: [2015-08-22 Sat 17:29]
+:END:
++ These are in [[file:~/Dropbox/SPMFEB13/]]
+  + Either in [[file:~/Dropbox/SPMFEB13/WesternShocks/]]
+  + Or in one of the date-named folders
+*** WCS values 
++ These are with a different chip, and with binning of 3x2
+*** Inter-position brightness calibration
++ I have measured brightness in several parts of the image
+  + Shown in table below, where *-ed columns are normalised to =226= which seems to be the best
++ There are problems with large-scale brightness gradients in some exposures
+  + Particularly E-W
+  + I have compared with =219= of the horizontal slits
+  + =226= looks fine, but =149= has a clear spurious gradient - falling from W to E
+  + =033= and =029= on the other hand have a gradient the other way
+  + This is shown in the =W/E= column of the table, which shows the average ratio between the West and East normalizations
+  + So we can divide the images into 3 groups:
+    + Fine :: 237, 232, 226 (W/E ~= 1)
+    + West bias :: 165, 169, 149, 154, 159 (W/E ~= 1.45)
+    + East bias :: 033, 029 (W/E ~= 0.8)
+| image |  NE |  NW |  SW |  SE |  *NE |  *NW |  *SW |  *SE | Mean          | W/E             |
+|-------+-----+-----+-----+-----+------+------+------+------+---------------+-----------------|
+|   165 | 507 | 435 | 434 | 160 | 0.69 | 0.87 | 0.82 | 0.54 | 0.73 +/- 0.07 | 1.39 +/- 0.13   |
+|   169 | 470 | 426 | 405 | 149 | 0.64 | 0.85 | 0.76 | 0.50 | 0.69 +/- 0.08 | 1.42 +/- 0.10   |
+|   237 | 685 | 485 | 491 | 267 | 0.94 | 0.97 | 0.93 | 0.89 | 0.93 +/- 0.02 | 1.04 +/- 6.5e-3 |
+|   232 | 700 | 473 | 511 | 272 | 0.96 | 0.94 | 0.96 | 0.91 | 0.94 +/- 0.01 | 1.02 +/- 0.04   |
+|   226 | 730 | 502 | 530 | 299 |    1 |    1 |    1 |    1 | 1             | 1               |
+|   149 | 490 | 470 | 406 | 138 | 0.67 | 0.94 | 0.77 | 0.46 | 0.71 +/- 0.10 | 1.54 +/- 0.14   |
+|   154 | 508 | 466 | 418 | 138 | 0.70 | 0.93 | 0.79 | 0.46 | 0.72 +/- 0.10 | 1.52 +/- 0.19   |
+|   159 | 515 | 479 | 436 | 154 | 0.71 | 0.95 | 0.82 | 0.52 | 0.75 +/- 0.09 | 1.46 +/- 0.12   |
+|   033 | 579 | 294 | 355 | 238 | 0.79 | 0.59 | 0.67 | 0.80 | 0.71 +/- 0.05 | 0.79 +/- 0.05   |
+|   029 | 581 | 307 | 356 | 224 | 0.80 | 0.61 | 0.67 | 0.75 | 0.71 +/- 0.04 | 0.83 +/- 0.07   |
+#+TBLFM: $6=$-4/730;f2::$7=$-4/502;f2::$8=$-4/530;f2::$9=$-4/299;f2::$10=vmeane($-4..$-1);f2::$11=vmeane([$7/$6, $8/$9]);f2
+
++ So to correct the brightness gradients, we use the following:
+  + For =149=, we have brightness the same brightness as 226 in the W side, but 0.5 times the brightness in the E side
+  + So we will try multiplying by a linear function (1 + delta*(i - 0.5*NX)/NX)
+  + For this case, we want (1 + 0.5 \delta)/(1 - 0.5 \delta) = 0.5 (remember that i increases from W to E)
+    + => 1 + 0.5 \delta = 0.5 - 0.25 \delta => 0.5 = -0.75 \delta => \delta = -2/3
+    + This is for a case W/E = 1.54 and it should scale with (W/E - 1)
+    + So we get \delta = -1.24 (W/E - 1)
+
 ** Jan 2010
 :LOGBOOK:
 CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
@@ -776,13 +819,15 @@ And here is a version for the velocity channels
 
 
 #+name: multigrid-combine
-#+BEGIN_SRC python :var labels = vel-channels :results silent
+#+BEGIN_SRC python :var labels=vel-channels :results output
   from astropy.io import fits
   import numpy as np
   nlist = [1, 2, 4, 8, 16]
   minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
   outim = np.zeros((1024, 1024))
   for label in labels:
+      print('.+.'*12)
+      print('Channel', label)
       for n, minw in reversed(list(zip(nlist, minweights))):
           fn = 'all-vert-{}-bin{:03d}.fits'.format(label, n)
           hdulist = fits.open(fn)
@@ -790,10 +835,57 @@ And here is a version for the velocity channels
           hdr = hdulist['scaled'].header
           w = hdulist['weight'].data
           m = w*im >= minw*1000
+          print('Binning', n, '- pixels used', m.sum())
           outim[m] = im[m]
       fits.PrimaryHDU(header=hdr, data=outim).writeto(
           'all-vert-{}-multibin.fits'.format(label), clobber=True)
 #+END_SRC
+
+#+RESULTS: multigrid-combine
+#+begin_example
+.+..+..+..+..+..+..+..+..+..+..+..+.
+Channel r30
+Binning 16 - pixels used 101120
+Binning 8 - pixels used 86400
+Binning 4 - pixels used 62144
+Binning 2 - pixels used 44500
+Binning 1 - pixels used 35532
+.+..+..+..+..+..+..+..+..+..+..+..+.
+Channel r10
+Binning 16 - pixels used 100608
+Binning 8 - pixels used 86144
+Binning 4 - pixels used 61968
+Binning 2 - pixels used 44408
+Binning 1 - pixels used 35471
+.+..+..+..+..+..+..+..+..+..+..+..+.
+Channel b10
+Binning 16 - pixels used 99840
+Binning 8 - pixels used 82112
+Binning 4 - pixels used 39872
+Binning 2 - pixels used 21452
+Binning 1 - pixels used 6119
+.+..+..+..+..+..+..+..+..+..+..+..+.
+Channel b30
+Binning 16 - pixels used 98560
+Binning 8 - pixels used 72832
+Binning 4 - pixels used 22928
+Binning 2 - pixels used 8888
+Binning 1 - pixels used 2342
+.+..+..+..+..+..+..+..+..+..+..+..+.
+Channel b50
+Binning 16 - pixels used 98048
+Binning 8 - pixels used 69888
+Binning 4 - pixels used 20272
+Binning 2 - pixels used 7752
+Binning 1 - pixels used 3025
+.+..+..+..+..+..+..+..+..+..+..+..+.
+Channel b70
+Binning 16 - pixels used 95744
+Binning 8 - pixels used 61568
+Binning 4 - pixels used 12800
+Binning 2 - pixels used 3424
+Binning 1 - pixels used 1135
+#+end_example
 
 
 
