@@ -130,21 +130,22 @@
 ** Repeat for the horizontal slits
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMFEB13/WesternShocks
+:ID:       6CE33437-BC17-49AA-B048-5BACCBB8C99B
 :END:
 
 #+name: horizontal-image-and-fullspec
-| image |    slit |  night | jslit | dj | ishift | fac | bfac |
-|-------+---------+--------+-------+----+--------+-----+------|
-|   165 | 166-167 | 160213 | 468.5 | 12 |     67 | 5.5 |    1 |
-|   169 | 170-171 | 160213 | 468.5 | 12 |     65 | 5.3 |    1 |
-|   237 | 238-239 | 160213 | 467.0 | 12 |     74 | 5.5 |    1 |
-|   232 | 233-234 | 160213 | 468.5 | 12 |     75 | 5.8 |    1 |
-|   226 | 227-228 | 160213 | 468.5 | 12 |     75 | 6.0 |    1 |
-|   149 | 150-151 | 160213 | 468.0 | 12 |     70 | 5.0 |    1 |
-|   154 | 155-156 | 160213 | 467.2 | 12 |     67 | 5.2 |    1 |
-|   159 | 160-161 | 160213 | 467.5 | 12 |     67 | 5.4 |    1 |
-|   033 | 034-035 | 150213 | 467.0 | 12 |     67 | 5.5 |    1 |
-|   029 | 030-031 | 150213 | 465.2 |  6 |     76 | 6.0 |    1 |
+| image |    slit |  night | jslit | dj | ishift | fac | bright | bgrad |
+|-------+---------+--------+-------+----+--------+-----+--------+-------|
+|   165 | 166-167 | 160213 | 468.5 | 12 |     67 | 5.5 |   0.73 |   1.4 |
+|   169 | 170-171 | 160213 | 468.5 | 12 |     65 | 5.3 |   0.69 |   1.4 |
+|   237 | 238-239 | 160213 | 467.0 | 12 |     74 | 5.5 |   0.93 |   1.0 |
+|   232 | 233-234 | 160213 | 468.5 | 12 |     75 | 5.8 |   0.94 |   1.0 |
+|   226 | 227-228 | 160213 | 468.5 | 12 |     75 | 6.0 |      1 |     1 |
+|   149 | 150-151 | 160213 | 468.0 | 12 |     70 | 5.0 |   0.71 |   1.5 |
+|   154 | 155-156 | 160213 | 467.2 | 12 |     67 | 5.2 |   0.72 |   1.5 |
+|   159 | 160-161 | 160213 | 467.5 | 12 |     67 | 5.4 |   0.75 |   1.5 |
+|   033 | 034-035 | 150213 | 467.0 | 12 |     67 | 5.5 |   0.71 |   0.8 |
+|   029 | 030-031 | 150213 | 465.2 |  6 |     76 | 6.0 |   0.71 |   0.8 |
 
 + [2015-08-21 Fri] I have measured the y-pixel position of the slit (=jslit=) on the images - it is roughly constant, but not quite
   + We have to be careful to use the "Image" coordinate, not the "Physical" one
@@ -161,6 +162,10 @@
   + But then subtract off the average of the two rows above and below this window, multiplied by the window width
   + This is equivalent to interpolating the bg underneath the slit profile
   + It seems to give better results than the previous method
++ [2015-08-22 Sat] The bright and bgrad columns can now be filled in from the calculation [[id:23506DE2-4D98-40C5-961F-4715BE7A1F55][down here]]
+  + Note that *bright is the reciprocal of bfac*, which I used in the table for the vertical slits 
+  + The bgrad is for a linear E-W gradient correction to the brightnesses
+  + I rounded it to 1 decimal place, since it is not that well determined
 
 #+header: :var table=horizontal-image-and-fullspec
 #+BEGIN_SRC python :return figfile :results file
@@ -176,20 +181,21 @@
   xarray = np.arange(nx)
   layout = {'left': 0.05, 'bottom': 0.07, 'right': 0.99, 'top': 0.95,
             'wspace': 0.02, 'hspace': 0.02}
-  fig, axgrid = plt.subplots(2, 5, sharex=True, sharey=True, gridspec_kw=layout)
+  fig, axgrid = plt.subplots(3, 4, sharex=True, sharey=True, gridspec_kw=layout)
   tweak = 1.0
-  for (imid, specid, night, jslit, dj, ishift, factor, bfac), ax in zip(table, axgrid.flat):
+  for (imid, specid, night, jslit, dj, ishift,
+       factor, bright, bgrad), ax in zip(table, axgrid.flat):
       imfile = 'spm{:03d}_ardec.fits'.format(imid)
       specfile = '../{}/reducciones/spm{}_bcr.fits'.format(night, specid)
       jslit = int(float(jslit))
       dj = int(dj)
       ishift = float(ishift)
       factor = float(factor)
-      bfac = float(bfac)
+      bfac = 1./float(bright)
 
       imhdu, = fits.open(imfile)
       spechdu, = fits.open(specfile)
-  
+
       imhdu.data -= 9.0  # remove residual bias
       spechdu.data -= 5.5
       # limits of slit (FWZI)
@@ -199,12 +205,17 @@
       offprofile = 0.5*(imhdu.data[j1-1, :] + imhdu.data[j2, :])
       # and subtract (multiplied by slit width) to get the pure slit profile
       improfile -= dj*offprofile
+      # Now find the gradient correction
+      NX = len(improfile)
+      x = np.arange(NX)/NX - 0.5
+      grad_corr = 1.0 - 1.24*(bgrad - 1.0)*x
+
       specprofile = spechdu.data.sum(axis=0)
  
-      ax.plot(xarray-ishift, (12.0/dj)*bfac*improfile/(1e4*tweak), label='image',
-      c='r', lw=2, alpha=0.3)
-      ax.plot(xarray, bfac*specprofile/(1e4*factor), label='spectrum',
-              c='k', lw=0.6)
+      ax.plot(xarray-ishift, (12.0/dj)*bfac*grad_corr*improfile/(1e4*tweak),
+              label='image', c='r', lw=2, alpha=0.3)
+      ax.plot(xarray, bfac*grad_corr*specprofile/(1e4*factor),
+              label='spectrum', c='k', lw=0.6)
 
       text_pattern = 'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'
       text = text_pattern.format(imid, ishift, factor/5.5, 1.0/bfac)
@@ -239,6 +250,9 @@ CLOCK: [2015-08-22 Sat 17:29]
 *** WCS values 
 + These are with a different chip, and with binning of 3x2
 *** Inter-position brightness calibration
+:PROPERTIES:
+:ID:       23506DE2-4D98-40C5-961F-4715BE7A1F55
+:END:
 + I have measured brightness in several parts of the image
   + Shown in table below, where *-ed columns are normalised to =226= which seems to be the best
 + There are problems with large-scale brightness gradients in some exposures
@@ -272,6 +286,7 @@ CLOCK: [2015-08-22 Sat 17:29]
     + => 1 + 0.5 \delta = 0.5 - 0.25 \delta => 0.5 = -0.75 \delta => \delta = -2/3
     + This is for a case W/E = 1.54 and it should scale with (W/E - 1)
     + So we get \delta = -1.24 (W/E - 1)
++ The columns "Mean" and "W/E" get copied to columns =bfac= and =bgrad= respectively in the [[id:6CE33437-BC17-49AA-B048-5BACCBB8C99B][table above]]
 
 ** Jan 2010
 :LOGBOOK:
