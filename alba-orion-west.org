@@ -263,7 +263,9 @@ CLOCK: [2015-08-22 Sat 17:29]
   from astropy.io import fits
   from astropy.wcs import WCS
 
-  table = [['image', 'spectrum', 'RA0', 'Dec0', 'dy', 'PA', 'weight', 'delta'], None]
+  table = [['image', 'spectrum', 'grating',
+            'RA0', 'Dec0', 'dy', 'PA',
+            'airmass', 'weight', 'delta'], None]
   for imid, specid, night, jslit, dj, ishift, fac, bright, bgrad in intable:
       fn = 'spm{:03d}_ardec.fits'.format(imid)
       hdu, = fits.open(fn)
@@ -275,7 +277,8 @@ CLOCK: [2015-08-22 Sat 17:29]
       dDEC_arcsec = hdu.header['CD2_1']*3600
       dy = np.hypot(dRA_arcsec, dDEC_arcsec)
       PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
-
+      grating = hdu.header['GRATING']
+      airmass = hdu.header['AIRMASS']
       #
       # Find the RA and Dec of the spectral slit center
       #
@@ -309,28 +312,28 @@ CLOCK: [2015-08-22 Sat 17:29]
       # Find linear E-W gradient to correct
       delta = -1.24*(bgrad - 1.0)
  
-      table.append([imid, int(imid)+1,
+      table.append([imid, int(imid)+1, grating, 
                     '{:.5f}'.format(RA0),
                     '{:.5f}'.format(Dec0),
                     '{:.4f}'.format(dy), '{:.3f}'.format(PA),
-                    '{:.4f}'.format(weight),
-                    '{:.4f}'.format(delta),
+                    '{:.2f}'.format(airmass),
+                    '{:.2f}'.format(weight), '{:.2f}'.format(delta),
       ])
 #+END_SRC
 
 #+RESULTS: horizontal-all-parameters
-| image | spectrum |      RA0 |     Dec0 |     dy |     PA | weight |   delta |
-|-------+----------+----------+----------+--------+--------+--------+---------|
-|   165 |      166 | 83.62409 | -5.44097 | 0.5248 | 90.496 | 0.7300 | -0.4960 |
-|   169 |      170 | 83.62424 | -5.43831 | 0.5251 | 90.449 | 0.6649 | -0.4960 |
-|   237 |      238 | 83.62752 | -5.43613 | 0.5249 | 90.421 | 0.9300 | -0.0000 |
-|   232 |      233 | 83.62683 | -5.43216 | 0.5243 | 90.399 | 0.9913 | -0.0000 |
-|   226 |      227 | 83.61872 | -5.42951 | 0.5252 | 90.462 | 1.0909 | -0.0000 |
-|   149 |      150 | 83.63349 | -5.42399 | 0.5249 | 90.561 | 0.6455 | -0.6200 |
-|   154 |      155 | 83.63366 | -5.42268 | 0.5247 | 90.579 | 0.6807 | -0.6200 |
-|   159 |      160 | 83.63375 | -5.42026 | 0.5244 | 90.651 | 0.7364 | -0.6200 |
-|    33 |       34 | 83.62033 | -5.41655 | 0.5149 | 89.637 | 0.7100 |  0.2480 |
-|    29 |       30 | 83.61937 | -5.41543 | 0.5148 | 89.729 | 0.7745 |  0.2480 |
+| image | spectrum | grating |      RA0 |     Dec0 |     dy |     PA | airmass | weight | delta |
+|-------+----------+---------+----------+----------+--------+--------+---------+--------+-------|
+|   165 |      166 |      12 | 83.62409 | -5.44097 | 0.5248 | 90.496 |    2.05 |   0.73 | -0.50 |
+|   169 |      170 |      13 | 83.62424 | -5.43831 | 0.5251 | 90.449 |    2.48 |   0.66 | -0.50 |
+|   237 |      238 |      11 | 83.62752 | -5.43613 | 0.5249 | 90.421 |    1.25 |   0.93 | -0.00 |
+|   232 |      233 |       9 | 83.62683 | -5.43216 | 0.5243 | 90.399 |    1.25 |   0.99 | -0.00 |
+|   226 |      227 |      10 | 83.61872 | -5.42951 | 0.5252 | 90.462 |    1.28 |   1.09 | -0.00 |
+|   149 |      150 |       4 | 83.63349 | -5.42399 | 0.5249 | 90.561 |    1.38 |   0.65 | -0.62 |
+|   154 |      155 |       5 | 83.63366 | -5.42268 | 0.5247 | 90.579 |    1.51 |   0.68 | -0.62 |
+|   159 |      160 |       9 | 83.63375 | -5.42026 | 0.5244 | 90.651 |    1.69 |   0.74 | -0.62 |
+|    33 |       34 |      -4 | 83.62033 | -5.41655 | 0.5149 | 89.637 |    1.31 |   0.71 |  0.25 |
+|    29 |       30 |      -4 | 83.61937 | -5.41543 | 0.5148 | 89.729 |    1.26 |   0.77 |  0.25 |
 
 
 *** Inter-position brightness calibration
@@ -733,6 +736,132 @@ xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 #+END_SRC
 
 
+** Repeat the spectral map for the horizontal slits
+:PROPERTIES:
+:dir:      ~/Dropbox/SPMFEB13/WesternShocks
+:END:
++ We can't use the same program as for the vertical slits because the table has extra columns
+  + In particular, it has the \delta parameter to account for the linear brightness correction along the slit
++ Also, the spectra are organised differently (wavelength along y-axis)
++ So we need to copy and modify the program
++ [3/3] Other changes to the program:
+  + [X] Remove hardcoding of slit length in pixels (now NY)
+  + [X] Correct for \delta factor
+    + We should actually apply this to the weights, which would no longer be constant for the entire slit
+    + Except, that I don't understand the reason for the gradient correction
+    + But I have done it like that anyhow
+  + [X] change sign of offset along slit
+
+#+name: create-horizontal-slit-map
+#+header: :var htab=horizontal-all-parameters
+#+header: :var vmin=-1000 vmax=1000 label="sum"
+#+BEGIN_SRC python :results output
+  import numpy as np
+  from astropy.io import fits
+  from astropy.wcs import WCS
+
+  #
+  # First set up WCS for the output image
+  #
+
+  NX, NY = 1024, 1024
+  dRA, dDec = -0.5/3600., 0.5/3600.
+  RA0, Dec0 = 83.61, -5.423
+  w = WCS(naxis=2)
+  w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
+  w.wcs.cdelt = [dRA, dDec]
+  w.wcs.crval = [RA0, Dec0]
+  w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
+
+  outimage = np.zeros((NY, NX))
+  outweights = np.zeros((NY, NX))
+
+  # Create world coord arrays for output image
+  II, JJ = np.meshgrid(np.arange(NX), np.arange(NY))
+  RA, Dec = w.all_pix2world(II, JJ, 0)
+
+  slit_width = 2.0                # width in arcsec of 150 micron slit
+
+  light_speed = 2.99792458e5
+  wavrest = 6562.7910
+  heliocentric_correction = 0.0   # I need to find this
+  vmin, vmax = float(vmin), float(vmax)
+  for imid, specid, _, ra0, dec0, dy, PA, _, weight, delta in htab:
+      # Unpack floats from strings in table row
+      ra0, dec0, dy, PA, weight, delta = [float(_) for _ in (ra0, dec0, dy, PA, weight, delta)]
+      # Open H alpha slit spectrum
+      spechdu, = fits.open('spec{:03d}-ha.fits'.format(specid))
+
+      # Create velocity array from header
+      nwav, k0, wav0, dwav = [spechdu.header[kwd+'2']
+                              for kwd in ('NAXIS', 'CRPIX', 'CRVAL', 'CDELT')]
+      wavs = wav0 + (np.arange(nwav) - k0 + 1)*dwav
+      vels = heliocentric_correction + light_speed*(wavs - wavrest)/wavrest
+      # Find indices corresponding to velocity limits
+      k1 = (vels < vmin).sum()
+      k2 = (vels <= vmax).sum()
+      # print('Velocities used', vels[k1:k2])
+
+      # Sum spectrum over all wavelengths
+      profile = spechdu.data[k1:k2, :].sum(axis=0)
+
+      NY = spechdu.header['NAXIS1']
+      yy = np.arange(NY)/NY - 0.5
+      grad_corr = 1.0 + delta*yy
+
+
+      # Transform output grid coords into slit frame offsets in arcsec
+      # XX, YY are intermediate offset coordinates along RA, Dec axes
+      XX = 3600*(RA - ra0)*np.cos(np.radians(Dec))
+      YY = 3600*(Dec - dec0)
+      # Precalculate geometric factors for rotation to slit frame
+      c, s = np.cos(np.radians(PA)), np.sin(np.radians(PA))
+      # X is ordinate perpendicular to slit
+      X = XX*c - YY*s
+      # Y is ordinate along slit
+      Y = -(YY*c - XX*s)
+
+      # Mask for all output pixels that fall in the slit
+      slitmask = abs(X) <= 0.5*slit_width
+      # cycle over all slit y pixels
+      for j, (intensity, gcorr) in enumerate(zip(profile, grad_corr)):
+          # Offset from slit center
+          y = (j - 0.5*(NY-1))*dy
+          # Mask for output pixels that fall in this slit pixel
+          pixmask = slitmask & (abs(Y - y) <= 0.5*dy)
+          # Fill in the output intensity and weight arrays
+          outimage[pixmask] += intensity
+          outweights[pixmask] += weight/gcorr
+
+  # Save everything as different images in a single fits file:
+  # 1. The sum of the raw slits 
+  # 2. The weights
+  # 3. The slits normalized by the weights
+  fits.HDUList([
+      fits.PrimaryHDU(),
+      fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
+      fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
+      fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
+      ]).writeto('all-horiz-{}.fits'.format(label), clobber=True)
+
+
+#+END_SRC
+
+#+RESULTS: create-horizontal-slit-map
+
+This shows the scaled image in ds9
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/all-horiz-sum.fits[3]
+#+END_SRC
+
+
+** TODO Correction for heliocentric velocity
++ [2015-08-23 Sun] I haven't done this yet
++ I have it in a table for the 2013 observations, but need to calculate it for the others
++ Plan is to base on what I did before:
+  + For Keck spectra [[id:1772B088-D07A-4228-95D4-14F9C3529EC1][here]]
+  + And for HST [[id:5D00EFD4-5F66-4075-B89D-1AFCF3A73B70][here]]
+
 ** Try to use different velocity ranges
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
@@ -836,13 +965,32 @@ xpaset -p ds9 scale limits 0 6000
 
 
 
+** Combine two the horizontal and vertical slits
+#+BEGIN_SRC python
+from astropy.io import fits
+scale = 1.8
+horiz = fits.open('../SPMFEB13/WesternShocks/all-horiz-sum.fits')
+vert = fits.open('../SPMJAN10/reducciones/all-vert-sum.fits')
+horiz['slits'].data += vert['slits'].data/scale
+horiz['weight'].data += vert['weight'].data
+horiz['scaled'].data = horiz['slits'].data/horiz['weight'].data
+horiz.writeto('all-slits-sum.fits', clobber=True)
+#+END_SRC
+
+#+RESULTS:
+: None
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/all-slits-sum.fits[3]
+#+END_SRC
+
 * The multigrid smoothing method
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
 :END:
 
 #+name: multi-smooth
-#+BEGIN_SRC python :var label="sum" :results output
+#+BEGIN_SRC python :var label="sum" slits="vert" :results output
   import sys
   sys.path.append('/Users/will/Work/RubinWFC3/Tsquared')
   from rebin_utils import downsample, oversample
@@ -850,7 +998,7 @@ xpaset -p ds9 scale limits 0 6000
 
   nlist = [1, 2, 4, 8, 16, 32]
 
-  infile = 'all-vert-{}.fits'.format(label)
+  infile = 'all-{}-{}.fits'.format(slits, label)
 
   hdulist = fits.open(infile)
   hdr = hdulist['scaled'].header
@@ -921,7 +1069,7 @@ And here is a version for the velocity channels
 
 
 #+name: multigrid-combine
-#+BEGIN_SRC python :var labels=vel-channels :results output
+#+BEGIN_SRC python :var labels=vel-channels slits="vert" :results output
   from astropy.io import fits
   import numpy as np
   nlist = [1, 2, 4, 8, 16]
@@ -931,7 +1079,7 @@ And here is a version for the velocity channels
       print('.+.'*12)
       print('Channel', label)
       for n, minw in reversed(list(zip(nlist, minweights))):
-          fn = 'all-vert-{}-bin{:03d}.fits'.format(label, n)
+          fn = 'all-{}-{}-bin{:03d}.fits'.format(slits, label, n)
           hdulist = fits.open(fn)
           im = hdulist['scaled'].data
           hdr = hdulist['scaled'].header
@@ -940,7 +1088,7 @@ And here is a version for the velocity channels
           print('Binning', n, '- pixels used', m.sum())
           outim[m] = im[m]
       fits.PrimaryHDU(header=hdr, data=outim).writeto(
-          'all-vert-{}-multibin.fits'.format(label), clobber=True)
+          'all-{}-{}-multibin.fits'.format(slits, label), clobber=True)
 #+END_SRC
 
 #+RESULTS: multigrid-combine
@@ -990,6 +1138,21 @@ Binning 1 - pixels used 1135
 #+end_example
 
 
+** Application to the horiz+vert set 
+
+#+call: multi-smooth[:results output](slits="slits, "label="sum")
+
+#+RESULTS:
+: nil
+
+
+#+name: just-integrated
++ sum
+
+#+call: multigrid-combine[:results output](labels=just-integrated, slits="slits")
+
+#+RESULTS:
+: nil
 
 * T diagnostics from linewidths
 + We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum
