@@ -136,16 +136,16 @@
 #+name: horizontal-image-and-fullspec
 | image |    slit |  night | jslit | dj | ishift | fac | bright | bgrad |
 |-------+---------+--------+-------+----+--------+-----+--------+-------|
-|   165 | 166-167 | 160213 | 468.5 | 12 |     67 | 5.5 |   0.73 |   1.4 |
-|   169 | 170-171 | 160213 | 468.5 | 12 |     65 | 5.3 |   0.69 |   1.4 |
-|   237 | 238-239 | 160213 | 467.0 | 12 |     74 | 5.5 |   0.93 |   1.0 |
-|   232 | 233-234 | 160213 | 468.5 | 12 |     75 | 5.8 |   0.94 |   1.0 |
-|   226 | 227-228 | 160213 | 468.5 | 12 |     75 | 6.0 |      1 |     1 |
-|   149 | 150-151 | 160213 | 468.0 | 12 |     70 | 5.0 |   0.71 |   1.5 |
-|   154 | 155-156 | 160213 | 467.2 | 12 |     67 | 5.2 |   0.72 |   1.5 |
-|   159 | 160-161 | 160213 | 467.5 | 12 |     67 | 5.4 |   0.75 |   1.5 |
-|   033 | 034-035 | 150213 | 467.0 | 12 |     67 | 5.5 |   0.71 |   0.8 |
-|   029 | 030-031 | 150213 | 465.2 |  6 |     76 | 6.0 |   0.71 |   0.8 |
+|   165 | 166-167 | 160213 | 468.5 | 12 |     67 | 5.5 |  0.777 |   1.4 |
+|   169 | 170-171 | 160213 | 468.5 | 12 |     65 | 5.3 |  0.744 |   1.4 |
+|   237 | 238-239 | 160213 | 467.0 | 12 |     74 | 5.5 |  0.969 |   1.0 |
+|   232 | 233-234 | 160213 | 468.5 | 12 |     75 | 5.8 |  1.000 |   1.0 |
+|   226 | 227-228 | 160213 | 468.5 | 12 |     75 | 6.0 |  0.998 |     1 |
+|   149 | 150-151 | 160213 | 468.0 | 12 |     70 | 5.0 |  0.825 |   1.7 |
+|   154 | 155-156 | 160213 | 467.2 | 12 |     67 | 5.2 |  0.862 |   1.7 |
+|   159 | 160-161 | 160213 | 467.5 | 12 |     67 | 5.4 |  0.818 |   1.7 |
+|   033 | 034-035 | 150213 | 467.0 | 12 |     67 | 5.5 |  0.837 |   0.8 |
+|   029 | 030-031 | 150213 | 465.2 |  6 |     76 | 6.0 |  0.847 |   0.8 |
 
 + [2015-08-21 Fri] I have measured the y-pixel position of the slit (=jslit=) on the images - it is roughly constant, but not quite
   + We have to be careful to use the "Image" coordinate, not the "Physical" one
@@ -166,6 +166,8 @@
   + Note that *bright is the reciprocal of bfac*, which I used in the table for the vertical slits 
   + The bgrad is for a linear E-W gradient correction to the brightnesses
   + I rounded it to 1 decimal place, since it is not that well determined
++ [2015-08-25 Tue] I redid the calculation of the =bright= factors, see [[id:23506DE2-4D98-40C5-961F-4715BE7A1F55][down here]], so we are now using the =corrnorm= column of the last table
++ Also experimented with increasing bgrad from 1.5 to 1.7 for 149, 154, 159
 
 #+header: :var table=horizontal-image-and-fullspec
 #+BEGIN_SRC python :return figfile :results file
@@ -251,6 +253,9 @@ CLOCK: [2015-08-22 Sat 17:29]
   + Either in [[file:~/Dropbox/SPMFEB13/WesternShocks/]]
   + Or in one of the date-named folders
 *** WCS values 
+:PROPERTIES:
+:ID:       F6ED03C3-EC32-4444-9746-4E3C2A15CD63
+:END:
 + These are with a different chip, and with binning of 3x2
 + Here I calculate a similar table to what I did for the [[id:6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D][vertical slits]]
 + This time we have dy = 0.52 arcsec
@@ -324,16 +329,16 @@ CLOCK: [2015-08-22 Sat 17:29]
 #+RESULTS: horizontal-all-parameters
 | image | spectrum | grating |      RA0 |     Dec0 |     dy |     PA | airmass | weight | delta |
 |-------+----------+---------+----------+----------+--------+--------+---------+--------+-------|
-|   165 |      166 |      12 | 83.62409 | -5.44097 | 0.5248 | 90.496 |    2.05 |   0.73 | -0.50 |
-|   169 |      170 |      13 | 83.62424 | -5.43831 | 0.5251 | 90.449 |    2.48 |   0.66 | -0.50 |
-|   237 |      238 |      11 | 83.62752 | -5.43613 | 0.5249 | 90.421 |    1.25 |   0.93 | -0.00 |
-|   232 |      233 |       9 | 83.62683 | -5.43216 | 0.5243 | 90.399 |    1.25 |   0.99 | -0.00 |
+|   165 |      166 |      12 | 83.62409 | -5.44097 | 0.5248 | 90.496 |    2.05 |   0.78 | -0.50 |
+|   169 |      170 |      13 | 83.62424 | -5.43831 | 0.5251 | 90.449 |    2.48 |   0.72 | -0.50 |
+|   237 |      238 |      11 | 83.62752 | -5.43613 | 0.5249 | 90.421 |    1.25 |   0.97 | -0.00 |
+|   232 |      233 |       9 | 83.62683 | -5.43216 | 0.5243 | 90.399 |    1.25 |   1.05 | -0.00 |
 |   226 |      227 |      10 | 83.61872 | -5.42951 | 0.5252 | 90.462 |    1.28 |   1.09 | -0.00 |
-|   149 |      150 |       4 | 83.63349 | -5.42399 | 0.5249 | 90.561 |    1.38 |   0.65 | -0.62 |
-|   154 |      155 |       5 | 83.63366 | -5.42268 | 0.5247 | 90.579 |    1.51 |   0.68 | -0.62 |
-|   159 |      160 |       9 | 83.63375 | -5.42026 | 0.5244 | 90.651 |    1.69 |   0.74 | -0.62 |
-|    33 |       34 |      -4 | 83.62033 | -5.41655 | 0.5149 | 89.637 |    1.31 |   0.71 |  0.25 |
-|    29 |       30 |      -4 | 83.61937 | -5.41543 | 0.5148 | 89.729 |    1.26 |   0.77 |  0.25 |
+|   149 |      150 |       4 | 83.63349 | -5.42399 | 0.5249 | 90.561 |    1.38 |   0.75 | -0.87 |
+|   154 |      155 |       5 | 83.63366 | -5.42268 | 0.5247 | 90.579 |    1.51 |   0.81 | -0.87 |
+|   159 |      160 |       9 | 83.63375 | -5.42026 | 0.5244 | 90.651 |    1.69 |   0.80 | -0.87 |
+|    33 |       34 |      -4 | 83.62033 | -5.41655 | 0.5149 | 89.637 |    1.31 |   0.84 |  0.25 |
+|    29 |       30 |      -4 | 83.61937 | -5.41543 | 0.5148 | 89.729 |    1.26 |   0.92 |  0.25 |
 
 
 *** Inter-position brightness calibration
@@ -374,7 +379,30 @@ CLOCK: [2015-08-22 Sat 17:29]
     + This is for a case W/E = 1.54 and it should scale with (W/E - 1)
     + So we get \delta = -1.24 (W/E - 1)
 + The columns "Mean" and "W/E" get copied to columns =bfac= and =bgrad= respectively in the [[id:6CE33437-BC17-49AA-B048-5BACCBB8C99B][table above]]
++ [2015-08-25 Tue] I was not satisfied with the brightness normalizations
+  + Some slits, notably 149, 154, 159 seem to be too bright in the combined image
+  + So I have remeasured the brightness in a central point (the bright clump just to the W of the nose of the giant bowshock)
+  + This gives slightly higher normalizations for those slits
+  + *BUT* we also need to account for the affect of the \delta correction on the reference point
+    + X0 = NX/2 = 312
+    + From the table, the Xpix values of the reference point can be smaller or larger than that
+    + So there is a further correction factor dcorr = 1 + \delta (Xpix - X0)/NX, which we have to /multiply/ the brightness norms by
+    + I copied the delta values from the table [[id:F6ED03C3-EC32-4444-9746-4E3C2A15CD63][here]]
+  + The result is that the corrections are closer to unity for nearly all the slits
 
+| image | bright | Xpix |  norm | delta | dcorr | corrnorm |
+|-------+--------+------+-------+-------+-------+----------|
+|   165 |    677 |  344 | 0.798 | -0.50 | 0.974 |    0.777 |
+|   169 |    646 |  341 | 0.762 | -0.50 | 0.977 |    0.744 |
+|   237 |    822 |  328 | 0.969 | -0.00 | 1.000 |    0.969 |
+|   232 |    848 |  334 |     1 | -0.00 | 1.000 |    1.000 |
+|   226 |    846 |  389 | 0.998 | -0.00 | 1.000 |    0.998 |
+|   149 |    673 |  284 | 0.794 | -0.87 | 1.039 |    0.825 |
+|   154 |    700 |  280 | 0.825 | -0.87 | 1.045 |    0.862 |
+|   159 |    663 |  279 | 0.782 | -0.87 | 1.046 |    0.818 |
+|   033 |    694 |  370 | 0.818 |  0.25 | 1.023 |    0.837 |
+|   029 |    697 |  386 | 0.822 |  0.25 | 1.030 |    0.847 |
+#+TBLFM: $4=$2/848;f3::$6=1 + $-1 ($3 - 312)/625 ;f3::$7=$-3 $-1; f3
 ** Jan 2010
 :LOGBOOK:
 CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
@@ -965,7 +993,11 @@ xpaset -p ds9 scale limits 0 6000
 
 
 
-** Combine two the horizontal and vertical slits
+** Combine both the horizontal and vertical slits
+:PROPERTIES:
+:dir:      ~/Dropbox/OrionWest
+:END:
+
 #+BEGIN_SRC python
 from astropy.io import fits
 scale = 1.8
@@ -984,13 +1016,60 @@ horiz.writeto('all-slits-sum.fits', clobber=True)
 xpaset -p ds9 fits $PWD/all-slits-sum.fits[3]
 #+END_SRC
 
+
++ Note that we have to explicitly set the working directory for this to work
+  + It is not enough that =dir= is set for this subtree
+#+call: multi-smooth[:dir .](label="sum", slits="slits")
+
+#+RESULTS:
+: Saving all-slits-sum-bin001.fits
+: Saving all-slits-sum-bin002.fits
+: Saving all-slits-sum-bin004.fits
+: Saving all-slits-sum-bin008.fits
+: Saving all-slits-sum-bin016.fits
+: Saving all-slits-sum-bin032.fits
+
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/all-slits-sum-bin032.fits['scaled']
+#+END_SRC
+
+
+Now we do the multiresolution maps for the combined data.  For the moment, just the spectrally integrated emission
+
+#+name: just-integrated
++ sum
+
+We need to extend the largest pixels used up to 32x32 in order to fill in all the big gaps between the horizontal slits 
+#+name: minweights-extended
+|   1 |   2 |   4 |   8 |  16 |  32 |
+| 1.0 | 2.0 | 4.0 | 4.0 | 4.0 | 4.0 |
+
+We can use the =imscale= parameter to adjust the resolution of the map.  If =imscale= is larger then we need a higher total flux for a pixel to be accepted, so we will end up with larger pixels 
+
+#+call: multigrid-combine[:dir .](labels=just-integrated, slits="slits", wtab=minweights-extended, imscale=150000)
+
+#+RESULTS:
+: .+..+..+..+..+..+..+..+..+..+..+..+.
+: Channel sum
+: Binning 32 - pixels used 218112
+: Binning 16 - pixels used 166144
+: Binning 8 - pixels used 37312
+: Binning 4 - pixels used 1344
+: Binning 2 - pixels used 44
+: Binning 1 - pixels used 0
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/all-slits-sum-multibin.fits
+#+END_SRC
+
 * The multigrid smoothing method
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
 :END:
 
 #+name: multi-smooth
-#+BEGIN_SRC python :var label="sum" slits="vert" :results output
+#+BEGIN_SRC python :var label="sum" :var slits="vert" :results output
   import sys
   sys.path.append('/Users/will/Work/RubinWFC3/Tsquared')
   from rebin_utils import downsample, oversample
@@ -1068,12 +1147,16 @@ And here is a version for the velocity channels
 + b70
 
 
+#+name: minweights-standard
+|   1 |   2 |   4 |   8 |  16 |
+| 0.5 | 1.0 | 2.0 | 2.0 | 2.0 |
+
 #+name: multigrid-combine
-#+BEGIN_SRC python :var labels=vel-channels slits="vert" :results output
+#+header: :var labels=vel-channels slits="vert" wtab=minweights-standard imscale=1000
+#+BEGIN_SRC python :results output
   from astropy.io import fits
   import numpy as np
-  nlist = [1, 2, 4, 8, 16]
-  minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
+  nlist, minweights = wtab
   outim = np.zeros((1024, 1024))
   for label in labels:
       print('.+.'*12)
@@ -1084,7 +1167,7 @@ And here is a version for the velocity channels
           im = hdulist['scaled'].data
           hdr = hdulist['scaled'].header
           w = hdulist['weight'].data
-          m = w*im >= minw*1000
+          m = w*im >= minw*imscale
           print('Binning', n, '- pixels used', m.sum())
           outim[m] = im[m]
       fits.PrimaryHDU(header=hdr, data=outim).writeto(
@@ -1138,22 +1221,6 @@ Binning 1 - pixels used 1135
 #+end_example
 
 
-** Application to the horiz+vert set 
-
-#+call: multi-smooth[:results output](slits="slits, "label="sum")
-
-#+RESULTS:
-: nil
-
-
-#+name: just-integrated
-+ sum
-
-#+call: multigrid-combine[:results output](labels=just-integrated, slits="slits")
-
-#+RESULTS:
-: nil
-
 * T diagnostics from linewidths
 + We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum
 + For the jet knots, assuming they are kinematically homogeneous, we should be able to measure the T from
@@ -1162,8 +1229,12 @@ Binning 1 - pixels used 1135
   + FWHM in Ha = 23.77 km/s
   + => thermal FWHM = sqrt((23.77**2 - 12.76**2) (14/13)) = 20.8 km/s
   + So basically 1e4 K, which is not surprising
-
-
+* The big bowshock
++ There is a giant, possibly double, possibly triple bow
++ It's N wing crosses LL2, and is red-shifted
+  + And has measured proper motion
++ The nose looks red-shifted too
++ It would be good to get proper motions of the nose
 * Coordinates of the slits
 + Data received from Alba [2015-08-11 Tue]
 
