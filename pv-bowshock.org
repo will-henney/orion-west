@@ -1,0 +1,112 @@
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:{} arch:headline
+#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+TITLE: PV diagrams from bowshocks
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+
+
+* Circular shocks
+:PROPERTIES:
+:noweb:    yes
+:END:
+#+name: imports
+#+BEGIN_SRC python
+  import numpy as np
+  from matplotlib import pyplot as plt
+  import seaborn as sns
+#+END_SRC
+
+#+name: functions
+#+BEGIN_SRC python
+  def v(theta):
+      "Line of sight velocity"
+      return np.cos(theta)*np.sin(inc - theta)
+
+  def x(theta):
+      "Plane of sky position"
+      return np.cos(inc - theta)
+#+END_SRC
+
+** Meridian plane
+:LOGBOOK:
+- Note taken on [2015-08-29 Sat 22:21]
+:END:
+#+BEGIN_SRC python :return figfile :results file
+  <<imports>>
+  <<functions>>
+
+  figfile = 'v-vs-x-circle.png'
+  theta = np.linspace(-np.pi/2, np.pi/2, 300)
+
+  inclinations = [0, 30, 60, 90]
+  colors = sns.color_palette('muted', n_colors=4)
+  for inc_dg, c in zip(inclinations, colors):
+      inc = np.radians(inc_dg)
+      plt.plot([x(0.0)], [v(0.0)], ls='', marker='o', c=c, mfc=c, mec='w')
+      thp, thn = inc/2 + np.pi/4, inc/2 - np.pi/4
+      plt.plot([x(thn)], [v(thn)], ls='', marker='v', c=c, mfc=c, mec=c)
+      plt.plot([x(thp)], [v(thp)], ls='', marker='^', c=c, mfc=c, mec=c)
+      plt.plot(x(theta), v(theta), color=c, label='inc = {}'.format(inc_dg))
+  plt.legend(fontsize='x-small', loc='lower left', ncol=2)
+  plt.xlabel('Displacement, x')
+  plt.ylabel('Doppler shift, v')
+  plt.title('PV diagrams for a hemi-spherical bowshock')
+  plt.xlim(-1.1, 1.1)
+  plt.ylim(-0.6, 1.1)
+  plt.gcf().set_size_inches((5,3))
+  plt.gcf().tight_layout()
+  plt.savefig(figfile)
+#+END_SRC
+
+#+RESULTS:
+[[file:v-vs-x-circle.png]]
+
++ Inclination is with respect to the plane of the sky
++ The dot shows the position of the "nose" of the bowshock
+  + Which should be the brightest part
+  + And has \(v = \sin i\)
++ The triangles show the max and min velocities reached
+  + Occurs at \(\theta = \frac12 i \pm \frac14 \pi\)
+  + Note for intermediate inclinations this is higher than the "nose" velocity (which is what you get in the "bullet" approximation)
+
+#+BEGIN_SRC python :return figfile :results file
+  <<imports>>
+  <<functions>>
+  figfile = 'vmax-vs-inc-circle.png'
+  inc = np.linspace(0, np.pi/2, 300)
+  inc_dg = np.degrees(inc)
+  with sns.color_palette('muted'):
+      plt.plot(inc_dg, v(inc/2 + np.pi/4), label='Vmax')
+      plt.plot(inc_dg, v(0), label='Vnose')
+      plt.plot(inc_dg, v(inc/2 - np.pi/4), label='Vmin')
+
+  plt.legend(fontsize='x-small', loc='right')
+  plt.xlabel('Inclination, i')
+  plt.ylabel('Doppler shift, v')
+  plt.title('Characteristic velocities for a hemi-spherical bowshock')
+  plt.xlim(-5.0, 95.0)
+  plt.ylim(-0.6, 1.1)
+  plt.gcf().set_size_inches((5,3))
+  plt.gcf().tight_layout()
+  plt.savefig(figfile)
+#+END_SRC
+
+#+RESULTS:
+[[file:vmax-vs-inc-circle.png]]
+
+Note that Vmax - Vmin is always 1, which is just that the FWZI is equal to the shock speed
+
+** Propagation into a moving medium
+
+
+* Make images redisplay after source block evaluation
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+#+END_SRC
+
+#+RESULTS:
+| org-redisplay-inline-images |
+
