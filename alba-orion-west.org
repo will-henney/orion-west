@@ -2271,6 +2271,30 @@ Binning 1 - pixels used 1135
 
 
 
+* Proper motions of the Orion West shocks 
++ [2015-08-26 Wed] Today I discovered that there is a new Massimo Robberto program that has re-observed the whole of Orion with the ACS F775W filter
++ And also various bits with the F130N and F139M WFC3 IR filters
++ This will allow us do to proper motion measurements of all the interesting shocks in our field
++ Relevant images are as follows:
+  + JCOL02010 for ACS field W of LL2
+  + JCOL09010 (ORIMOS-16) for ACS field just below that, containing the nose of the giant bowshock
+  + JCOL03010 ACS includes LL2 and region immediately to W
+  + ICOL22030 WFC3 IR image of region W of LL2
+  + JCOL05010 ACS field of the big gap between trapezium and LL2
+  + JCOL11010 ACS way S with filaments along extension of bright bar
++ Missing images
+
++ Older images that we might use
+  + An [S II] WFPC2 image that covers the circular bubble to the S of LL2 plus the upper partial "nose" of the big bowshock: U8OC2604M from Bally's ACS program 9825
+  + [X] We should actually get the entire set of these
+    + [2015-08-27 Thu] Downloaded to =/fs/nil/other0/will/orion-bally-wfpc2-2004/=
+  + There is a interesting bowshock seen in [S II] to the W of the end of HH269, but not quite as W as the flatter bow that we can see in Ha and NIR
+    + RA: 05 34 59.81
+    + Dec: -05 23 39.94
+    + Image: U8OC1804M
+  + This could be a candidate for the same flow as the big bowshock
+  + We also need to look into possible correspondences with the molecular outflows from Orion S
+
 * Modifying org export to include header arguments                 :noexport:
 Based on http://kitchingroup.cheme.cmu.edu/blog/2014/09/22/Showing-what-data-went-into-a-code-block-on-export/
 
