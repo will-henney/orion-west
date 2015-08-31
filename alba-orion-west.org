@@ -246,6 +246,14 @@
 * Datasets that we will use
 
 ** Odd slits that we don't want to forget
++ 2007 Jan
+  + Some of the LL1 slits show blueshifted emission at their N end
+    + spec060-oiii
+    + spec055-ha
+    + spec068-ha
+    + spec073-ha
+  + Unfortunately, most of the slits were put too far South to see this
+  + The [O III] slits from 2013 Dec Orion S don't quite go far west enough to reach this, and the same is true of the Orion S slits from 2007
 + 2010 Jan
   + spm078 (Ha, [N II])
   + spm085 ([S II])
@@ -260,14 +268,69 @@
   + This is a horizontal slit across LL2 (just N of star)
   + It shows that a blue emission layer stops just in front of the LL2 bow
 + 2013 Dec
+  + There is one extra position just below LL2 - spm116
+    + Unfortunately, it is low s/n
 + 2015 Feb
   + 0013 and 0003
   + More horizontal slits in the middle part
   + These are similar to the slits from Dec 2013
-** Feb 2015
-+ These are in [[file:~/Dropbox/SPMFEB15/][file:~/Dropbox/SPMFEB15/]]
 ** Dec 2013
 + These are in [[file:~/Dropbox/papers/LL-Objects/SPMDIC13/][file:~/Dropbox/papers/LL-Objects/SPMDIC13/]]
++ They are horizontal slits in between LL2 and Orion S
+** Feb 2015
++ These are in [[file:~/Dropbox/SPMFEB15/][file:~/Dropbox/SPMFEB15/]]
++ They are horizontal slits in between LL2 and Orion S with a new chip
+** Jan 2007 and Feb 2006
+:PROPERTIES:
+:ID:       CB720DCF-0A33-4C51-9A0B-932030BC0E45
+:END:
++ These are the HH 505 observations in [[file:~/Work/SPM2007/Reduced/HH505/slits/reducciones/][file:~/Work/SPM2007/Reduced/HH505/slits/reducciones/]]
++ And also in [[file:~/Work/SPM2005/]] for the older ones
+  + Not sure why the folder is called 2005 rather than 2006
+  + With reduced versions of these in [[file:~/Work/SPM2007/Reduced/HH505/slits/SPMha/]]
++ They are mainly vertical, but there are a few horizontal slits
+*** Original database for vertical slits
++ Taken from [[file:~/Work/SPM2007/Reduced/HH505/slits/reducciones/jw0.csv][jw0.csv]]
++ I have removed the following columns from the table because they were constants:
+  + lamrest = 6562.82
+  + lamscale = 0.04375213
+  + d vel =  2
+  + NX = 300
+  + NY = 512
+  + ufiddle = 0
+  + fluxfiddle = 1
+|         |         RA |        Dec | dataset | lam0 | helio corr | ypixscale | jcenter | True File           |
+|---------+------------+------------+---------+------+------------+-----------+---------+---------------------|
+| jw0e068 | -0.6828000 |  -15.91200 |       1 | 6557 |      -13.3 |      0.62 |     316 | spec2062-ha.fits    |
+| jw0e043 | -0.4308000 | -0.7920000 |       2 | 6558 |     -21.53 |     0.623 |     182 | spec324-halpha.fits |
+| jw0e024 | -0.2388000 |   5.579999 |       2 | 6558 |      -21.5 |     0.623 |     183 | spec319-halpha.fits |
+| jw0e022 | -0.2243999 |  -38.23200 |       1 | 6557 |     -12.91 |      0.62 |     317 | spec2038-ha.fits    |
+| jw0e004 | -0.0419999 | -0.2160000 |       2 | 6558 |     -20.92 |      0.62 |     200 | spec261-halpha.fits |
+| jw0w012 |   0.116399 |   3.671999 |       2 | 6558 |     -21.03 |     0.622 |     196 | spec271-halpha.fits |
+| jw0w020 |   0.202799 |   3.960000 |       2 | 6558 |     -21.09 |     0.621 |     193 | spec277-halpha.fits |
+| jw0w040 |  0.4019999 |   6.335999 |       2 | 6558 |     -21.15 |     0.622 |     192 | spec282-halpha.fits |
+| jw0w056 |  0.5604000 |   6.515999 |       2 | 6558 |     -21.21 |     0.622 |     191 | spec287-halpha.fits |
+| jw0w062 |  0.6179999 |   6.551999 |       2 | 6558 |     -21.27 |     0.619 |     189 | spec292-halpha.fits |
+| jw0w086 |  0.8628000 |   7.955999 |       2 | 6558 |     -21.32 |     0.621 |     189 | spec297-halpha.fits |
+| jw0w092 |  0.9227999 |  -36.21600 |       1 | 6557 |     -12.97 |      0.62 |     316 | spec2042-ha.fits    |
+| jw0w122 |   1.220399 |   5.543999 |       2 | 6558 |     -21.39 |     0.619 |     187 | spec304-halpha.fits |
+| jw0w143 |   1.433999 |  -35.13600 |       1 | 6557 |     -13.04 |     0.622 |     191 | spec2046-ha.fits    |
+| jw0w186 |   1.863599 |  -34.77600 |       1 | 6557 |      -13.1 |     0.621 |     316 | spec2050-ha.fits    |
+| jw0w238 |   2.379599 |  -14.68800 |       1 | 6557 |     -13.18 |     0.619 |     316 | spec2054-ha.fits    |
+| jw0w300 |   2.996399 |  -16.27200 |       1 | 6557 |     -13.24 |     0.619 |     316 | spec2058-ha.fits    |
+| jw0w323 |   3.231599 |   3.887999 |       2 | 6558 |     -21.47 |     0.623 |     184 | spec312-halpha.fits |
+
++ They seem to be from two different sets:
+  + The 20XX-ha ones from Jan 2007
+    + There are also 2022, 2076, 2081 that aren't used here
+    + 2022 is a horizontal slit
+    + 2076 and 2081 are [O III] Orion S slits (why did we never use these?)
+  + and the XXX-halpha ones from Feb 2006
+    + Unfortunately, I don't have the spmXXX-ardec.fits files for those
+    + [ ] Write to Teresa and see if she has them
+    + An example image+slit is pp260.fits
+
+
 ** Feb 2013
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMFEB13/WesternShocks
