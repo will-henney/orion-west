@@ -11,6 +11,53 @@
 #+PROPERTY: header-args    :exports both
 
 
+* TODO New general version of the slit flux calibration and astrometry
++ It would be better to use the [[file:~/Work/OrionTreasury/wfi/][WFI images]] to flux calibrate the spectra
+  + As well as being more reliable, this is necessary in the case of some of the LL2 slits, since the Image+slit was taken in [S II] instead of H alpha
++ We will apply it first to the LL2 slits, plus any other odd slits that are lying around
+  + With the plan being to add in the original horizontal and vertical slits afterwards
++ As well as flux calibration, it will also help with the offset along the slit
+
+
+** General policy for the workflow
++ The previous version had used org-babel source blocks that read directly from org-mode tables.
+  - This is convenient for rapid development
+  - But it makes the overall logic hard to follow
+  - And hard to share with anyone not using emacs
++ So for this implementation I plan to do the following:
+  1. Tangle all python scripts to files
+  2. Write all data tables to files
+     - Initial input table can be written as TSV from org table
+     - Do I use JSON or astropy tables written to TSV, or to FITS or ...?
+  3. Do I control it all with a makefile?
+
+** Outline of steps
+
+1. We use the image+slit in order to find the slit reference position
+   + The image-spectrum offset along the slit has to be found iteratively through a later step
+2. Compare the spectrum profile (=spec=) with a synthetic slit (=image=) on the WFI image
+   + Similar to [[id:0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B][Application to the vertical slits]] and [[id:6CE33437-BC17-49AA-B048-5BACCBB8C99B][Repeat for the horizontal slits]]
+   + Find the =jshift= value that best matches up the profiles
+   + Find brightness normalization
+     + Check for calibration gradients along the slit by plotting =spec/image= against =y=
+     + Check for zero point errors by plotting  =spec= against =image=
+     + [ ] One problem will be disentangling the above two effects, because if there is a strong systematic brightness gradient along the slit then their effects will be degenerate
+   + Write out the slit astrometry and flux calibration to a table, similar to how we did [[id:6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D][here]] for the vertical slits and [[id:F6ED03C3-EC32-4444-9746-4E3C2A15CD63][here]] for the horizontal slits 
+3. Project the calibrated spectra onto a common spatial grid
+   + For different velocity ranges
+     + This requires finding the heliocentric correction
+   + This is what we already did for the [[id:23C29E96-4471-454E-A463-D365731119C0][vertical]] and [[id:60833550-A462-4F18-86DE-895625FF3E7A][horizontal]] slits
+     + We need to generalise this slightly so we can treat any PA (maybe that will work out of the box) and both cases for the dimension order of the spectra files (Y-V, or V-Y)
+
+** Table of all slits 
+:PROPERTIES:
+:TABLE_EXPORT_FILE: all-slits-input.tab
+:TABLE_EXPORT_FORMAT: orgtbl-to-tsv
+:END:
+This does not have all the slits yet, but it will eventually (I hope)
+
+| |
+
 * Dealing with the offset between image and spectrum
 + It seems that this is not as constant as I had hoped
   + In the [[id:8685D060-12A9-4E73-B069-11D5315ED8EB][vertical slits]] it varies from 52 to 60 pixels
@@ -327,7 +374,7 @@
     + 2076 and 2081 are [O III] Orion S slits (why did we never use these?)
   + and the XXX-halpha ones from Feb 2006
     + Unfortunately, I don't have the spmXXX-ardec.fits files for those
-    + [ ] Write to Teresa and see if she has them
+    + [X] Write to Teresa and see if she has them
     + An example image+slit is pp260.fits
 
 
@@ -462,7 +509,7 @@ CLOCK: [2015-08-22 Sat 17:29]
 
 + So to correct the brightness gradients, we use the following:
   + For =149=, we have brightness the same brightness as 226 in the W side, but 0.5 times the brightness in the E side
-  + So we will try multiplying by a linear function (1 + delta*(i - 0.5*NX)/NX)
+  + So we will try multiplying by a linear function =(1 + delta*(i - 0.5*NX)/NX)=
   + For this case, we want (1 + 0.5 \delta)/(1 - 0.5 \delta) = 0.5 (remember that i increases from W to E)
     + => 1 + 0.5 \delta = 0.5 - 0.25 \delta => 0.5 = -0.75 \delta => \delta = -2/3
     + This is for a case W/E = 1.54 and it should scale with (W/E - 1)
@@ -746,6 +793,7 @@ spm078, spm085
 ** Test with the velocity-integrated emission
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
+:ID:       23C29E96-4471-454E-A463-D365731119C0
 :END:
 :LOGBOOK:
 - Note taken on [2015-08-25 Tue 11:41] \\
@@ -1770,6 +1818,7 @@ xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 ** Repeat the spectral map for the horizontal slits
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMFEB13/WesternShocks
+:ID:       60833550-A462-4F18-86DE-895625FF3E7A
 :END:
 + We can't use the same program as for the vertical slits because the table has extra columns
   + In particular, it has the \delta parameter to account for the linear brightness correction along the slit
