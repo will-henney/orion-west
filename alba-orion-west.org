@@ -70,17 +70,17 @@
 + The Notes column is just to remind us 
 | Dataset | imid | specid | Notes                |
 |---------+------+--------+----------------------|
-| 2006-02 |      |    324 | LL2 first epoch      |
-| 2006-02 |      |    319 |                      |
-| 2006-02 |      |    261 |                      |
-| 2006-02 |      |    271 |                      |
-| 2006-02 |      |    277 |                      |
-| 2006-02 |      |    282 |                      |
-| 2006-02 |      |    287 |                      |
-| 2006-02 |      |    292 |                      |
-| 2006-02 |      |    297 |                      |
-| 2006-02 |      |    304 |                      |
-| 2006-02 |      |    312 |                      |
+| 2006-02 |  323 |    324 | LL2 first epoch      |
+| 2006-02 |  318 |    319 |                      |
+| 2006-02 |  260 |    261 |                      |
+| 2006-02 |  270 |    271 |                      |
+| 2006-02 |  276 |    277 |                      |
+| 2006-02 |  281 |    282 |                      |
+| 2006-02 |  286 |    287 |                      |
+| 2006-02 |  291 |    292 |                      |
+| 2006-02 |  296 |    297 |                      |
+| 2006-02 |  303 |    304 |                      |
+| 2006-02 |  313 |    312 | Image follows spec!  |
 |---------+------+--------+----------------------|
 | 2007-01 |      |   2062 | LL2 second epoch     |
 | 2007-01 |      |   2038 |                      |
@@ -123,11 +123,45 @@ import os
   tab = Table.read('all-slits-input.tab', format='ascii.tab')
 #+END_SRC
 
+*** Fits files for the spectra and image+slit
++ These are each a dictionary of template formats, which is keyed by the date of observations (YYYY-MM)
++ There is a separate template for
+  1. The original full spectrum file, which includes ha and nii
+     - This is only used for the flux calibration and positioning, summing up in the wavelength direction
+     - So it doesn't matter that it isn't rectified
+     - [ ] Ideally it will be CR-rejected and bias-subtracted, but I am not sure I have those for all datasets
+  2. The extracted Ha line
+  3. The extracted [N II] line
+  4. The image+slit exposure
+     - I only use this for finding the ra, dec of the slit center
+#+BEGIN_SRC python
+  fullspecfile_template = {
+      '2006-02': 'Work/SPM2005/pp{:03d}.fits',
+  }
+
+  hafile_template = {
+      '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{:03d}-halpha.fits',
+  }
+  niifile_template = {
+      '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{:03d}-nii.fits',
+  }
+
+  imfile_template = {
+      '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{:03d}-ardec.fits',
+  }
+#+END_SRC
+
+
 *** Construct the synthetic slit from the reference image
 A function to trace the profile of a slit
 + Input are arrays of RA and Dec coordinates
 + Together with the image itself and its WCS object
-+ Output is an array of the profile, calculated from the nearest pixel
++ Output is an array of the profile along the slit
+  + Although the function makes no assumption about the geometry of the coordinate arrays, so it doesn't /need/ to be a slit
++ [ ] Currently the output profile is simply calculated from the nearest pixel, but I have grander plans for this eventually:
+  - I should construct a logical mask for each slit pixel, based on the pixel size, and then average all the image pixels for which the mask is True
+  - This will be pretty slow if I am using the entire reference image array every time
+  - So I should first extract a sub-image, given by the limits of the slit
 #+BEGIN_SRC python
   def slit_profile(ra, dec, image, wcs):
       """
@@ -138,13 +172,19 @@ A function to trace the profile of a slit
       return np.array([image[j, i] for i, j in zip(ii, jj)])
 #+END_SRC
 
-The actual phootometric standard image we asre going to use.  This is from Massimo's ground-based program
+The actual photometric standard image we are going to use.  This is from Massimo's ground-based program.  The pixel size is 0.238 arcsec 
 #+BEGIN_SRC python
   wfi_dir = '/Users/will/Work/OrionTreasury/wfi'
   photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
   wphot = WCS(photom.header)
 #+END_SRC
 
+*** Loop over the slit positions and do the stuff
+#+BEGIN_SRC python
+  for row in tab:
+      imslitfile = 
+      specfile = 
+#+END_SRC
 *** Test what is going on 
 #+BEGIN_SRC python
   print(wphot.wcs)
