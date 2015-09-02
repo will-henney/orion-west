@@ -54,9 +54,283 @@
 :TABLE_EXPORT_FILE: all-slits-input.tab
 :TABLE_EXPORT_FORMAT: orgtbl-to-tsv
 :END:
-This does not have all the slits yet, but it will eventually (I hope)
+:LOGBOOK:
+- Note taken on [2015-09-01 Tue 15:20] \\
+  I haven't quite decide what is going into this table yet.  
+  + It will at least have the dataset (YYYY-MM) and the ids for the image+slit and/or the spectrum.
+  + Currently it also has a column for notes, so I can remember what is what.
+  + Do I want to add the values if we determine them by hand?
+    + Position of slit on image
+    + Offset image-spectrum
+    + Flux calibration
+  + Or alternatively, could we determine all of those automatically?
+    + Probably not
+:END:
++ This does not have all the slits yet, but it will eventually (I hope)
++ The Notes column is just to remind us 
+| Dataset | imid | specid | Notes                |
+|---------+------+--------+----------------------|
+| 2006-02 |      |    324 | LL2 first epoch      |
+| 2006-02 |      |    319 |                      |
+| 2006-02 |      |    261 |                      |
+| 2006-02 |      |    271 |                      |
+| 2006-02 |      |    277 |                      |
+| 2006-02 |      |    282 |                      |
+| 2006-02 |      |    287 |                      |
+| 2006-02 |      |    292 |                      |
+| 2006-02 |      |    297 |                      |
+| 2006-02 |      |    304 |                      |
+| 2006-02 |      |    312 |                      |
+|---------+------+--------+----------------------|
+| 2007-01 |      |   2062 | LL2 second epoch     |
+| 2007-01 |      |   2038 |                      |
+| 2007-01 |      |   2042 |                      |
+| 2007-01 |      |   2046 |                      |
+| 2007-01 |      |   2050 |                      |
+| 2007-01 |      |   2054 |                      |
+| 2007-01 |      |   2058 |                      |
+|---------+------+--------+----------------------|
+| 2007-01 |      |    055 | LL1 extreme N        |
+| 2007-01 |      |    068 |                      |
+| 2007-01 |      |    073 |                      |
+|---------+------+--------+----------------------|
+| 2010-01 |  078 |        | Vertical W of LL2    |
+|---------+------+--------+----------------------|
+| 2013-02 |  024 |        | Horizontal LL2       |
+|---------+------+--------+----------------------|
+| 2013-12 |  016 |        | Horizontal below LL2 |
+|---------+------+--------+----------------------|
+| 2015-02 |      |   0003 |                      |
+| 2015-02 |      |   0013 |                      |
+|---------+------+--------+----------------------|
 
-| |
+
+** Program to perform flux calibration: slit-calibration.py
+:PROPERTIES:
+:header-args: :tangle slit-calibration.py :comments link
+:END:
+
+*** Imports
+#+BEGIN_SRC python
+from astropy.table import Table
+from astropy.io import fits
+from astropy.wcs import WCS
+import os
+#+END_SRC
+
+*** Read in the table of all slits
+#+BEGIN_SRC python
+  tab = Table.read('all-slits-input.tab', format='ascii.tab')
+#+END_SRC
+
+*** Construct the synthetic slit from the reference image
+A function to trace the profile of a slit
++ Input are arrays of RA and Dec coordinates
++ Together with the image itself and its WCS object
++ Output is an array of the profile, calculated from the nearest pixel
+#+BEGIN_SRC python
+  def slit_profile(ra, dec, image, wcs):
+      """
+      Find the image intensity for a list of positions (ra and dec)
+      """
+      xi, yj = wcs.all_world2pix(ra, dec, 0)
+      ii, jj = int(xi + 0.5), int(yi + 0.5)
+      return np.array([image[j, i] for i, j in zip(ii, jj)])
+#+END_SRC
+
+The actual phootometric standard image we asre going to use.  This is from Massimo's ground-based program
+#+BEGIN_SRC python
+  wfi_dir = '/Users/will/Work/OrionTreasury/wfi'
+  photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
+  wphot = WCS(photom.header)
+#+END_SRC
+
+*** Test what is going on 
+#+BEGIN_SRC python
+  print(wphot.wcs)
+  # for row in tab:
+  #     print([row[x] for x in ('Dataset', 'imid', 'specid', 'Notes')])
+#+END_SRC
+
+** Run slit-calibration.py
+#+BEGIN_SRC sh :results verbatim
+python slit-calibration.py
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+       flag: 137
+      naxis: 2
+      crpix: 0x1005a00b0
+               4538         4346      
+         pc: 0x1005ab020
+    pc[0][]:  -6.6111e-05   0         
+    pc[1][]:   0            6.6111e-05
+      cdelt: 0x10059d2e0
+               1            1         
+      crval: 0x10056fdd0
+               83.744      -5.4471    
+      cunit: 0x1005b9f30
+             "deg"
+             "deg"
+      ctype: 0x1005c0210
+             "RA---TAN"
+             "DEC--TAN"
+    lonpole: 180.000000
+    latpole: -5.447127
+    restfrq: 0.000000
+    restwav: 0.000000
+        npv: 0
+     npvmax: 0
+         pv: 0x0
+        nps: 0
+     npsmax: 0
+         ps: 0x0
+         cd: 0x1005b9fc0
+    cd[0][]:  -6.6111e-05   0         
+    cd[1][]:   0            6.6111e-05
+      crota: 0x1005ba580
+               0            0         
+     altlin: 2
+     velref: 0
+        alt: ' '
+     colnum: 0
+      colax: 0x1005b0630
+                 0      0
+    wcsname: UNDEFINED
+      cname: 0x10058bda0
+             UNDEFINED
+             UNDEFINED
+      crder: 0x1005bb3d0
+             UNDEFINED     UNDEFINED   
+      csyer: 0x1005abf70
+             UNDEFINED     UNDEFINED   
+    radesys: "FK5"
+    equinox: 2000.000000
+    specsys: UNDEFINED
+    ssysobs: UNDEFINED
+    velosys: UNDEFINED
+    ssyssrc: UNDEFINED
+    zsource: UNDEFINED
+     obsgeo: UNDEFINED     UNDEFINED     UNDEFINED     
+    dateobs: UNDEFINED
+    dateavg: UNDEFINED
+     mjdobs: UNDEFINED
+     mjdavg: UNDEFINED
+       ntab: 0
+        tab: 0x0
+       nwtb: 0
+        wtb: 0x0
+      types: 0x100553470
+            2200 2201
+     lngtyp: "RA"
+     lattyp: "DEC"
+        lng: 0
+        lat: 1
+       spec: -1
+   cubeface: -1
+        err: 0x0
+        lin: (see below)
+        cel: (see below)
+        spc: (see below)
+     m_flag: 137
+    m_naxis: 2
+    m_crpix: 0x1005a00b0  (= crpix)
+       m_pc: 0x1005ab020  (= pc)
+    m_cdelt: 0x10059d2e0  (= cdelt)
+    m_crval: 0x10056fdd0  (= crval)
+    m_cunit: 0x1005b9f30  (= cunit)
+    m_ctype: 0x1005c0210  (= ctype)
+       m_pv: 0x0  (= pv)
+       m_ps: 0x0  (= ps)
+       m_cd: 0x1005b9fc0  (= cd)
+    m_crota: 0x1005ba580  (= crota)
+
+    m_colax: 0x1005b0630  (= colax)
+    m_cname: 0x10058bda0  (= cname)
+    m_crder: 0x1005bb3d0  (= crder)
+    m_csyer: 0x1005abf70  (= csyer)
+      m_tab: 0x0  (= tab)
+      m_wtb: 0x0  (= wtb)
+
+   lin.*
+       flag: 137
+      naxis: 2
+      crpix: 0x1005a00b0
+               4538         4346      
+         pc: 0x1005ab020
+    pc[0][]:  -6.6111e-05   0         
+    pc[1][]:   0            6.6111e-05
+      cdelt: 0x10059d2e0
+               1            1         
+      unity: 0
+        err: 0x0
+piximg[0][]:  -6.6111e-05   0         
+piximg[1][]:   0            6.6111e-05
+imgpix[0][]:  -15126       -0         
+imgpix[1][]:   0            15126     
+     m_flag: 0
+    m_naxis: 0
+    m_crpix: 0x0
+       m_pc: 0x0
+    m_cdelt: 0x0
+
+   cel.*
+      flag: 137
+     offset: 0
+       phi0:  0.000000
+     theta0: 90.000000
+       ref:   83.744      -5.4471       180         -5.4471    
+       prj: (see below)
+     euler:   83.744       95.447       180         -0.094927     0.99548   
+    latpreq: 0 (not required)
+     isolat: 0
+        err: 0x0
+
+   prj.*
+       flag: 103
+       code: "TAN"
+         r0: 57.295780
+         pv: (not used)
+       phi0:  0.000000
+     theta0: 90.000000
+     bounds: 7
+
+       name: "gnomonic"
+   category: 1 (zenithal)
+    pvrange: 0
+  simplezen: 1
+  equiareal: 0
+  conformal: 0
+     global: 0
+  divergent: 1
+         x0: 0.000000
+         y0: 0.000000
+        err: 0x0
+        w[]:   0            0            0            0            0         
+               0            0            0            0            0         
+          m: 0
+          n: 0
+     prjx2s: 0x0105aafb50
+     prjs2x: 0x0105aaf510
+
+   spc.*
+       flag: 0
+       type: "    "
+       code: "   "
+      crval: UNDEFINED
+    restfrq: 0.000000
+    restwav: 0.000000
+         pv: (not used)
+          w:   0            0            0           (remainder unused)
+    isGrism: 0
+        err: 0x0
+     spxX2P: 0x0
+     spxP2S: 0x0
+     spxS2P: 0x0
+     spxP2X: 0x0
+
+#+end_example
 
 * Dealing with the offset between image and spectrum
 + It seems that this is not as constant as I had hoped
@@ -121,53 +395,53 @@ This does not have all the slits yet, but it will eventually (I hope)
         + These tend to have high values of bfac
 
 #+header: :var table=vertical-image-and-fullspec
-#+BEGIN_SRC python :return figfile :results file
-  from astropy.io import fits
-  import numpy as np
-  import matplotlib.pyplot as plt
-  import seaborn as sns; sns.set()
-  sns.set_color_codes()
+#+BEGIN_SRC python
+from astropy.io import fits
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+sns.set_color_codes()
 
-  nspec = 12
-  ny = 512
-  figfile = 'image-spec-offsets.pdf'
-  yarray = np.arange(ny)
-  layout = {'left': 0.05, 'bottom': 0.07, 'right': 0.99, 'top': 0.95,
-            'wspace': 0.02, 'hspace': 0.02}
-  fig, axgrid = plt.subplots(4, 4, sharex=True, sharey=True, gridspec_kw=layout)
-  tweak = 1.2
-  for (imid, specid, islit, jshift, factor, bfac), ax in zip(table, axgrid.flat):
-      imfile = 'posiciones/spm{}-ardec.fits'.format(imid)
-      specfile = 'spm{}h.fits'.format(specid)
-      islit = int(float(islit))
-      jshift = float(jshift)
-      factor = float(factor)
-      bfac = float(bfac)
+nspec = 12
+ny = 512
+figfile = 'image-spec-offsets.pdf'
+yarray = np.arange(ny)
+layout = {'left': 0.05, 'bottom': 0.07, 'right': 0.99, 'top': 0.95,
+          'wspace': 0.02, 'hspace': 0.02}
+fig, axgrid = plt.subplots(4, 4, sharex=True, sharey=True, gridspec_kw=layout)
+tweak = 1.2
+for (imid, specid, islit, jshift, factor, bfac), ax in zip(table, axgrid.flat):
+    imfile = 'posiciones/spm{}-ardec.fits'.format(imid)
+    specfile = 'spm{}h.fits'.format(specid)
+    islit = int(float(islit))
+    jshift = float(jshift)
+    factor = float(factor)
+    bfac = float(bfac)
 
-      imhdu, = fits.open(imfile)
-      spechdu, = fits.open(specfile)
-  
-      imhdu.data -= 1170.0  # remove bias
-      improfile = imhdu.data[:, islit-3:islit+3].sum(axis=1)
-      specprofile = spechdu.data.sum(axis=1)
- 
-      ax.plot(yarray+jshift, bfac*improfile/(1e4*tweak), label='image',
-              c='r', lw=2, alpha=0.3)
-      ax.plot(yarray, bfac*specprofile/(1e4*factor), label='spectrum',
-              c='k', lw=0.6)
+    imhdu, = fits.open(imfile)
+    spechdu, = fits.open(specfile)
 
-      text_pattern = 'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'
-      text = text_pattern.format(imid, jshift, factor/4.4, 1.0/bfac)
-      ax.text(300, 0.1, text, ha='center', va='bottom', fontsize=7)
+    imhdu.data -= 1170.0  # remove bias
+    improfile = imhdu.data[:, islit-3:islit+3].sum(axis=1)
+    specprofile = spechdu.data.sum(axis=1)
 
-  axgrid[0, 0].legend(fontsize='xx-small', loc='upper left')
-  axgrid[0, 0].set_xlim(0.0, 640)
-  axgrid[0, 0].set_ylim(0.0, 5.5)
-  axgrid[-1, 2].set_xlabel('pixel')
-  axgrid[1, 0].set_ylabel('intensity')
-  fig.suptitle('Alignment and flux calibration of vertical slits')
-  fig.set_size_inches(11, 8.5)
-  fig.savefig(figfile)
+    ax.plot(yarray+jshift, bfac*improfile/(1e4*tweak), label='image',
+            c='r', lw=2, alpha=0.3)
+    ax.plot(yarray, bfac*specprofile/(1e4*factor), label='spectrum',
+            c='k', lw=0.6)
+
+    text_pattern = 'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'
+    text = text_pattern.format(imid, jshift, factor/4.4, 1.0/bfac)
+    ax.text(300, 0.1, text, ha='center', va='bottom', fontsize=7)
+
+axgrid[0, 0].legend(fontsize='xx-small', loc='upper left')
+axgrid[0, 0].set_xlim(0.0, 640)
+axgrid[0, 0].set_ylim(0.0, 5.5)
+axgrid[-1, 2].set_xlabel('pixel')
+axgrid[1, 0].set_ylabel('intensity')
+fig.suptitle('Alignment and flux calibration of vertical slits')
+fig.set_size_inches(11, 8.5)
+fig.savefig(figfile)
 
 
 #+END_SRC
@@ -219,67 +493,67 @@ This does not have all the slits yet, but it will eventually (I hope)
 + Also experimented with increasing bgrad from 1.5 to 1.7 for 149, 154, 159
 
 #+header: :var table=horizontal-image-and-fullspec
-#+BEGIN_SRC python :return figfile :results file
-  from astropy.io import fits
-  import numpy as np
-  import matplotlib.pyplot as plt
-  import seaborn as sns; sns.set()
-  sns.set_color_codes()
+#+BEGIN_SRC python
+from astropy.io import fits
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+sns.set_color_codes()
 
-  nspec = 10
-  nx = 625
-  figfile = 'image-spec-offsets.pdf'
-  xarray = np.arange(nx)
-  layout = {'left': 0.05, 'bottom': 0.07, 'right': 0.99, 'top': 0.95,
-            'wspace': 0.02, 'hspace': 0.02}
-  fig, axgrid = plt.subplots(3, 4, sharex=True, sharey=True, gridspec_kw=layout)
-  tweak = 1.0
-  for (imid, specid, night, jslit, dj, ishift,
-       factor, bright, bgrad), ax in zip(table, axgrid.flat):
-      imfile = 'spm{:03d}_ardec.fits'.format(imid)
-      specfile = '../{}/reducciones/spm{}_bcr.fits'.format(night, specid)
-      jslit = int(float(jslit))
-      dj = int(dj)
-      ishift = float(ishift)
-      factor = float(factor)
-      bfac = 1./float(bright)
+nspec = 10
+nx = 625
+figfile = 'image-spec-offsets.pdf'
+xarray = np.arange(nx)
+layout = {'left': 0.05, 'bottom': 0.07, 'right': 0.99, 'top': 0.95,
+          'wspace': 0.02, 'hspace': 0.02}
+fig, axgrid = plt.subplots(3, 4, sharex=True, sharey=True, gridspec_kw=layout)
+tweak = 1.0
+for (imid, specid, night, jslit, dj, ishift,
+     factor, bright, bgrad), ax in zip(table, axgrid.flat):
+    imfile = 'spm{:03d}_ardec.fits'.format(imid)
+    specfile = '../{}/reducciones/spm{}_bcr.fits'.format(night, specid)
+    jslit = int(float(jslit))
+    dj = int(dj)
+    ishift = float(ishift)
+    factor = float(factor)
+    bfac = 1./float(bright)
 
-      imhdu, = fits.open(imfile)
-      spechdu, = fits.open(specfile)
+    imhdu, = fits.open(imfile)
+    spechdu, = fits.open(specfile)
 
-      imhdu.data -= 9.0  # remove residual bias
-      spechdu.data -= 5.5
-      # limits of slit (FWZI)
-      j1, j2 = jslit-dj//2, jslit+dj//2
-      improfile = imhdu.data[j1:j2, :].sum(axis=0)
-      # take average profile either side of the slit
-      offprofile = 0.5*(imhdu.data[j1-1, :] + imhdu.data[j2, :])
-      # and subtract (multiplied by slit width) to get the pure slit profile
-      improfile -= dj*offprofile
-      # Now find the gradient correction
-      NX = len(improfile)
-      x = np.arange(NX)/NX - 0.5
-      grad_corr = 1.0 - 1.24*(bgrad - 1.0)*x
+    imhdu.data -= 9.0  # remove residual bias
+    spechdu.data -= 5.5
+    # limits of slit (FWZI)
+    j1, j2 = jslit-dj//2, jslit+dj//2
+    improfile = imhdu.data[j1:j2, :].sum(axis=0)
+    # take average profile either side of the slit
+    offprofile = 0.5*(imhdu.data[j1-1, :] + imhdu.data[j2, :])
+    # and subtract (multiplied by slit width) to get the pure slit profile
+    improfile -= dj*offprofile
+    # Now find the gradient correction
+    NX = len(improfile)
+    x = np.arange(NX)/NX - 0.5
+    grad_corr = 1.0 - 1.24*(bgrad - 1.0)*x
 
-      specprofile = spechdu.data.sum(axis=0)
- 
-      ax.plot(xarray-ishift, (12.0/dj)*bfac*grad_corr*improfile/(1e4*tweak),
-              label='image', c='r', lw=2, alpha=0.3)
-      ax.plot(xarray, bfac*grad_corr*specprofile/(1e4*factor),
-              label='spectrum', c='k', lw=0.6)
+    specprofile = spechdu.data.sum(axis=0)
 
-      text_pattern = 'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'
-      text = text_pattern.format(imid, ishift, factor/5.5, 1.0/bfac)
-      ax.text(300, 0.1, text, ha='center', va='bottom', fontsize=7)
+    ax.plot(xarray-ishift, (12.0/dj)*bfac*grad_corr*improfile/(1e4*tweak),
+            label='image', c='r', lw=2, alpha=0.3)
+    ax.plot(xarray, bfac*grad_corr*specprofile/(1e4*factor),
+            label='spectrum', c='k', lw=0.6)
 
-  axgrid[0, 0].legend(fontsize='xx-small', loc='upper left')
-  axgrid[0, 0].set_xlim(-80, 640)
-  axgrid[0, 0].set_ylim(0.0, 1.5)
-  axgrid[-1, 2].set_xlabel('pixel')
-  axgrid[1, 0].set_ylabel('intensity')
-  fig.suptitle('Alignment and flux calibration of horizontal slits')
-  fig.set_size_inches(11, 8.5)
-  fig.savefig(figfile)
+    text_pattern = 'pos #{} shift = {:.1f} factor = {:.2f} bright = {:.2f}'
+    text = text_pattern.format(imid, ishift, factor/5.5, 1.0/bfac)
+    ax.text(300, 0.1, text, ha='center', va='bottom', fontsize=7)
+
+axgrid[0, 0].legend(fontsize='xx-small', loc='upper left')
+axgrid[0, 0].set_xlim(-80, 640)
+axgrid[0, 0].set_ylim(0.0, 1.5)
+axgrid[-1, 2].set_xlabel('pixel')
+axgrid[1, 0].set_ylabel('intensity')
+fig.suptitle('Alignment and flux calibration of horizontal slits')
+fig.set_size_inches(11, 8.5)
+fig.savefig(figfile)
 
 
 #+END_SRC
@@ -376,6 +650,7 @@ This does not have all the slits yet, but it will eventually (I hope)
     + Unfortunately, I don't have the spmXXX-ardec.fits files for those
     + [X] Write to Teresa and see if she has them
     + An example image+slit is pp260.fits
+    + Now she has sent these - they are in [[file:~/Dropbox/papers/LL-Objects/feb2006/][file:~/Dropbox/papers/LL-Objects/feb2006/]]
 
 
 ** Feb 2013
@@ -399,67 +674,67 @@ CLOCK: [2015-08-22 Sat 17:29]
   + But it does vary about 1 deg between the two nights
 #+name: horizontal-all-parameters
 #+header: :var intable=horizontal-image-and-fullspec
-#+BEGIN_SRC python :return table :exports both
-  import numpy as np
-  from astropy.io import fits
-  from astropy.wcs import WCS
+#+BEGIN_SRC python
+import numpy as np
+from astropy.io import fits
+from astropy.wcs import WCS
 
-  table = [['image', 'spectrum', 'grating',
-            'RA0', 'Dec0', 'dy', 'PA',
-            'airmass', 'weight', 'delta'], None]
-  for imid, specid, night, jslit, dj, ishift, fac, bright, bgrad in intable:
-      fn = 'spm{:03d}_ardec.fits'.format(imid)
-      hdu, = fits.open(fn)
+table = [['image', 'spectrum', 'grating',
+          'RA0', 'Dec0', 'dy', 'PA',
+          'airmass', 'weight', 'delta'], None]
+for imid, specid, night, jslit, dj, ishift, fac, bright, bgrad in intable:
+    fn = 'spm{:03d}_ardec.fits'.format(imid)
+    hdu, = fits.open(fn)
 
-      #
-      # Find pixel scale along slit and position angle of slit
-      #
-      dRA_arcsec = hdu.header['CD1_1']*3600*np.cos(np.radians(hdu.header['CRVAL2']))
-      dDEC_arcsec = hdu.header['CD2_1']*3600
-      dy = np.hypot(dRA_arcsec, dDEC_arcsec)
-      PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
-      grating = hdu.header['GRATING']
-      airmass = hdu.header['AIRMASS']
-      #
-      # Find the RA and Dec of the spectral slit center
-      #
+    #
+    # Find pixel scale along slit and position angle of slit
+    #
+    dRA_arcsec = hdu.header['CD1_1']*3600*np.cos(np.radians(hdu.header['CRVAL2']))
+    dDEC_arcsec = hdu.header['CD2_1']*3600
+    dy = np.hypot(dRA_arcsec, dDEC_arcsec)
+    PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
+    grating = hdu.header['GRATING']
+    airmass = hdu.header['AIRMASS']
+    #
+    # Find the RA and Dec of the spectral slit center
+    #
 
-      # Pixel coords of spectrum slit center on image (in FITS 1-based convention)
-      # I *think* the shift along the slit goes the other way here
-      i0, j0 = 0.5*(1 + hdu.header['NAXIS1']) + ishift, jslit
+    # Pixel coords of spectrum slit center on image (in FITS 1-based convention)
+    # I *think* the shift along the slit goes the other way here
+    i0, j0 = 0.5*(1 + hdu.header['NAXIS1']) + ishift, jslit
 
-      # Convert to world coordinates
-      wcs = WCS(hdu.header)
-      # Crazy packing/unpacking required to use single scalar coords
-      (RA0, Dec0), = wcs.all_pix2world([[i0, j0]], 1)
+    # Convert to world coordinates
+    wcs = WCS(hdu.header)
+    # Crazy packing/unpacking required to use single scalar coords
+    (RA0, Dec0), = wcs.all_pix2world([[i0, j0]], 1)
 
-      # Test it by hand using small-patch-of-sky approximation
-      c = 1./np.cos(np.radians(-5.42))
-      RA1 = (hdu.header['CRVAL1']
-             + c*hdu.header['CD1_1']*(i0 - hdu.header['CRPIX1'])
-             + c*hdu.header['CD1_2']*(j0 - hdu.header['CRPIX2']))
-      Dec1 = (hdu.header['CRVAL2']
-              + hdu.header['CD2_1']*(i0 - hdu.header['CRPIX1'])
-              + hdu.header['CD2_2']*(j0 - hdu.header['CRPIX2']))
-      assert(abs(RA1 - RA0) < 1e-6 )
-      assert(abs(Dec1 - Dec0) < 1e-6 )
+    # Test it by hand using small-patch-of-sky approximation
+    c = 1./np.cos(np.radians(-5.42))
+    RA1 = (hdu.header['CRVAL1']
+           + c*hdu.header['CD1_1']*(i0 - hdu.header['CRPIX1'])
+           + c*hdu.header['CD1_2']*(j0 - hdu.header['CRPIX2']))
+    Dec1 = (hdu.header['CRVAL2']
+            + hdu.header['CD2_1']*(i0 - hdu.header['CRPIX1'])
+            + hdu.header['CD2_2']*(j0 - hdu.header['CRPIX2']))
+    assert(abs(RA1 - RA0) < 1e-6 )
+    assert(abs(Dec1 - Dec0) < 1e-6 )
 
-      #
-      # Find total weight factor, combining inter-image factor with the
-      # image-to-spectrum factor
-      #
-      weight = (fac/5.5)*bright
+    #
+    # Find total weight factor, combining inter-image factor with the
+    # image-to-spectrum factor
+    #
+    weight = (fac/5.5)*bright
 
-      # Find linear E-W gradient to correct
-      delta = -1.24*(bgrad - 1.0)
- 
-      table.append([imid, int(imid)+1, grating, 
-                    '{:.5f}'.format(RA0),
-                    '{:.5f}'.format(Dec0),
-                    '{:.4f}'.format(dy), '{:.3f}'.format(PA),
-                    '{:.2f}'.format(airmass),
-                    '{:.2f}'.format(weight), '{:.2f}'.format(delta),
-      ])
+    # Find linear E-W gradient to correct
+    delta = -1.24*(bgrad - 1.0)
+
+    table.append([imid, int(imid)+1, grating, 
+                  '{:.5f}'.format(RA0),
+                  '{:.5f}'.format(Dec0),
+                  '{:.4f}'.format(dy), '{:.3f}'.format(PA),
+                  '{:.2f}'.format(airmass),
+                  '{:.2f}'.format(weight), '{:.2f}'.format(delta),
+    ])
 #+END_SRC
 
 #+RESULTS: horizontal-all-parameters
@@ -562,59 +837,59 @@ CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 
 #+name: vertical-all-parameters
 #+header: :var intable=vertical-image-and-fullspec
-#+BEGIN_SRC python :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones :exports both
-  import numpy as np
-  from astropy.io import fits
-  from astropy.wcs import WCS
+#+BEGIN_SRC python
+import numpy as np
+from astropy.io import fits
+from astropy.wcs import WCS
 
-  table = [['image', 'spectrum', 'RA0', 'Dec0', 'dy', 'PA', 'weight'], None]
-  for imid, specid, islit, jshift, fac, bfac in intable:
-      fn = 'spm{}-ardec.fits'.format(imid)
-      hdu, = fits.open(fn)
+table = [['image', 'spectrum', 'RA0', 'Dec0', 'dy', 'PA', 'weight'], None]
+for imid, specid, islit, jshift, fac, bfac in intable:
+    fn = 'spm{}-ardec.fits'.format(imid)
+    hdu, = fits.open(fn)
 
-      #
-      # Find pixel scale along slit and position angle of slit
-      #
-      dRA_arcsec = hdu.header['CD1_2']*3600*np.cos(np.radians(hdu.header['CRVAL2']))
-      dDEC_arcsec = hdu.header['CD2_2']*3600
-      dy = np.hypot(dRA_arcsec, dDEC_arcsec)
-      PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
+    #
+    # Find pixel scale along slit and position angle of slit
+    #
+    dRA_arcsec = hdu.header['CD1_2']*3600*np.cos(np.radians(hdu.header['CRVAL2']))
+    dDEC_arcsec = hdu.header['CD2_2']*3600
+    dy = np.hypot(dRA_arcsec, dDEC_arcsec)
+    PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
 
-      #
-      # Find the RA and Dec of the spectral slit center
-      #
+    #
+    # Find the RA and Dec of the spectral slit center
+    #
 
-      # Pixel coords of spectrum slit center on image (in FITS 1-based convention)
-      i0, j0 = islit, 0.5*(1 + hdu.header['NAXIS2']) - jshift
+    # Pixel coords of spectrum slit center on image (in FITS 1-based convention)
+    i0, j0 = islit, 0.5*(1 + hdu.header['NAXIS2']) - jshift
 
-      # Convert to world coordinates
-      wcs = WCS(hdu.header)
-      # Crazy packing/unpacking required to use single scalar coords
-      (RA0, Dec0), = wcs.all_pix2world([[i0, j0]], 1)
+    # Convert to world coordinates
+    wcs = WCS(hdu.header)
+    # Crazy packing/unpacking required to use single scalar coords
+    (RA0, Dec0), = wcs.all_pix2world([[i0, j0]], 1)
 
-      # Test it by hand using small-patch-of-sky approximation
-      c = 1./np.cos(np.radians(-5.42))
-      RA1 = (hdu.header['CRVAL1']
-             + c*hdu.header['CD1_1']*(i0 - hdu.header['CRPIX1'])
-             + c*hdu.header['CD1_2']*(j0 - hdu.header['CRPIX2']))
-      Dec1 = (hdu.header['CRVAL2']
-              + hdu.header['CD2_1']*(i0 - hdu.header['CRPIX1'])
-              + hdu.header['CD2_2']*(j0 - hdu.header['CRPIX2']))
-      assert(abs(RA1 - RA0) < 1e-6 )
-      assert(abs(Dec1 - Dec0) < 1e-6 )
+    # Test it by hand using small-patch-of-sky approximation
+    c = 1./np.cos(np.radians(-5.42))
+    RA1 = (hdu.header['CRVAL1']
+           + c*hdu.header['CD1_1']*(i0 - hdu.header['CRPIX1'])
+           + c*hdu.header['CD1_2']*(j0 - hdu.header['CRPIX2']))
+    Dec1 = (hdu.header['CRVAL2']
+            + hdu.header['CD2_1']*(i0 - hdu.header['CRPIX1'])
+            + hdu.header['CD2_2']*(j0 - hdu.header['CRPIX2']))
+    assert(abs(RA1 - RA0) < 1e-6 )
+    assert(abs(Dec1 - Dec0) < 1e-6 )
 
-      #
-      # Find total weight factor, combining inter-image factor with the
-      # image-to-spectrum factor
-      #
-      weight = (fac/4.4)/bfac
- 
-      table.append([imid, int(imid)+1,
-                    '{:.5f}'.format(RA0),
-                    '{:.5f}'.format(Dec0),
-                    '{:.4f}'.format(dy), '{:.3f}'.format(PA),
-                    '{:.4f}'.format(weight),
-      ])
+    #
+    # Find total weight factor, combining inter-image factor with the
+    # image-to-spectrum factor
+    #
+    weight = (fac/4.4)/bfac
+
+    table.append([imid, int(imid)+1,
+                  '{:.5f}'.format(RA0),
+                  '{:.5f}'.format(Dec0),
+                  '{:.4f}'.format(dy), '{:.3f}'.format(PA),
+                  '{:.4f}'.format(weight),
+    ])
 #+END_SRC
 
 #+RESULTS: vertical-all-parameters
@@ -811,91 +1086,91 @@ Some positions are a bit problematic - try missing them out:
 #+header: :var ignore=positions-to-drop
 #+header: :var vtab=vertical-all-parameters
 #+header: :var vmin=-1000 vmax=1000 label="sum"
-#+BEGIN_SRC python :results output
-  import numpy as np
-  from astropy.io import fits
-  from astropy.wcs import WCS
+#+BEGIN_SRC python
+import numpy as np
+from astropy.io import fits
+from astropy.wcs import WCS
 
-  #
-  # First set up WCS for the output image
-  #
+#
+# First set up WCS for the output image
+#
 
-  NX, NY = 1024, 1024
-  dRA, dDec = -0.5/3600., 0.5/3600.
-  RA0, Dec0 = 83.61, -5.423
-  w = WCS(naxis=2)
-  w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
-  w.wcs.cdelt = [dRA, dDec]
-  w.wcs.crval = [RA0, Dec0]
-  w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
+NX, NY = 1024, 1024
+dRA, dDec = -0.5/3600., 0.5/3600.
+RA0, Dec0 = 83.61, -5.423
+w = WCS(naxis=2)
+w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
+w.wcs.cdelt = [dRA, dDec]
+w.wcs.crval = [RA0, Dec0]
+w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
 
-  outimage = np.zeros((NY, NX))
-  outweights = np.zeros((NY, NX))
+outimage = np.zeros((NY, NX))
+outweights = np.zeros((NY, NX))
 
-  # Create world coord arrays for output image
-  II, JJ = np.meshgrid(np.arange(NX), np.arange(NY))
-  RA, Dec = w.all_pix2world(II, JJ, 0)
+# Create world coord arrays for output image
+II, JJ = np.meshgrid(np.arange(NX), np.arange(NY))
+RA, Dec = w.all_pix2world(II, JJ, 0)
 
-  slit_width = 2.0                # width in arcsec of 150 micron slit
+slit_width = 2.0                # width in arcsec of 150 micron slit
 
-  light_speed = 2.99792458e5
-  wavrest = 6562.7910
-  heliocentric_correction = 0.0   # I need to find this
-  vmin, vmax = float(vmin), float(vmax)
-  for imid, specid, ra0, dec0, dy, PA, weight in vtab:
-      if int(imid) in ignore:
-          continue  # drop some positions
-      # Unpack floats from strings in table row
-      ra0, dec0, dy, PA, weight = [float(_) for _ in (ra0, dec0, dy, PA, weight)]
-      # Open H alpha slit spectrum
-      spechdu, = fits.open('spec{}-ha.fits'.format(specid))
+light_speed = 2.99792458e5
+wavrest = 6562.7910
+heliocentric_correction = 0.0   # I need to find this
+vmin, vmax = float(vmin), float(vmax)
+for imid, specid, ra0, dec0, dy, PA, weight in vtab:
+    if int(imid) in ignore:
+        continue  # drop some positions
+    # Unpack floats from strings in table row
+    ra0, dec0, dy, PA, weight = [float(_) for _ in (ra0, dec0, dy, PA, weight)]
+    # Open H alpha slit spectrum
+    spechdu, = fits.open('spec{}-ha.fits'.format(specid))
 
-      # Create velocity array from header
-      nwav, k0, wav0, dwav = [spechdu.header[kwd+'1']
-                              for kwd in ('NAXIS', 'CRPIX', 'CRVAL', 'CDELT')]
-      wavs = wav0 + (np.arange(nwav) - k0 + 1)*dwav
-      vels = heliocentric_correction + light_speed*(wavs - wavrest)/wavrest
-      # Find indices corresponding to velocity limits
-      k1 = (vels < vmin).sum()
-      k2 = (vels <= vmax).sum()
-      print('Velocities used', vels[k1:k2])
+    # Create velocity array from header
+    nwav, k0, wav0, dwav = [spechdu.header[kwd+'1']
+                            for kwd in ('NAXIS', 'CRPIX', 'CRVAL', 'CDELT')]
+    wavs = wav0 + (np.arange(nwav) - k0 + 1)*dwav
+    vels = heliocentric_correction + light_speed*(wavs - wavrest)/wavrest
+    # Find indices corresponding to velocity limits
+    k1 = (vels < vmin).sum()
+    k2 = (vels <= vmax).sum()
+    print('Velocities used', vels[k1:k2])
 
-      # Sum spectrum over all wavelengths
-      profile = spechdu.data[:, k1:k2].sum(axis=1)
+    # Sum spectrum over all wavelengths
+    profile = spechdu.data[:, k1:k2].sum(axis=1)
 
-      # Transform output grid coords into slit frame offsets in arcsec
-      # XX, YY are intermediate offset coordinates along RA, Dec axes
-      XX = 3600*(RA - ra0)*np.cos(np.radians(Dec))
-      YY = 3600*(Dec - dec0)
-      # Precalculate geometric factors for rotation to slit frame
-      c, s = np.cos(np.radians(PA)), np.sin(np.radians(PA))
-      # X is ordinate perpendicular to slit
-      X = XX*c - YY*s
-      # Y is ordinate along slit
-      Y = YY*c - XX*s
+    # Transform output grid coords into slit frame offsets in arcsec
+    # XX, YY are intermediate offset coordinates along RA, Dec axes
+    XX = 3600*(RA - ra0)*np.cos(np.radians(Dec))
+    YY = 3600*(Dec - dec0)
+    # Precalculate geometric factors for rotation to slit frame
+    c, s = np.cos(np.radians(PA)), np.sin(np.radians(PA))
+    # X is ordinate perpendicular to slit
+    X = XX*c - YY*s
+    # Y is ordinate along slit
+    Y = YY*c - XX*s
 
-      # Mask for all output pixels that fall in the slit
-      slitmask = abs(X) <= 0.5*slit_width
-      # cycle over all slit y pixels
-      for j, intensity in enumerate(profile):
-          # Offset from slit center
-          y = (j - 255.5)*dy
-          # Mask for output pixels that fall in this slit pixel
-          pixmask = slitmask & (abs(Y - y) <= 0.5*dy)
-          # Fill in the output intensity and weight arrays
-          outimage[pixmask] += intensity
-          outweights[pixmask] += weight
+    # Mask for all output pixels that fall in the slit
+    slitmask = abs(X) <= 0.5*slit_width
+    # cycle over all slit y pixels
+    for j, intensity in enumerate(profile):
+        # Offset from slit center
+        y = (j - 255.5)*dy
+        # Mask for output pixels that fall in this slit pixel
+        pixmask = slitmask & (abs(Y - y) <= 0.5*dy)
+        # Fill in the output intensity and weight arrays
+        outimage[pixmask] += intensity
+        outweights[pixmask] += weight
 
-  # Save everything as different images in a single fits file:
-  # 1. The sum of the raw slits 
-  # 2. The weights
-  # 3. The slits normalized by the weights
-  fits.HDUList([
-      fits.PrimaryHDU(),
-      fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
-      fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
-      fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
-      ]).writeto('all-vert-{}.fits'.format(label), clobber=True)
+# Save everything as different images in a single fits file:
+# 1. The sum of the raw slits 
+# 2. The weights
+# 3. The slits normalized by the weights
+fits.HDUList([
+    fits.PrimaryHDU(),
+    fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
+    fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
+    fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
+    ]).writeto('all-vert-{}.fits'.format(label), clobber=True)
 
 
 #+END_SRC
@@ -1810,7 +2085,7 @@ Velocities used [-264.5365553  -262.53793006 -260.53930481 -258.54067957 -256.54
 + The third image is what should be used in the rebinning process (together with the second image, the weights)
 
 This shows the scaled image in ds9
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 #+END_SRC
 
@@ -1835,94 +2110,94 @@ xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 #+name: create-horizontal-slit-map
 #+header: :var htab=horizontal-all-parameters
 #+header: :var vmin=-1000 vmax=1000 label="sum"
-#+BEGIN_SRC python :results output
-  import numpy as np
-  from astropy.io import fits
-  from astropy.wcs import WCS
+#+BEGIN_SRC python
+import numpy as np
+from astropy.io import fits
+from astropy.wcs import WCS
 
-  #
-  # First set up WCS for the output image
-  #
+#
+# First set up WCS for the output image
+#
 
-  NX, NY = 1024, 1024
-  dRA, dDec = -0.5/3600., 0.5/3600.
-  RA0, Dec0 = 83.61, -5.423
-  w = WCS(naxis=2)
-  w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
-  w.wcs.cdelt = [dRA, dDec]
-  w.wcs.crval = [RA0, Dec0]
-  w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
+NX, NY = 1024, 1024
+dRA, dDec = -0.5/3600., 0.5/3600.
+RA0, Dec0 = 83.61, -5.423
+w = WCS(naxis=2)
+w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
+w.wcs.cdelt = [dRA, dDec]
+w.wcs.crval = [RA0, Dec0]
+w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
 
-  outimage = np.zeros((NY, NX))
-  outweights = np.zeros((NY, NX))
+outimage = np.zeros((NY, NX))
+outweights = np.zeros((NY, NX))
 
-  # Create world coord arrays for output image
-  II, JJ = np.meshgrid(np.arange(NX), np.arange(NY))
-  RA, Dec = w.all_pix2world(II, JJ, 0)
+# Create world coord arrays for output image
+II, JJ = np.meshgrid(np.arange(NX), np.arange(NY))
+RA, Dec = w.all_pix2world(II, JJ, 0)
 
-  slit_width = 2.0                # width in arcsec of 150 micron slit
+slit_width = 2.0                # width in arcsec of 150 micron slit
 
-  light_speed = 2.99792458e5
-  wavrest = 6562.7910
-  heliocentric_correction = 0.0   # I need to find this
-  vmin, vmax = float(vmin), float(vmax)
-  for imid, specid, _, ra0, dec0, dy, PA, _, weight, delta in htab:
-      # Unpack floats from strings in table row
-      ra0, dec0, dy, PA, weight, delta = [float(_) for _ in (ra0, dec0, dy, PA, weight, delta)]
-      # Open H alpha slit spectrum
-      spechdu, = fits.open('spec{:03d}-ha.fits'.format(specid))
+light_speed = 2.99792458e5
+wavrest = 6562.7910
+heliocentric_correction = 0.0   # I need to find this
+vmin, vmax = float(vmin), float(vmax)
+for imid, specid, _, ra0, dec0, dy, PA, _, weight, delta in htab:
+    # Unpack floats from strings in table row
+    ra0, dec0, dy, PA, weight, delta = [float(_) for _ in (ra0, dec0, dy, PA, weight, delta)]
+    # Open H alpha slit spectrum
+    spechdu, = fits.open('spec{:03d}-ha.fits'.format(specid))
 
-      # Create velocity array from header
-      nwav, k0, wav0, dwav = [spechdu.header[kwd+'2']
-                              for kwd in ('NAXIS', 'CRPIX', 'CRVAL', 'CDELT')]
-      wavs = wav0 + (np.arange(nwav) - k0 + 1)*dwav
-      vels = heliocentric_correction + light_speed*(wavs - wavrest)/wavrest
-      # Find indices corresponding to velocity limits
-      k1 = (vels < vmin).sum()
-      k2 = (vels <= vmax).sum()
-      # print('Velocities used', vels[k1:k2])
+    # Create velocity array from header
+    nwav, k0, wav0, dwav = [spechdu.header[kwd+'2']
+                            for kwd in ('NAXIS', 'CRPIX', 'CRVAL', 'CDELT')]
+    wavs = wav0 + (np.arange(nwav) - k0 + 1)*dwav
+    vels = heliocentric_correction + light_speed*(wavs - wavrest)/wavrest
+    # Find indices corresponding to velocity limits
+    k1 = (vels < vmin).sum()
+    k2 = (vels <= vmax).sum()
+    # print('Velocities used', vels[k1:k2])
 
-      # Sum spectrum over all wavelengths
-      profile = spechdu.data[k1:k2, :].sum(axis=0)
+    # Sum spectrum over all wavelengths
+    profile = spechdu.data[k1:k2, :].sum(axis=0)
 
-      NY = spechdu.header['NAXIS1']
-      yy = np.arange(NY)/NY - 0.5
-      grad_corr = 1.0 + delta*yy
+    NY = spechdu.header['NAXIS1']
+    yy = np.arange(NY)/NY - 0.5
+    grad_corr = 1.0 + delta*yy
 
 
-      # Transform output grid coords into slit frame offsets in arcsec
-      # XX, YY are intermediate offset coordinates along RA, Dec axes
-      XX = 3600*(RA - ra0)*np.cos(np.radians(Dec))
-      YY = 3600*(Dec - dec0)
-      # Precalculate geometric factors for rotation to slit frame
-      c, s = np.cos(np.radians(PA)), np.sin(np.radians(PA))
-      # X is ordinate perpendicular to slit
-      X = XX*c - YY*s
-      # Y is ordinate along slit
-      Y = -(YY*c - XX*s)
+    # Transform output grid coords into slit frame offsets in arcsec
+    # XX, YY are intermediate offset coordinates along RA, Dec axes
+    XX = 3600*(RA - ra0)*np.cos(np.radians(Dec))
+    YY = 3600*(Dec - dec0)
+    # Precalculate geometric factors for rotation to slit frame
+    c, s = np.cos(np.radians(PA)), np.sin(np.radians(PA))
+    # X is ordinate perpendicular to slit
+    X = XX*c - YY*s
+    # Y is ordinate along slit
+    Y = -(YY*c - XX*s)
 
-      # Mask for all output pixels that fall in the slit
-      slitmask = abs(X) <= 0.5*slit_width
-      # cycle over all slit y pixels
-      for j, (intensity, gcorr) in enumerate(zip(profile, grad_corr)):
-          # Offset from slit center
-          y = (j - 0.5*(NY-1))*dy
-          # Mask for output pixels that fall in this slit pixel
-          pixmask = slitmask & (abs(Y - y) <= 0.5*dy)
-          # Fill in the output intensity and weight arrays
-          outimage[pixmask] += intensity
-          outweights[pixmask] += weight/gcorr
+    # Mask for all output pixels that fall in the slit
+    slitmask = abs(X) <= 0.5*slit_width
+    # cycle over all slit y pixels
+    for j, (intensity, gcorr) in enumerate(zip(profile, grad_corr)):
+        # Offset from slit center
+        y = (j - 0.5*(NY-1))*dy
+        # Mask for output pixels that fall in this slit pixel
+        pixmask = slitmask & (abs(Y - y) <= 0.5*dy)
+        # Fill in the output intensity and weight arrays
+        outimage[pixmask] += intensity
+        outweights[pixmask] += weight/gcorr
 
-  # Save everything as different images in a single fits file:
-  # 1. The sum of the raw slits 
-  # 2. The weights
-  # 3. The slits normalized by the weights
-  fits.HDUList([
-      fits.PrimaryHDU(),
-      fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
-      fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
-      fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
-      ]).writeto('all-horiz-{}.fits'.format(label), clobber=True)
+# Save everything as different images in a single fits file:
+# 1. The sum of the raw slits 
+# 2. The weights
+# 3. The slits normalized by the weights
+fits.HDUList([
+    fits.PrimaryHDU(),
+    fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
+    fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
+    fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
+    ]).writeto('all-horiz-{}.fits'.format(label), clobber=True)
 
 
 #+END_SRC
@@ -1930,7 +2205,7 @@ xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 #+RESULTS: create-horizontal-slit-map
 
 This shows the scaled image in ds9
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 fits $PWD/all-horiz-sum.fits[3]
 #+END_SRC
 
@@ -1953,25 +2228,14 @@ xpaset -p ds9 fits $PWD/all-horiz-sum.fits[3]
 #+name: noisy-slits
 + 145
 
-#+call: create-slit-map(vmin=-200, vmax=-50, label="blue", ignore=noisy-slits) :results silent
-
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 fits $PWD/all-vert-blue.fits[3]
 #+END_SRC
 
 + Try some blue wing 20 km/s channels
 
-#+call: create-slit-map(vmin="-40", vmax="-20", label="b30", ignore=noisy-slits) :results silent
-#+call: create-slit-map(vmin="-60", vmax="-40", label="b50", ignore=noisy-slits) :results silent
-#+call: create-slit-map(vmin="-80", vmax="-60", label="b70", ignore=noisy-slits) :results silent
-
 + And some line core channels
-#+call: create-slit-map(vmin="20", vmax="40", label="r30", ignore=noisy-slits) :results silent
-#+call: create-slit-map(vmin="0", vmax="20", label="r10", ignore=noisy-slits) :results silent
-#+call: create-slit-map(vmin="-20", vmax="0", label="b10", ignore=noisy-slits) :results silent
-
-
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 rgb new
 xpaset -p ds9 fits $PWD/all-vert-b30.fits[3]
 xpaset -p ds9 rgb green
@@ -1980,7 +2244,7 @@ xpaset -p ds9 rgb blue
 xpaset -p ds9 fits $PWD/all-vert-b70.fits[3]
 #+END_SRC
 
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 rgb new
 xpaset -p ds9 fits $PWD/all-vert-r30.fits[3]
 xpaset -p ds9 scale linear
@@ -1996,15 +2260,7 @@ xpaset -p ds9 scale limits 0 6000
 #+END_SRC
 
 
-#+call: multi-smooth(label="b30") :results silent 
-#+call: multi-smooth(label="b50") :results silent 
-#+call: multi-smooth(label="b70") :results silent 
-
-#+call: multi-smooth(label="r30") :results silent 
-#+call: multi-smooth(label="r10") :results silent 
-#+call: multi-smooth(label="b10") :results silent 
-
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 rgb new
 xpaset -p ds9 fits $PWD/all-vert-b30-bin016.fits['scaled']
 xpaset -p ds9 rgb green
@@ -2015,7 +2271,7 @@ xpaset -p ds9 fits $PWD/all-vert-b70-bin016.fits['scaled']
 
 
 + Display the multigrid smoothed channel maps
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 rgb new
 xpaset -p ds9 fits $PWD/all-vert-b30-multibin.fits
 xpaset -p ds9 scale linear
@@ -2027,7 +2283,7 @@ xpaset -p ds9 fits $PWD/all-vert-b70-multibin.fits
 xpaset -p ds9 scale linear
 #+END_SRC
 
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 rgb new
 xpaset -p ds9 fits $PWD/all-vert-r30-multibin.fits
 xpaset -p ds9 scale linear
@@ -2064,15 +2320,13 @@ horiz.writeto('all-slits-sum.fits', clobber=True)
 #+RESULTS:
 : None
 
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 fits $PWD/all-slits-sum.fits[3]
 #+END_SRC
 
 
 + Note that we have to explicitly set the working directory for this to work
   + It is not enough that =dir= is set for this subtree
-#+call: multi-smooth[:dir .](label="sum", slits="slits")
-
 #+RESULTS:
 : Saving all-slits-sum-bin001.fits
 : Saving all-slits-sum-bin002.fits
@@ -2082,7 +2336,7 @@ xpaset -p ds9 fits $PWD/all-slits-sum.fits[3]
 : Saving all-slits-sum-bin032.fits
 
 
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 fits $PWD/all-slits-sum-bin032.fits['scaled']
 #+END_SRC
 
@@ -2099,8 +2353,6 @@ We need to extend the largest pixels used up to 32x32 in order to fill in all th
 
 We can use the =imscale= parameter to adjust the resolution of the map.  If =imscale= is larger then we need a higher total flux for a pixel to be accepted, so we will end up with larger pixels 
 
-#+call: multigrid-combine[:dir .](labels=just-integrated, slits="slits", wtab=minweights-extended, imscale=200000)
-
 #+RESULTS:
 : .+..+..+..+..+..+..+..+..+..+..+..+.
 : Channel sum
@@ -2111,7 +2363,7 @@ We can use the =imscale= parameter to adjust the resolution of the map.  If =ims
 : Binning 2 - pixels used 16
 : Binning 1 - pixels used 0
 
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 fits $PWD/all-slits-sum-multibin.fits
 #+END_SRC
 
@@ -2121,34 +2373,34 @@ xpaset -p ds9 fits $PWD/all-slits-sum-multibin.fits
 :END:
 
 #+name: multi-smooth
-#+BEGIN_SRC python :var label="sum" :var slits="vert" :results output
-  import sys
-  sys.path.append('/Users/will/Work/RubinWFC3/Tsquared')
-  from rebin_utils import downsample, oversample
-  from astropy.io import fits
+#+BEGIN_SRC python
+import sys
+sys.path.append('/Users/will/Work/RubinWFC3/Tsquared')
+from rebin_utils import downsample, oversample
+from astropy.io import fits
 
-  nlist = [1, 2, 4, 8, 16, 32]
+nlist = [1, 2, 4, 8, 16, 32]
 
-  infile = 'all-{}-{}.fits'.format(slits, label)
+infile = 'all-{}-{}.fits'.format(slits, label)
 
-  hdulist = fits.open(infile)
-  hdr = hdulist['scaled'].header
-  im = hdulist['scaled'].data
-  w = hdulist['weight'].data
-  m = w > 0.0
+hdulist = fits.open(infile)
+hdr = hdulist['scaled'].header
+im = hdulist['scaled'].data
+w = hdulist['weight'].data
+m = w > 0.0
 
-  for n in nlist:
-      im[~m] = 0.0
-      outfile = infile.replace('.fits', '-bin{:03d}.fits'.format(n))
-      print('Saving', outfile)
-      # Save both the scaled image and the weights, but at the full resolution
-      fits.HDUList([
-          fits.PrimaryHDU(),
-          fits.ImageHDU(data=oversample(im, n), header=hdr, name='scaled'),
-          fits.ImageHDU(data=oversample(w, n), header=hdr, name='weight'),
-      ]).writeto(outfile, clobber=True)
-      # Now do the rebinning by a factor of two
-      [im,], m, w = downsample([im,], m, weights=w)
+for n in nlist:
+    im[~m] = 0.0
+    outfile = infile.replace('.fits', '-bin{:03d}.fits'.format(n))
+    print('Saving', outfile)
+    # Save both the scaled image and the weights, but at the full resolution
+    fits.HDUList([
+        fits.PrimaryHDU(),
+        fits.ImageHDU(data=oversample(im, n), header=hdr, name='scaled'),
+        fits.ImageHDU(data=oversample(w, n), header=hdr, name='weight'),
+    ]).writeto(outfile, clobber=True)
+    # Now do the rebinning by a factor of two
+    [im,], m, w = downsample([im,], m, weights=w)
 
 #+END_SRC
 
@@ -2160,7 +2412,7 @@ xpaset -p ds9 fits $PWD/all-slits-sum-multibin.fits
 : Saving all-vert-sum-bin016.fits
 : Saving all-vert-sum-bin032.fits
 
-#+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh
 xpaset -p ds9 fits $PWD/all-vert-sum-bin016.fits['scaled']
 #+END_SRC
 
@@ -2170,21 +2422,21 @@ xpaset -p ds9 fits $PWD/all-vert-sum-bin016.fits['scaled']
 + This will be a problem if we want to combine the different levels and impose a minimum weight
   + An easy solution would be to have the minimum weight vary per level
 
-#+BEGIN_SRC python :results silent
-  from astropy.io import fits
-  import numpy as np
-  nlist = [1, 2, 4, 8, 16]
-  minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
-  outim = np.zeros((1024, 1024))
-  for n, minw in reversed(list(zip(nlist, minweights))):
-      fn = 'all-vert-sum-bin{:03d}.fits'.format(n)
-      hdulist = fits.open(fn)
-      im = hdulist['scaled'].data
-      hdr = hdulist['scaled'].header
-      w = hdulist['weight'].data
-      m = w*im >= minw*1e5
-      outim[m] = im[m]
-  fits.PrimaryHDU(header=hdr, data=outim).writeto('all-vert-sum-multibin.fits', clobber=True)
+#+BEGIN_SRC python
+from astropy.io import fits
+import numpy as np
+nlist = [1, 2, 4, 8, 16]
+minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
+outim = np.zeros((1024, 1024))
+for n, minw in reversed(list(zip(nlist, minweights))):
+    fn = 'all-vert-sum-bin{:03d}.fits'.format(n)
+    hdulist = fits.open(fn)
+    im = hdulist['scaled'].data
+    hdr = hdulist['scaled'].header
+    w = hdulist['weight'].data
+    m = w*im >= minw*1e5
+    outim[m] = im[m]
+fits.PrimaryHDU(header=hdr, data=outim).writeto('all-vert-sum-multibin.fits', clobber=True)
 #+END_SRC
 
 
@@ -2205,25 +2457,25 @@ And here is a version for the velocity channels
 
 #+name: multigrid-combine
 #+header: :var labels=vel-channels slits="vert" wtab=minweights-standard imscale=1000
-#+BEGIN_SRC python :results output
-  from astropy.io import fits
-  import numpy as np
-  nlist, minweights = wtab
-  outim = np.zeros((1024, 1024))
-  for label in labels:
-      print('.+.'*12)
-      print('Channel', label)
-      for n, minw in reversed(list(zip(nlist, minweights))):
-          fn = 'all-{}-{}-bin{:03d}.fits'.format(slits, label, n)
-          hdulist = fits.open(fn)
-          im = hdulist['scaled'].data
-          hdr = hdulist['scaled'].header
-          w = hdulist['weight'].data
-          m = w*im >= minw*imscale
-          print('Binning', n, '- pixels used', m.sum())
-          outim[m] = im[m]
-      fits.PrimaryHDU(header=hdr, data=outim).writeto(
-          'all-{}-{}-multibin.fits'.format(slits, label), clobber=True)
+#+BEGIN_SRC python
+from astropy.io import fits
+import numpy as np
+nlist, minweights = wtab
+outim = np.zeros((1024, 1024))
+for label in labels:
+    print('.+.'*12)
+    print('Channel', label)
+    for n, minw in reversed(list(zip(nlist, minweights))):
+        fn = 'all-{}-{}-bin{:03d}.fits'.format(slits, label, n)
+        hdulist = fits.open(fn)
+        im = hdulist['scaled'].data
+        hdr = hdulist['scaled'].header
+        w = hdulist['weight'].data
+        m = w*im >= minw*imscale
+        print('Binning', n, '- pixels used', m.sum())
+        outim[m] = im[m]
+    fits.PrimaryHDU(header=hdr, data=outim).writeto(
+        'all-{}-{}-multibin.fits'.format(slits, label), clobber=True)
 #+END_SRC
 
 #+RESULTS: multigrid-combine
@@ -2414,7 +2666,7 @@ Based on http://kitchingroup.cheme.cmu.edu/blog/2014/09/22/Showing-what-data-wen
 ** This is all copied from John Kitchin's page
 Here is how we can get a list of the table-names indicating their name or that they are results (results are enclosed in ()).
 
-#+BEGIN_SRC emacs-lisp :results list
+#+BEGIN_SRC emacs-lisp
 (org-element-map (org-element-parse-buffer) 'table
   (lambda (element)     
     (or (org-element-property :name element) (org-element-property :results element))))
@@ -2429,7 +2681,7 @@ Here is how we can get a list of the table-names indicating their name or that t
 
 Similarly, here is the list of parameters for each block.
 
-#+BEGIN_SRC emacs-lisp :results list
+#+BEGIN_SRC emacs-lisp
 (org-element-map (org-element-parse-buffer) 'src-block
   (lambda (element)     
     (org-element-property :parameters element)))
@@ -2447,10 +2699,10 @@ Similarly, here is the list of parameters for each block.
 
 
 ** My attempt to extend it to '#+header:' elements
-#+BEGIN_SRC emacs-lisp :results list
-  (org-element-map (org-element-parse-buffer) 'src-block
-    (lambda (element)
-    (org-element-property :header element)))
+#+BEGIN_SRC emacs-lisp
+(org-element-map (org-element-parse-buffer) 'src-block
+  (lambda (element)
+  (org-element-property :header element)))
 #+END_SRC
 
 #+RESULTS:
@@ -2461,7 +2713,7 @@ Similarly, here is the list of parameters for each block.
 
 
 ** And to named plain lists
-#+BEGIN_SRC emacs-lisp :results list
+#+BEGIN_SRC emacs-lisp
 (org-element-map (org-element-parse-buffer) 'plain-list
   (lambda (element)     
     (or (org-element-property :name element) (org-element-property :results element))))
@@ -2477,69 +2729,69 @@ Similarly, here is the list of parameters for each block.
 ** Now my version of Kitchin's output filters
 
 #+BEGIN_SRC emacs-lisp
-  (defun ox-mrkup-filter-table (text back-end info)
-    (let ((tblname (pop tblnames)))
-      (message "tblname is \"%s\"" tblname)
-      ; pop does not remove nil from the list, so we do it here.
-      (when (null tblname) (setq tblnames (cdr tblnames)))
-      (cond
-       ((listp tblname)  ; from results
-        (concat (format "<br><pre class=\"example\">Results table name: %s</pre>" (car tblname)) text))
-       ((null tblname)   ; no name
-        text)
-       (t ; everything else
-        (concat (format "<br><pre class=\"example\">Table name: %s</pre>" tblname) text)))))
+(defun ox-mrkup-filter-table (text back-end info)
+  (let ((tblname (pop tblnames)))
+    (message "tblname is \"%s\"" tblname)
+    ; pop does not remove nil from the list, so we do it here.
+    (when (null tblname) (setq tblnames (cdr tblnames)))
+    (cond
+     ((listp tblname)  ; from results
+      (concat (format "<br><pre class=\"example\">Results table name: %s</pre>" (car tblname)) text))
+     ((null tblname)   ; no name
+      text)
+     (t ; everything else
+      (concat (format "<br><pre class=\"example\">Table name: %s</pre>" tblname) text)))))
 
-  (defun ox-mrkup-filter-plain-list (text back-end info)
-    (let ((listname (pop listnames)))
-      (message "listname is \"%s\"" listname)
-      ; pop does not remove nil from the list, so we do it here.
-      (when (null listname) (setq listnames (cdr listnames)))
-      (cond
-       ((null listname)   ; no name
-        text)
-       (t ; everything else
-        (concat (format "<br><pre class=\"example\">List name: %s</pre>" listname) text)))))
+(defun ox-mrkup-filter-plain-list (text back-end info)
+  (let ((listname (pop listnames)))
+    (message "listname is \"%s\"" listname)
+    ; pop does not remove nil from the list, so we do it here.
+    (when (null listname) (setq listnames (cdr listnames)))
+    (cond
+     ((null listname)   ; no name
+      text)
+     (t ; everything else
+      (concat (format "<br><pre class=\"example\">List name: %s</pre>" listname) text)))))
 
-  (defun ox-mrkup-filter-src-block (text back-end info)
-    (let ((params (pop src-params))
-          (hparams (pop hdr-params))
-          (lang (pop src-langs)))
-      (when (null params) (setq src-params (cdr src-params)))
-      (when (null hparams) (setq hdr-params (cdr hdr-params)))
-      (if params  
-          (concat (format "<pre class=\"example\">Language = %s\nParameters = %s\nHeader = %s</pre>" lang params hparams) text)
-        text)))
+(defun ox-mrkup-filter-src-block (text back-end info)
+  (let ((params (pop src-params))
+        (hparams (pop hdr-params))
+        (lang (pop src-langs)))
+    (when (null params) (setq src-params (cdr src-params)))
+    (when (null hparams) (setq hdr-params (cdr hdr-params)))
+    (if params  
+        (concat (format "<pre class=\"example\">Language = %s\nParameters = %s\nHeader = %s</pre>" lang params hparams) text)
+      text)))
 
-  ;; preprocess to get table names, src parameters and languages.
-  (let ((tblnames (org-element-map (org-element-parse-buffer) 'table
+;; preprocess to get table names, src parameters and languages.
+(let ((tblnames (org-element-map (org-element-parse-buffer) 'table
+                  (lambda (element)     
+                    (or (org-element-property :name element)                    
+                        (org-element-property :results element)))))
+
+      (listnames (org-element-map (org-element-parse-buffer) 'plain-list
+                  (lambda (element)     
+                    (org-element-property :name element))))
+
+      (src-params (org-element-map (org-element-parse-buffer) 'src-block
                     (lambda (element)     
-                      (or (org-element-property :name element)                    
-                          (org-element-property :results element)))))
+                      (org-element-property :parameters element))))
 
-        (listnames (org-element-map (org-element-parse-buffer) 'plain-list
+      (hdr-params (org-element-map (org-element-parse-buffer) 'src-block
                     (lambda (element)     
-                      (org-element-property :name element))))
-      
-        (src-params (org-element-map (org-element-parse-buffer) 'src-block
-                      (lambda (element)     
-                        (org-element-property :parameters element))))
+                      (org-element-property :header element))))
 
-        (hdr-params (org-element-map (org-element-parse-buffer) 'src-block
-                      (lambda (element)     
-                        (org-element-property :header element))))
+      (src-langs (org-element-map (org-element-parse-buffer) 'src-block
+                   (lambda (element)     
+                     (org-element-property :language element))))
 
-        (src-langs (org-element-map (org-element-parse-buffer) 'src-block
-                     (lambda (element)     
-                       (org-element-property :language element))))
+      ;; register the filters
+      (org-export-filter-table-functions '(ox-mrkup-filter-table))
+      (org-export-filter-plain-list-functions '(ox-mrkup-filter-plain-list))
+      (org-export-filter-src-block-functions '(ox-mrkup-filter-src-block)))
 
-        ;; register the filters
-        (org-export-filter-table-functions '(ox-mrkup-filter-table))
-        (org-export-filter-plain-list-functions '(ox-mrkup-filter-plain-list))
-        (org-export-filter-src-block-functions '(ox-mrkup-filter-src-block)))
-
-    ;; and export the result
-    (browse-url (org-export-to-file 'html "alba-orion-west.html")))
+  ;; and export the result
+  (browse-url (org-export-to-file 'html "alba-orion-west.html")))
 #+END_SRC
 
 #+RESULTS:
