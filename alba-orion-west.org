@@ -77,8 +77,8 @@
     + This is measured by hand in DS9
   - shift :: pixel offset along the slit between image+slit and spectrum
     + This has to be found by trial and error (from plotting slit profile from spectrum and conparing with synthetic slit)
-  - zero :: the zero point of the spectrum
-    + this is in case the bias has not been removed
+  - norm :: the factor we divide the spectrum by so that it is equal to the flux calibration image
+    + for the center of the slit, since we will need to include a quadratic correction term later
 |  Dataset | imid |    specid | saxis | islit | shift | norm | Notes                |
 |----------+------+-----------+-------+-------+-------+------+----------------------|
 |  2006-02 |  326 |       324 |     2 | 283.5 |   60. | 1000 | LL2 first epoch      |
@@ -93,13 +93,13 @@
 |  2006-02 |  303 |       304 |     2 | 270.5 |   65. | 5000 |                      |
 |  2006-02 |  313 |       312 |     2 | 278.0 |   60. | 2500 | Image follows spec!  |
 |----------+------+-----------+-------+-------+-------+------+----------------------|
-| 2007-01b | 2061 |    2062-c |       |  255. |   60. |      | LL2 second epoch     |
-| 2007-01b | 2037 | 2038-2040 |       |  255. |   60. |      |                      |
-| 2007-01b | 2041 | 2042-2044 |       |  255. |   60. |      |                      |
-| 2007-01b | 2045 | 2046-2048 |       |  255. |   60. |      |                      |
-| 2007-01b | 2049 | 2050-2052 |       |  255. |   60. |      |                      |
-| 2007-01b | 2053 | 2054-2056 |       |  255. |   60. |      |                      |
-| 2007-01b | 2057 | 2058-2060 |       |  255. |   60. |      |                      |
+| 2007-01b | 2061 |    2062-c |     2 | 256.0 |   60. | 5000 | LL2 second epoch     |
+| 2007-01b | 2037 | 2038-2040 |     2 | 249.0 |   60. | 5000 |                      |
+| 2007-01b | 2041 | 2042-2044 |     2 | 250.0 |   60. | 5000 |                      |
+| 2007-01b | 2045 | 2046-2048 |     2 | 251.5 |   60. | 5000 |                      |
+| 2007-01b | 2049 | 2050-2052 |     2 | 253.0 |   60. | 5000 |                      |
+| 2007-01b | 2053 | 2054-2056 |     2 | 254.5 |   60. | 5000 |                      |
+| 2007-01b | 2057 | 2058-2060 |     2 | 254.5 |   60. | 5000 |                      |
 |----------+------+-----------+-------+-------+-------+------+----------------------|
 |  2007-01 |  054 |       055 |       |  255. |   60. |      | LL1 extreme N        |
 |  2007-01 |  067 |       068 |       |  255. |   60. |      |                      |
@@ -116,6 +116,13 @@
 |----------+------+-----------+-------+-------+-------+------+----------------------|
 
 
+Run it for a single slit
+#+BEGIN_SRC sh :results verbatim
+python slit-calibration.py 2006-02-281# 1>&2
+#+END_SRC
+
+#+RESULTS:
+
 ** Program to perform flux calibration: slit-calibration.py
 :PROPERTIES:
 :header-args: :tangle slit-calibration.py :comments link
@@ -124,6 +131,7 @@
 *** Imports
 #+BEGIN_SRC python
   import os
+  import sys
   import numpy as np
   import astropy
   from astropy.table import Table
@@ -139,9 +147,9 @@
 + We want the ID columns to be read as strings since they contain leading zeros in some cases, which need to be preserved
 + This was not happening automatically for the =imid= column so I use a custom converter
 #+BEGIN_SRC python
-converters = {'imid': [astropy.io.ascii.convert_numpy(np.str)]}
-tab = Table.read('all-slits-input.tab',
-                 format='ascii.tab', converters=converters)
+  converters = {'imid': [astropy.io.ascii.convert_numpy(np.str)]}
+  tab = Table.read('all-slits-input.tab',
+                   format='ascii.tab', converters=converters)
 #+END_SRC
 
 *** Fits files for the spectra and image+slit
@@ -321,26 +329,51 @@ wphot = WCS(photom.header)
       axes[0].plot([vmin, vmax], [vmin, vmax], '-')
       axes[0].set_xlim(vmin, vmax)
       axes[0].set_ylim(vmin, vmax)
+      axes[0].set_xlabel('Calibration profile')
+      axes[0].set_ylabel('Spectrum profile')
 
       # Second, plot each against slit pixel to check spatial offset
       ypix = np.arange(len(calib))
       axes[1].plot(ypix, calib, ypix, spec)
       axes[1].set_xlim(0.0, ypix.max())
       axes[1].set_ylim(vmin, vmax)
+      axes[1].set_xlabel('Slit pixel')
+      axes[1].set_ylabel('Profile')
 
       # Third, plot ratio to look for linear trends
       axes[2].plot(ypix, spec/calib)
       axes[2].set_xlim(0.0, ypix.max())
       axes[2].set_ylim(0.0, 1.5)
+      axes[2].set_xlabel('Slit pixel')
+      axes[2].set_ylabel('Ratio')
 
       fig.set_size_inches(5, 8)
+      fig.tight_layout()
       fig.savefig(prefix+'.png')
+#+END_SRC
+
+*** Use command line argument to restrict which datasets are processed
++ Read a single command line argument to choose which datasets to process
+  + It can be as specific as a single position:
+    + E.g, 2006-02-281
+  + Or all positions from one set:
+    + E.g, 2007-01b
+  + Or all from one year:
+    + E.g, 2013
+  + Or whatever
++ The purpose of this is to speed things up when iterating to find the offsets and norms
+#+BEGIN_SRC python
+  if len(sys.argv) > 1:
+      selector_pattern = sys.argv[1]
+  else:
+      selector_pattern = ''
 #+END_SRC
 
 *** Loop over the slit positions and do the stuff
 #+BEGIN_SRC python
   for row in tab:
-      if row['Dataset'] != '2006-02':
+      full_id = row['Dataset'] + '-' + row['imid']
+      if not full_id.startswith(selector_pattern):
           continue
       print(row)
       imslitfile = find_fits_filepath(row, 'image')
@@ -364,7 +397,7 @@ wphot = WCS(photom.header)
       ha_profile = hahdu.data.sum(axis=wavaxis)
       nii_profile = niihdu.data.sum(axis=wavaxis)
       spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
-      plt_prefix = 'plots/{}-{}-calib'.format(row['Dataset'], row['imid'])
+      plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
       make_three_plots(spec_profile, calib_profile, plt_prefix)
 #+END_SRC
 *** Test what is going on 
@@ -379,122 +412,10 @@ wphot = WCS(photom.header)
   + This means that the normal output (e.g., print statements) will show up in the =*Org-Babel Error Output*= buffer 
 
 #+BEGIN_SRC sh :results verbatim
-python slit-calibration.py # 1>&2
+python slit-calibration.py 2007-01b# 1>&2
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-<Row 0 of table
- values=('2006-02', '326', '324', 2, 283.5, 60.0, 1000, 'LL2 first epoch')
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 326 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 324 Template = Work/SPM2005/pp{}.fits
-ID = 324 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 324 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.67287622  83.67264012  83.67240404  83.67216797  83.67193191
-  83.67169587] [-5.43316    -5.41586707 -5.39857415 -5.38128123 -5.36398832 -5.34669541]
-[ 5612.  5616.  5619.  5623.  5627.  5630.] [ 4556.  4818.  5079.  5341.  5603.  5864.]
-<Row 1 of table
- values=(2006-02, 318, 319, 2, 280.0, 70.0, 3000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 318 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 319 Template = Work/SPM2005/pp{}.fits
-ID = 319 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 319 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.67218283  83.67190626  83.6716297   83.67135315  83.67107663
-  83.67080011] [-5.43312806 -5.41583276 -5.39853746 -5.38124216 -5.36394686 -5.34665157]
-[ 5623.  5627.  5631.  5635.  5639.  5644.] [ 4557.  4818.  5080.  5342.  5603.  5865.]
-<Row 2 of table
- values=(2006-02, 260, 261, 2, 251.4, 55.0, 3000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 260 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 261 Template = Work/SPM2005/pp{}.fits
-ID = 261 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 261 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.67111639  83.67091437  83.67071236  83.67051036  83.67030837
-  83.6701064 ] [-5.43189927 -5.41468131 -5.39746336 -5.3802454  -5.36302746 -5.34580952]
-[ 5639.  5642.  5645.  5648.  5651.  5654.] [ 4575.  4836.  5096.  5357.  5617.  5877.]
-<Row 3 of table
- values=(2006-02, 270, 271, 2, 253.5, 60.0, 6000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 270 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 271 Template = Work/SPM2005/pp{}.fits
-ID = 271 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 271 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.67067483  83.67041372  83.67015261  83.66989153  83.66963045
-  83.6693694 ] [-5.43182595 -5.41456224 -5.39729853 -5.38003483 -5.36277113 -5.34550743]
-[ 5645.  5649.  5653.  5657.  5661.  5665.] [ 4576.  4838.  5099.  5360.  5621.  5882.]
-<Row 4 of table
- values=(2006-02, 276, 277, 2, 256.0, 60.0, 6000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 276 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 277 Template = Work/SPM2005/pp{}.fits
-ID = 277 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 277 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.67023271  83.66996852  83.66970435  83.66944019  83.66917604
-  83.66891191] [-5.43170651 -5.41445512 -5.39720373 -5.37995234 -5.36270096 -5.34544959]
-[ 5652.  5656.  5660.  5664.  5668.  5672.] [ 4578.  4839.  5100.  5361.  5622.  5883.]
-<Row 5 of table
- values=(2006-02, 281, 282, 2, 257.7, 60.0, 4000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 281 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 282 Template = Work/SPM2005/pp{}.fits
-ID = 282 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 282 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.66934555  83.66908297  83.6688204   83.66855784  83.6682953
-  83.66803277] [-5.43111148 -5.41384131 -5.39657114 -5.37930097 -5.36203081 -5.34476065]
-[ 5665.  5669.  5673.  5677.  5681.  5685.] [ 4587.  4848.  5110.  5371.  5632.  5893.]
-<Row 6 of table
- values=(2006-02, 286, 287, 2, 261.0, 60.0, 3500, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 286 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 287 Template = Work/SPM2005/pp{}.fits
-ID = 287 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 287 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.66879194  83.66851325  83.66823458  83.66795593  83.66767729
-  83.66739867] [-5.43105645 -5.41378758 -5.3965187  -5.37924983 -5.36198097 -5.34471211]
-[ 5674.  5678.  5682.  5686.  5691.  5695.] [ 4588.  4849.  5110.  5372.  5633.  5894.]
-<Row 7 of table
- values=(2006-02, 291, 292, 2, 262.7, 65.0, 5000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 291 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 292 Template = Work/SPM2005/pp{}.fits
-ID = 292 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 292 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.66836383  83.66813116  83.66789849  83.66766584  83.66743321
-  83.66720058] [-5.43164099 -5.414456   -5.39727102 -5.38008604 -5.36290106 -5.3457161 ]
-[ 5680.  5684.  5687.  5691.  5694.  5698.] [ 4579.  4839.  5099.  5359.  5619.  5879.]
-<Row 8 of table
- values=(2006-02, 296, 297, 2, 267.0, 60.0, 3000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 296 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 297 Template = Work/SPM2005/pp{}.fits
-ID = 297 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 297 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.66737006  83.66714245  83.66691484  83.66668725  83.66645968
-  83.66623212] [-5.43058075 -5.41333407 -5.39608738 -5.3788407  -5.36159403 -5.34434736]
-[ 5695.  5699.  5702.  5706.  5709.  5712.] [ 4595.  4856.  5117.  5378.  5639.  5900.]
-<Row 9 of table
- values=(2006-02, 303, 304, 2, 270.5, 65.0, 5000, --)
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 303 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 304 Template = Work/SPM2005/pp{}.fits
-ID = 304 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 304 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.66632364  83.66610781  83.66589198  83.66567617  83.66546038
-  83.66524459] [-5.43198622 -5.41469805 -5.39740988 -5.38012171 -5.36283355 -5.34554539]
-[ 5711.  5714.  5717.  5721.  5724.  5727.] [ 4574.  4835.  5097.  5358.  5620.  5881.]
-<Row 10 of table
- values=('2006-02', '313', '312', 2, 278.0, 60.0, 2500, 'Image follows spec!')
- dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('Notes', '<U20')]>
-ID = 313 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 312 Template = Work/SPM2005/pp{}.fits
-ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-[ 83.65769585  83.65741904  83.65714224  83.65686546  83.6565887
-  83.65631195] [-5.43188789 -5.4145882  -5.39728851 -5.37998882 -5.36268914 -5.34538946]
-[ 5841.  5845.  5849.  5853.  5858.  5862.] [ 4575.  4837.  5099.  5360.  5622.  5884.]
-#+end_example
 
 * Dealing with the offset between image and spectrum
 + It seems that this is not as constant as I had hoped

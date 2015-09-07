@@ -1,5 +1,6 @@
 # [[file:alba-orion-west.org::*Imports][Imports:1]]
 import os
+import sys
 import numpy as np
 import astropy
 from astropy.table import Table
@@ -147,25 +148,40 @@ def make_three_plots(spec, calib, prefix):
     axes[0].plot([vmin, vmax], [vmin, vmax], '-')
     axes[0].set_xlim(vmin, vmax)
     axes[0].set_ylim(vmin, vmax)
+    axes[0].set_xlabel('Calibration profile')
+    axes[0].set_ylabel('Spectrum profile')
 
     # Second, plot each against slit pixel to check spatial offset
     ypix = np.arange(len(calib))
     axes[1].plot(ypix, calib, ypix, spec)
     axes[1].set_xlim(0.0, ypix.max())
     axes[1].set_ylim(vmin, vmax)
+    axes[1].set_xlabel('Slit pixel')
+    axes[1].set_ylabel('Profile')
 
     # Third, plot ratio to look for linear trends
     axes[2].plot(ypix, spec/calib)
     axes[2].set_xlim(0.0, ypix.max())
     axes[2].set_ylim(0.0, 1.5)
+    axes[2].set_xlabel('Slit pixel')
+    axes[2].set_ylabel('Ratio')
 
     fig.set_size_inches(5, 8)
+    fig.tight_layout()
     fig.savefig(prefix+'.png')
 # Make\ some\ useful\ and\ pretty\ plots:1 ends here
 
+# [[file:alba-orion-west.org::*Use%20command%20line%20argument%20to%20restrict%20which%20datasets%20are%20processed][Use\ command\ line\ argument\ to\ restrict\ which\ datasets\ are\ processed:1]]
+if len(sys.argv) > 1:
+    selector_pattern = sys.argv[1]
+else:
+    selector_pattern = ''
+# Use\ command\ line\ argument\ to\ restrict\ which\ datasets\ are\ processed:1 ends here
+
 # [[file:alba-orion-west.org::*Loop%20over%20the%20slit%20positions%20and%20do%20the%20stuff][Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1]]
 for row in tab:
-    if row['Dataset'] != '2006-02':
+    full_id = row['Dataset'] + '-' + row['imid']
+    if not full_id.startswith(selector_pattern):
         continue
     print(row)
     imslitfile = find_fits_filepath(row, 'image')
@@ -189,7 +205,7 @@ for row in tab:
     ha_profile = hahdu.data.sum(axis=wavaxis)
     nii_profile = niihdu.data.sum(axis=wavaxis)
     spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
-    plt_prefix = 'plots/{}-{}-calib'.format(row['Dataset'], row['imid'])
+    plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
     make_three_plots(spec_profile, calib_profile, plt_prefix)
 # Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1 ends here
 
