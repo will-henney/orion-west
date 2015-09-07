@@ -19,7 +19,7 @@
 + As well as flux calibration, it will also help with the offset along the slit
 
 
-** General policy for the workflow
+** General policy for the workflow                                 :noexport:
 + The previous version had used org-babel source blocks that read directly from org-mode tables.
   - This is convenient for rapid development
   - But it makes the overall logic hard to follow
@@ -53,6 +53,7 @@
 :PROPERTIES:
 :TABLE_EXPORT_FILE: all-slits-input.tab
 :TABLE_EXPORT_FORMAT: orgtbl-to-tsv
+:ID:       38EBF0CA-1CA6-4420-A9D8-F784FEB57BCC
 :END:
 :LOGBOOK:
 - Note taken on [2015-09-01 Tue 15:20] \\
@@ -67,42 +68,50 @@
     + Probably not
 :END:
 + This does not have all the slits yet, but it will eventually (I hope)
-+ The Notes column is just to remind us 
-| Dataset | imid | specid | Notes                |
-|---------+------+--------+----------------------|
-| 2006-02 |  323 |    324 | LL2 first epoch      |
-| 2006-02 |  318 |    319 |                      |
-| 2006-02 |  260 |    261 |                      |
-| 2006-02 |  270 |    271 |                      |
-| 2006-02 |  276 |    277 |                      |
-| 2006-02 |  281 |    282 |                      |
-| 2006-02 |  286 |    287 |                      |
-| 2006-02 |  291 |    292 |                      |
-| 2006-02 |  296 |    297 |                      |
-| 2006-02 |  303 |    304 |                      |
-| 2006-02 |  313 |    312 | Image follows spec!  |
-|---------+------+--------+----------------------|
-| 2007-01 |      |   2062 | LL2 second epoch     |
-| 2007-01 |      |   2038 |                      |
-| 2007-01 |      |   2042 |                      |
-| 2007-01 |      |   2046 |                      |
-| 2007-01 |      |   2050 |                      |
-| 2007-01 |      |   2054 |                      |
-| 2007-01 |      |   2058 |                      |
-|---------+------+--------+----------------------|
-| 2007-01 |      |    055 | LL1 extreme N        |
-| 2007-01 |      |    068 |                      |
-| 2007-01 |      |    073 |                      |
-|---------+------+--------+----------------------|
-| 2010-01 |  078 |        | Vertical W of LL2    |
-|---------+------+--------+----------------------|
-| 2013-02 |  024 |        | Horizontal LL2       |
-|---------+------+--------+----------------------|
-| 2013-12 |  016 |        | Horizontal below LL2 |
-|---------+------+--------+----------------------|
-| 2015-02 |      |   0003 |                      |
-| 2015-02 |      |   0013 |                      |
-|---------+------+--------+----------------------|
++ The Notes column is just to remind us of stuff
++ After editing, remember to export the table to file with =C-c t e=
++ [2015-09-04 Fri] Added some new columns:
+  - saxis :: dimension along the slit length in IMAGE coordinates (1 for x-axis; 2 for y-axis)
+    + This is checked by hand in DS9
+  - islit :: pixel position of slit along the perpendicular axis (y-axis for saxis=1, x-axis for saxis=2)
+    + This is measured by hand in DS9
+  - shift :: pixel offset along the slit between image+slit and spectrum
+    + This has to be found by trial and error (from plotting slit profile from spectrum and conparing with synthetic slit)
+|  Dataset | imid |    specid | saxis | islit | shift | Notes                |
+|----------+------+-----------+-------+-------+-------+----------------------|
+|  2006-02 |  323 |       324 |     2 | 283.5 |   60. | LL2 first epoch      |
+|  2006-02 |  318 |       319 |     2 | 280.0 |   60. |                      |
+|  2006-02 |  260 |       261 |     2 | 251.4 |   60. |                      |
+|  2006-02 |  270 |       271 |     2 | 253.5 |   60. |                      |
+|  2006-02 |  276 |       277 |     2 | 256.0 |   60. |                      |
+|  2006-02 |  281 |       282 |     2 | 257.7 |   60. |                      |
+|  2006-02 |  286 |       287 |     2 | 261.0 |   60. |                      |
+|  2006-02 |  291 |       292 |     2 | 262.7 |   60. |                      |
+|  2006-02 |  296 |       297 |     2 | 267.0 |   60. |                      |
+|  2006-02 |  303 |       304 |     2 | 270.5 |   60. |                      |
+|  2006-02 |  313 |       312 |     2 | 278.0 |   60. | Image follows spec!  |
+|----------+------+-----------+-------+-------+-------+----------------------|
+| 2007-01b | 2061 |    2062-c |       |  255. |   60. | LL2 second epoch     |
+| 2007-01b | 2037 | 2038-2040 |       |  255. |   60. |                      |
+| 2007-01b | 2041 | 2042-2044 |       |  255. |   60. |                      |
+| 2007-01b | 2045 | 2046-2048 |       |  255. |   60. |                      |
+| 2007-01b | 2049 | 2050-2052 |       |  255. |   60. |                      |
+| 2007-01b | 2053 | 2054-2056 |       |  255. |   60. |                      |
+| 2007-01b | 2057 | 2058-2060 |       |  255. |   60. |                      |
+|----------+------+-----------+-------+-------+-------+----------------------|
+|  2007-01 |  054 |       055 |       |  255. |   60. | LL1 extreme N        |
+|  2007-01 |  067 |       068 |       |  255. |   60. |                      |
+|  2007-01 |  072 |       073 |       |  255. |   60. |                      |
+|----------+------+-----------+-------+-------+-------+----------------------|
+|  2010-01 |  078 |   079-080 |       |  255. |   60. | Vertical W of LL2    |
+|----------+------+-----------+-------+-------+-------+----------------------|
+|  2013-02 |  024 |       025 |       |  255. |   60. | Horizontal LL2       |
+|----------+------+-----------+-------+-------+-------+----------------------|
+|  2013-12 |  116 |   117-118 |       |  255. |   60. | Horizontal below LL2 |
+|----------+------+-----------+-------+-------+-------+----------------------|
+|  2015-02 | 0003 |      0004 |       |  255. |   60. |                      |
+|  2015-02 | 0012 |      0013 |       |  255. |   60. |                      |
+|----------+------+-----------+-------+-------+-------+----------------------|
 
 
 ** Program to perform flux calibration: slit-calibration.py
@@ -112,43 +121,96 @@
 
 *** Imports
 #+BEGIN_SRC python
-from astropy.table import Table
-from astropy.io import fits
-from astropy.wcs import WCS
-import os
+  import os
+  import numpy as np
+  import astropy
+  from astropy.table import Table
+  from astropy.io import fits
+  from astropy.wcs import WCS
+  from matplotlib import pyplot as plt
+  import seaborn as sns
 #+END_SRC
 
 *** Read in the table of all slits
++ We want the ID columns to be read as strings since they contain leading zeros in some cases, which need to be preserved
++ This was not happening automatically for the =imid= column so I use a custom converter
 #+BEGIN_SRC python
-  tab = Table.read('all-slits-input.tab', format='ascii.tab')
+converters = {'imid': [astropy.io.ascii.convert_numpy(np.str)]}
+tab = Table.read('all-slits-input.tab',
+                 format='ascii.tab', converters=converters)
 #+END_SRC
 
 *** Fits files for the spectra and image+slit
-+ These are each a dictionary of template formats, which is keyed by the date of observations (YYYY-MM)
-+ There is a separate template for
-  1. The original full spectrum file, which includes ha and nii
-     - This is only used for the flux calibration and positioning, summing up in the wavelength direction
-     - So it doesn't matter that it isn't rectified
-     - [ ] Ideally it will be CR-rejected and bias-subtracted, but I am not sure I have those for all datasets
-  2. The extracted Ha line
-  3. The extracted [N II] line
-  4. The image+slit exposure
-     - I only use this for finding the ra, dec of the slit center
++ These are kept in nested dicts of dicts of template formats, which are keyed
+  1. By the file type (see below)
+  2. By the date of observations (YYYY-MM)
+     - with a suffix b to distinguish different sets from same temporada
++ The file types are:
+  + fullspec :: The original full spectrum file, which includes ha and nii
+    - This is only used for the flux calibration and positioning, summing up in the wavelength direction
+    - So it doesn't matter that it isn't rectified
+    - [ ] Ideally it will be CR-rejected and bias-subtracted, but I am not sure I have those for all datasets
+    - Note that some of the datasets where two exposures are summed use a format like =117-118= for the file name for the full spectrum
+    - Also note that for the 2013-02 dataset I have made symbolic links into the =WesternShocks/= folder for the full spectrum files, so that we don't have to know about the individual night folders (=150213/= and =160213/=) any more. 
+  + ha :: The extracted Ha line
+    - In cases where the full spectrum has form like =117-118=, then the extracted H\alpha spectrum just uses =117=
+    - This is implemented in the function =find_fits_filepath()=
+  + nii :: The extracted [N II] line
+    - Same as for H\alpha
+  + image :: The image+slit exposure
+    - I only use this for finding the ra, dec of the slit center
 #+BEGIN_SRC python
-  fullspecfile_template = {
-      '2006-02': 'Work/SPM2005/pp{:03d}.fits',
-  }
+file_templates = {
+    'fullspec' : {
+        '2006-02': 'Work/SPM2005/pp{}.fits',
+        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spec{}-transf.fits',
+        '2010-01': 'Dropbox/SPMJAN10/reducciones/spm{}h.fits',
+        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits',
+        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits',
+    },
+    'ha' : {
+        '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits',
+        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spec{}-ha.fits',
+        '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits',
+        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits',
+        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o-ha.fits',
+    },
+    'nii' : {
+        '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits',
+        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spec{}-nii.fits',
+        '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits',
+        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits',
+        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o-nii.fits',
+    },
+    'image' : {
+        '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits',
+        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spm{}-ardec.fits',
+        '2010-01': 'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits',
+        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits',
+        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}-ardec.fits',
+    },
+}
 
-  hafile_template = {
-      '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{:03d}-halpha.fits',
-  }
-  niifile_template = {
-      '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{:03d}-nii.fits',
-  }
-
-  imfile_template = {
-      '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{:03d}-ardec.fits',
-  }
+def find_fits_filepath(db, filetype):
+    """Return path to the FITS file for an image or spectrum 
+    """
+    id_ = db['imid'] if filetype == 'image' else db['specid']
+    id_ = str(id_)
+    if filetype in ('ha', 'nii') and db['Dataset'] not in ['2013-12']:
+        id_ = id_.split('-')[0]
+    template = file_templates[filetype][db['Dataset']]
+    print('ID =', id_, 'Template =', template)
+    path = template.format(id_)
+    homedir = os.path.expanduser('~')
+    return os.path.join(homedir, path)
 #+END_SRC
 
 
@@ -163,213 +225,506 @@ A function to trace the profile of a slit
   - This will be pretty slow if I am using the entire reference image array every time
   - So I should first extract a sub-image, given by the limits of the slit
 #+BEGIN_SRC python
-  def slit_profile(ra, dec, image, wcs):
-      """
-      Find the image intensity for a list of positions (ra and dec)
-      """
-      xi, yj = wcs.all_world2pix(ra, dec, 0)
-      ii, jj = int(xi + 0.5), int(yi + 0.5)
-      return np.array([image[j, i] for i, j in zip(ii, jj)])
+def slit_profile(ra, dec, image, wcs):
+    """
+    Find the image intensity for a list of positions (ra and dec)
+    """
+    xi, yj = wcs.all_world2pix(ra, dec, 0)
+    ii, jj = int(xi + 0.5), int(yi + 0.5)
+    return np.array([image[j, i] for i, j in zip(ii, jj)])
 #+END_SRC
 
 The actual photometric standard image we are going to use.  This is from Massimo's ground-based program.  The pixel size is 0.238 arcsec 
 #+BEGIN_SRC python
-  wfi_dir = '/Users/will/Work/OrionTreasury/wfi'
-  photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
-  wphot = WCS(photom.header)
+wfi_dir = '/Users/will/Work/OrionTreasury/wfi'
+photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
+wphot = WCS(photom.header)
 #+END_SRC
+
+
+*** Find the world coordinates of each pixel along the slit 
++ [2015-09-06 Sun] To make this more useful, I will return the entire array of RA and Dec for each pixel along the slit (instead of just RA0, Dec0 for the slit center)
+  + This means that the =ds= and =PA= parameters will no longer be needed, but I will leave them in anyway. 
++ Similar to what I did [[id:6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D][here]] and [[id:F6ED03C3-EC32-4444-9746-4E3C2A15CD63][here]]
+  + But simpler really
++ We need to find the following:
+  + (=RA0=, =Dec0=) of the slit center
+    + This comes from the WCS header of the image+slit, together with the =islit= and =shift= values from the [[id:38EBF0CA-1CA6-4420-A9D8-F784FEB57BCC][table above]]
+  + Pixel scale along the slit =ds=
+  + =PA= of the slit
+#+BEGIN_SRC python
+  def find_slit_coords(db, hdr):
+      """Find the coordinates of all the pixels along a spectrograph slit
+
+      Input arguments are a dict-like 'db' of hand-measured values (must
+      contain 'saxis', 'islit' and 'shift') and a FITS header 'hdr' from
+      the image+slit exposure.
+
+      Returns a dict of 'ds' (slit pixel scale), 'PA' (slit position
+      angle), 'RA' (array of RA values along slit), 'Dec' (array of Dec
+      values along slit)
+
+      """
+      jstring = str(db['saxis'])  # which image axis lies along slit
+      dRA_arcsec = hdr['CD1_'+jstring]*3600*np.cos(np.radians(hdr['CRVAL2']))
+      dDEC_arcsec = hdr['CD2_'+jstring]*3600
+      ds = np.hypot(dRA_arcsec, dDEC_arcsec)
+      PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
+
+      # Pixel coords of each slit pixel on image (in 0-based convention)
+      if jstring == '1':
+          # Slit is horizontal in IMAGE coords
+          ns = hdr['NAXIS1']
+          iarr = np.arange(ns) - float(db['shift'])
+          jarr = np.ones(ns)*float(db['islit'])
+      elif jstring == '2':
+          # Slit is vertical in IMAGE coords
+          ns = hdr['NAXIS2']
+          iarr = np.ones(ns)*float(db['islit'])
+          jarr = np.arange(ns) - float(db['shift'])
+      else:
+          raise ValueError('Slit axis (saxis) must be 1 or 2')
+
+      # Convert to world coords
+      RA, Dec = WCS(hdr).all_pix2world(iarr, jarr, 0)
+  
+      return {'ds': ds, 'PA': PA, 'RA': RA, 'Dec': Dec}
+#+END_SRC
+
+
+*** Make some useful and pretty plots
 
 *** Loop over the slit positions and do the stuff
 #+BEGIN_SRC python
   for row in tab:
-      imslitfile = 
-      specfile = 
+      print(row)
+      if row['Dataset'] not in ('2012-02'):
+          continue
+      imslitfile = find_fits_filepath(row, 'image')
+      specfile = find_fits_filepath(row, 'fullspec')
+      imhdu = fits.open(imslitfile)[0]
+      spechdu = fits.open(specfile)[0]
+
+      # World coordinates along slit
+      slit_coords = find_slit_coords(row, imhdu.header)
+
+      # Find synthetic profile from calibration image
+      calib_profile = slit_profile(slit_coords['RA'], slit_coords['Dec'],
+                                   photom.data, wphot)
+
+      # Find actual profile along slit from spectrum
+      wavaxis = 1                 # TODO need to check if this is always true
+      spec_profile = spechdu.data.sum(axis=wavaxis)
+
+      call make_plots(spec_profile, calib_profile)
 #+END_SRC
 *** Test what is going on 
 #+BEGIN_SRC python
-  print(wphot.wcs)
-  # for row in tab:
-  #     print([row[x] for x in ('Dataset', 'imid', 'specid', 'Notes')])
+print(wphot.wcs)
+# for row in tab:
+#     print([row[x] for x in ('Dataset', 'imid', 'specid', 'Notes')])
 #+END_SRC
 
 ** Run slit-calibration.py
-#+BEGIN_SRC sh :results verbatim
-python slit-calibration.py
++ For debugging we can redirect stdout to stderr with =1>&2=
+  + This means that the normal output (e.g., print statements) will show up in the =*Org-Babel Error Output*= buffer 
+
+#+BEGIN_SRC sh
+python slit-calibration.py # 1>&2
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
-       flag: 137
-      naxis: 2
-      crpix: 0x1005a00b0
-               4538         4346      
-         pc: 0x1005ab020
-    pc[0][]:  -6.6111e-05   0         
-    pc[1][]:   0            6.6111e-05
-      cdelt: 0x10059d2e0
-               1            1         
-      crval: 0x10056fdd0
-               83.744      -5.4471    
-      cunit: 0x1005b9f30
-             "deg"
-             "deg"
-      ctype: 0x1005c0210
-             "RA---TAN"
-             "DEC--TAN"
-    lonpole: 180.000000
-    latpole: -5.447127
-    restfrq: 0.000000
-    restwav: 0.000000
-        npv: 0
-     npvmax: 0
-         pv: 0x0
-        nps: 0
-     npsmax: 0
-         ps: 0x0
-         cd: 0x1005b9fc0
-    cd[0][]:  -6.6111e-05   0         
-    cd[1][]:   0            6.6111e-05
-      crota: 0x1005ba580
-               0            0         
-     altlin: 2
-     velref: 0
-        alt: ' '
-     colnum: 0
-      colax: 0x1005b0630
-                 0      0
-    wcsname: UNDEFINED
-      cname: 0x10058bda0
-             UNDEFINED
-             UNDEFINED
-      crder: 0x1005bb3d0
-             UNDEFINED     UNDEFINED   
-      csyer: 0x1005abf70
-             UNDEFINED     UNDEFINED   
-    radesys: "FK5"
-    equinox: 2000.000000
-    specsys: UNDEFINED
-    ssysobs: UNDEFINED
-    velosys: UNDEFINED
-    ssyssrc: UNDEFINED
-    zsource: UNDEFINED
-     obsgeo: UNDEFINED     UNDEFINED     UNDEFINED     
-    dateobs: UNDEFINED
-    dateavg: UNDEFINED
-     mjdobs: UNDEFINED
-     mjdavg: UNDEFINED
-       ntab: 0
-        tab: 0x0
-       nwtb: 0
-        wtb: 0x0
-      types: 0x100553470
-            2200 2201
-     lngtyp: "RA"
-     lattyp: "DEC"
-        lng: 0
-        lat: 1
-       spec: -1
-   cubeface: -1
-        err: 0x0
-        lin: (see below)
-        cel: (see below)
-        spc: (see below)
-     m_flag: 137
-    m_naxis: 2
-    m_crpix: 0x1005a00b0  (= crpix)
-       m_pc: 0x1005ab020  (= pc)
-    m_cdelt: 0x10059d2e0  (= cdelt)
-    m_crval: 0x10056fdd0  (= crval)
-    m_cunit: 0x1005b9f30  (= cunit)
-    m_ctype: 0x1005c0210  (= ctype)
-       m_pv: 0x0  (= pv)
-       m_ps: 0x0  (= ps)
-       m_cd: 0x1005b9fc0  (= cd)
-    m_crota: 0x1005ba580  (= crota)
-
-    m_colax: 0x1005b0630  (= colax)
-    m_cname: 0x10058bda0  (= cname)
-    m_crder: 0x1005bb3d0  (= crder)
-    m_csyer: 0x1005abf70  (= csyer)
-      m_tab: 0x0  (= tab)
-      m_wtb: 0x0  (= wtb)
-
-   lin.*
-       flag: 137
-      naxis: 2
-      crpix: 0x1005a00b0
-               4538         4346      
-         pc: 0x1005ab020
-    pc[0][]:  -6.6111e-05   0         
-    pc[1][]:   0            6.6111e-05
-      cdelt: 0x10059d2e0
-               1            1         
-      unity: 0
-        err: 0x0
-piximg[0][]:  -6.6111e-05   0         
-piximg[1][]:   0            6.6111e-05
-imgpix[0][]:  -15126       -0         
-imgpix[1][]:   0            15126     
-     m_flag: 0
-    m_naxis: 0
-    m_crpix: 0x0
-       m_pc: 0x0
-    m_cdelt: 0x0
-
-   cel.*
-      flag: 137
-     offset: 0
-       phi0:  0.000000
-     theta0: 90.000000
-       ref:   83.744      -5.4471       180         -5.4471    
-       prj: (see below)
-     euler:   83.744       95.447       180         -0.094927     0.99548   
-    latpreq: 0 (not required)
-     isolat: 0
-        err: 0x0
-
-   prj.*
-       flag: 103
-       code: "TAN"
-         r0: 57.295780
-         pv: (not used)
-       phi0:  0.000000
-     theta0: 90.000000
-     bounds: 7
-
-       name: "gnomonic"
-   category: 1 (zenithal)
-    pvrange: 0
-  simplezen: 1
-  equiareal: 0
-  conformal: 0
-     global: 0
-  divergent: 1
-         x0: 0.000000
-         y0: 0.000000
-        err: 0x0
-        w[]:   0            0            0            0            0         
-               0            0            0            0            0         
-          m: 0
-          n: 0
-     prjx2s: 0x0105aafb50
-     prjs2x: 0x0105aaf510
-
-   spc.*
-       flag: 0
-       type: "    "
-       code: "   "
-      crval: UNDEFINED
-    restfrq: 0.000000
-    restwav: 0.000000
-         pv: (not used)
-          w:   0            0            0           (remainder unused)
-    isGrism: 0
-        err: 0x0
-     spxX2P: 0x0
-     spxP2S: 0x0
-     spxS2P: 0x0
-     spxP2X: 0x0
-
+<Row 0 of table
+ values=('2006-02', '323', '324', 'LL2 first epoch')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 323 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 324 Template = Work/SPM2005/pp{}.fits
+ID = 324 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp323-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp324.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec324-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 1 of table
+ values=(2006-02, 318, 319, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 318 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 319 Template = Work/SPM2005/pp{}.fits
+ID = 319 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp318-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp319.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec319-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 2 of table
+ values=(2006-02, 260, 261, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 260 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 261 Template = Work/SPM2005/pp{}.fits
+ID = 261 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp260-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp261.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec261-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 3 of table
+ values=(2006-02, 270, 271, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 270 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 271 Template = Work/SPM2005/pp{}.fits
+ID = 271 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp270-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp271.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec271-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 4 of table
+ values=(2006-02, 276, 277, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 276 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 277 Template = Work/SPM2005/pp{}.fits
+ID = 277 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp276-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp277.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec277-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 5 of table
+ values=(2006-02, 281, 282, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 281 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 282 Template = Work/SPM2005/pp{}.fits
+ID = 282 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp281-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp282.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec282-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 6 of table
+ values=(2006-02, 286, 287, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 286 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 287 Template = Work/SPM2005/pp{}.fits
+ID = 287 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp286-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp287.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec287-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 7 of table
+ values=(2006-02, 291, 292, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 291 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 292 Template = Work/SPM2005/pp{}.fits
+ID = 292 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp291-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp292.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec292-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 8 of table
+ values=(2006-02, 296, 297, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 296 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 297 Template = Work/SPM2005/pp{}.fits
+ID = 297 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp296-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp297.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec297-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 9 of table
+ values=(2006-02, 303, 304, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 303 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 304 Template = Work/SPM2005/pp{}.fits
+ID = 304 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp303-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp304.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec304-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 10 of table
+ values=('2006-02', '313', '312', 'Image follows spec!')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 313 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 312 Template = Work/SPM2005/pp{}.fits
+ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp313-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2005/pp312.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec312-halpha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 11 of table
+ values=('2007-01b', '2061', '2062-c', 'LL2 second epoch')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 2061 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2062-c Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2062 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2061-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2062-c.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2062-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 12 of table
+ values=(2007-01b, 2037, 2038-2040, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 2037 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2038-2040 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2038 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2037-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2038-2040.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2038-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 13 of table
+ values=(2007-01b, 2041, 2042-2044, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 2041 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2042-2044 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2042 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2041-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2042-2044.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2042-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 14 of table
+ values=(2007-01b, 2045, 2046-2048, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 2045 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2046-2048 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2046 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2045-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2046-2048.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2046-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 15 of table
+ values=(2007-01b, 2049, 2050-2052, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 2049 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2050-2052 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2050 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2049-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2050-2052.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2050-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 16 of table
+ values=(2007-01b, 2053, 2054-2056, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 2053 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2054-2056 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2054 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2053-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2054-2056.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2054-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 17 of table
+ values=(2007-01b, 2057, 2058-2060, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 2057 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2058-2060 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2058 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2057-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2058-2060.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2058-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 18 of table
+ values=('2007-01', '054', '055', 'LL1 extreme N')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 054 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
+ID = 055 Template = Work/SPM2007/Reduced/spec{}-transf.fits
+ID = 055 Template = Work/SPM2007/Reduced/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/spm054-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/spec055-transf.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/spec055-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 19 of table
+ values=(2007-01, 067, 068, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 067 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
+ID = 068 Template = Work/SPM2007/Reduced/spec{}-transf.fits
+ID = 068 Template = Work/SPM2007/Reduced/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/spm067-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/spec068-transf.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/spec068-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 20 of table
+ values=(2007-01, 072, 073, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 072 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
+ID = 073 Template = Work/SPM2007/Reduced/spec{}-transf.fits
+ID = 073 Template = Work/SPM2007/Reduced/spec{}-ha.fits
+Filename: /Users/will/Work/SPM2007/Reduced/spm072-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/spec073-transf.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
+Filename: /Users/will/Work/SPM2007/Reduced/spec073-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 21 of table
+ values=('2010-01', '078', '079-080', 'Vertical W of LL2')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 078 Template = Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits
+ID = 079-080 Template = Dropbox/SPMJAN10/reducciones/spm{}h.fits
+ID = 079 Template = Dropbox/SPMJAN10/reducciones/spec{}-ha.fits
+Filename: /Users/will/Dropbox/SPMJAN10/reducciones/posiciones/spm078-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
+Filename: /Users/will/Dropbox/SPMJAN10/reducciones/spm079-080h.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
+Filename: /Users/will/Dropbox/SPMJAN10/reducciones/spec079-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
+<Row 22 of table
+ values=('2013-02', '024', '025', 'Horizontal LL2')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 024 Template = Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits
+ID = 025 Template = Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits
+ID = 025 Template = Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits
+Filename: /Users/will/Dropbox/SPMFEB13/WesternShocks/spm024_ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (625, 1017)   float32   
+Filename: /Users/will/Dropbox/SPMFEB13/WesternShocks/spm025_bcr.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (625, 1017)   float32   
+Filename: /Users/will/Dropbox/SPMFEB13/WesternShocks/spec025-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU      71   (625, 300)   float32   
+<Row 23 of table
+ values=('2013-12', '116', '117-118', 'Horizontal below LL2')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 116 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits
+ID = 117-118 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits
+ID = 117-118 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits
+Filename: /Users/will/Dropbox/papers/LL-Objects/SPMDIC13/spm116-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     107   (939, 1024)   float32   
+Filename: /Users/will/Dropbox/papers/LL-Objects/SPMDIC13/spm117-118_bcrx.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     107   (615, 1024)   float32   
+Filename: /Users/will/Dropbox/papers/LL-Objects/SPMDIC13/spec117-118-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     107   (615, 300)   float32   
+<Row 24 of table
+ values=(2015-02, 0003, 0004, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 0003 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o-ha.fits
+Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0003-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     107   (1076, 1024)   float32   
+Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0004o_bcrx.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     143   (979, 1024)   float32   
+Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0004o-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     143   (979, 300)   float32   
+<Row 25 of table
+ values=(2015-02, 0012, 0013, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('Notes', '<U20')]>
+ID = 0012 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o-ha.fits
+Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0012-ardec.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     107   (1076, 1024)   float32   
+Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0013o_bcrx.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     143   (979, 1024)   float32   
+Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0013o-ha.fits
+No.    Name         Type      Cards   Dimensions   Format
+0    PRIMARY     PrimaryHDU     143   (979, 300)   float32   
 #+end_example
 
 * Dealing with the offset between image and spectrum
