@@ -205,6 +205,7 @@ for row in tab:
     ha_profile = hahdu.data.sum(axis=wavaxis)
     nii_profile = niihdu.data.sum(axis=wavaxis)
     spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
+    spec_profile -= row['zero']
     plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
     make_three_plots(spec_profile, calib_profile, plt_prefix)
 # Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1 ends here
