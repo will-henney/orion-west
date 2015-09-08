@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 from astropy import units as u
 from astropy.coordinates import SkyCoord
+from astropy.modeling import models, fitting
 # Imports:1 ends here
 
 # [[file:alba-orion-west.org::*Read%20in%20the%20table%20of%20all%20slits][Read\ in\ the\ table\ of\ all\ slits:1]]
@@ -136,39 +137,63 @@ def find_slit_coords(db, hdr):
             'Dec': coords.icrs.dec.value}
 # Find\ the\ world\ coordinates\ of\ each\ pixel\ along\ the\ slit:1 ends here
 
+# [[file:alba-orion-west.org::*Fit%20Chebyshev%20polynomials%20to%20along-slit%20variation][Fit\ Chebyshev\ polynomials\ to\ along-slit\ variation:1]]
+def fit_cheb(x, y, npoly=3, mask=None):
+    """Fits a Chebyshev poly to y(x) and returns fitted y-values"""
+    fitter = fitting.LinearLSQFitter()
+    p_init = models.Chebyshev1D(npoly, domain=[x.min(), x.max()])
+    if mask is None:
+        mask = np.ones_like(x).astype(bool)
+    p = fitter(p_init, x[mask], y[mask])
+    print(p)
+    return p(x)
+# Fit\ Chebyshev\ polynomials\ to\ along-slit\ variation:1 ends here
+
 # [[file:alba-orion-west.org::*Make%20some%20useful%20and%20pretty%20plots][Make\ some\ useful\ and\ pretty\ plots:1]]
+sns.set_palette('RdPu_d', 3)
 def make_three_plots(spec, calib, prefix):
     assert spec.shape == calib.shape
     fig, axes = plt.subplots(3, 1)
 
     vmin, vmax = 0.0, 2*np.median(calib) 
 
+    ypix = np.arange(len(calib))
+    ratio = spec/calib
+    mask = (ypix > 10.0) & (ratio > 0.8*np.median(ratio)) \
+           & (ratio < 1.3*np.median(ratio)) 
+    ratio_fit = fit_cheb(ypix, ratio, mask=mask)
+
+    alpha = 0.8
+
     # First, plot two profiles against each other to check for zero-point offsets
-    axes[0].plot(calib, spec, '.')
-    axes[0].plot([vmin, vmax], [vmin, vmax], '-')
+    axes[0].plot(calib, spec/ratio_fit, '.', alpha=alpha)
+    axes[0].plot([vmin, vmax], [vmin, vmax], '-', alpha=alpha)
     axes[0].set_xlim(vmin, vmax)
     axes[0].set_ylim(vmin, vmax)
-    axes[0].set_xlabel('Calibration profile')
-    axes[0].set_ylabel('Spectrum profile')
+    axes[0].set_xlabel('Calibration Image')
+    axes[0].set_ylabel('Corrected Integrated Spectrum')
 
     # Second, plot each against slit pixel to check spatial offset
-    ypix = np.arange(len(calib))
-    axes[1].plot(ypix, calib, ypix, spec)
+    axes[1].plot(ypix, calib, alpha=alpha, label='Calibration Image')
+    axes[1].plot(ypix, spec/ratio_fit, alpha=alpha, lw=1.0, label='Corrected Integrated Spectrum')
+    axes[1].plot(ypix, spec, alpha=alpha, lw=0.5, label='Uncorrected Integrated Spectrum')
     axes[1].set_xlim(0.0, ypix.max())
     axes[1].set_ylim(vmin, vmax)
+    axes[1].legend(fontsize='xx-small')
     axes[1].set_xlabel('Slit pixel')
     axes[1].set_ylabel('Profile')
 
-    # Third, plot ratio to look for linear trends
-    axes[2].plot(ypix, spec/calib)
+    # Third, plot ratio to look for spatial trends
+    axes[2].plot(ypix, ratio, alpha=alpha)
+    axes[2].plot(ypix, ratio_fit, alpha=alpha)
     axes[2].set_xlim(0.0, ypix.max())
     axes[2].set_ylim(0.0, 1.5)
     axes[2].set_xlabel('Slit pixel')
-    axes[2].set_ylabel('Ratio')
+    axes[2].set_ylabel('Ratio: Spec / Calib')
 
     fig.set_size_inches(5, 8)
     fig.tight_layout()
-    fig.savefig(prefix+'.png')
+    fig.savefig(prefix+'.png', dpi=300)
 # Make\ some\ useful\ and\ pretty\ plots:1 ends here
 
 # [[file:alba-orion-west.org::*Use%20command%20line%20argument%20to%20restrict%20which%20datasets%20are%20processed][Use\ command\ line\ argument\ to\ restrict\ which\ datasets\ are\ processed:1]]
