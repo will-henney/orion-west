@@ -155,11 +155,12 @@ def make_three_plots(spec, calib, prefix):
     assert spec.shape == calib.shape
     fig, axes = plt.subplots(3, 1)
 
-    vmin, vmax = 0.0, 2*np.median(calib) 
+    vmin, vmax = 0.0, 2.5*np.median(calib) 
 
     ypix = np.arange(len(calib))
     ratio = spec/calib
-    mask = (ypix > 10.0) & (ratio > 0.8*np.median(ratio)) \
+    mask = (ypix > 10.0) & (ypix < 600.0) \
+           & (ratio > 0.6*np.median(ratio)) \
            & (ratio < 1.3*np.median(ratio)) 
     ratio_fit = fit_cheb(ypix, ratio, mask=mask)
 
@@ -226,7 +227,7 @@ for row in tab:
                                  photom.data, wphot)
 
     # Find actual profile along slit from spectrum
-    wavaxis = 1                 # TODO need to check if this is always true
+    wavaxis = row['saxis'] - 1  # This always seems to be true
     ha_profile = hahdu.data.sum(axis=wavaxis)
     nii_profile = niihdu.data.sum(axis=wavaxis)
     spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
