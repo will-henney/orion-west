@@ -86,51 +86,180 @@
     + This is for the center of the slit, since we will need to include a polynomial correction term later
     + Also found by trial and error - it does not need to be exact since any inaccuracy will get compensated by the leading term of the Chebyshev fit
   - zero :: Correction to the zero point of the spectra
-    - Found by trial and error so that the upper graph panel of spectrum versus image passes through the origin
+    - Found by looking at the background in the ha and nii spectra, and a little bit of trial and error so that the upper graph panel of spectrum versus image passes through the origin
 
 |  Dataset | imid |    specid | saxis | islit | shift | norm | zero | Notes                |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
-|  2006-02 |  326 |       324 |     2 | 283.5 |   74. |  600 |  3.5 | LL2 first epoch      |
-|  2006-02 |  318 |       319 |     2 | 280.0 |   78. | 3300 |    0 |                      |
-|  2006-02 |  260 |       261 |     2 | 251.4 |   55. | 3000 |    0 |                      |
-|  2006-02 |  270 |       271 |     2 | 253.5 |   60. | 6000 |    0 |                      |
-|  2006-02 |  276 |       277 |     2 | 256.0 |   60. | 6000 |    0 |                      |
-|  2006-02 |  281 |       282 |     2 | 257.7 |   64. | 3000 |  3.0 |                      |
-|  2006-02 |  286 |       287 |     2 | 261.0 |   64. | 3000 |  2.0 |                      |
-|  2006-02 |  291 |       292 |     2 | 262.7 |   65. | 4000 |  2.0 |                      |
-|  2006-02 |  296 |       297 |     2 | 267.0 |   66. | 2200 |  3.0 |                      |
-|  2006-02 |  303 |       304 |     2 | 270.5 |   70. | 2000 |  5.0 |                      |
-|  2006-02 |  313 |       312 |     2 | 278.0 |   70. | 2000 |  2.5 | Image follows spec!  |
+|  2006-02 |  326 |       324 |     2 | 283.5 |   74. |  900 |  1.0 | LL2 first epoch      |
+|  2006-02 |  318 |       319 |     2 | 280.0 |   78. | 3300 |    3 |                      |
+|  2006-02 |  260 |       261 |     2 | 251.4 |   55. | 3000 |    1 |                      |
+|  2006-02 |  270 |       271 |     2 | 253.5 |   60. | 6000 |    4 |                      |
+|  2006-02 |  276 |       277 |     2 | 256.0 |   60. | 6000 |    6 |                      |
+|  2006-02 |  281 |       282 |     2 | 257.7 |   64. | 3600 |    8 |                      |
+|  2006-02 |  286 |       287 |     2 | 261.0 |   64. | 3600 |    8 |                      |
+|  2006-02 |  291 |       292 |     2 | 262.7 |   65. | 4500 |    6 |                      |
+|  2006-02 |  296 |       297 |     2 | 267.0 |   66. | 2600 |    8 |                      |
+|  2006-02 |  303 |       304 |     2 | 270.5 |   70. | 2800 |    8 |                      |
+|  2006-02 |  313 |       312 |     2 | 278.0 |   70. | 2200 |    6 | Image follows spec!  |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
-| 2007-01b | 2061 |    2062-c |     2 | 256.0 |   68. | 8400 |    0 | LL2 second epoch     |
-| 2007-01b | 2037 | 2038-2040 |     2 | 249.0 |   60. | 8400 |    0 |                      |
-| 2007-01b | 2041 | 2042-2044 |     2 | 250.0 |   63. | 8400 |    0 |                      |
-| 2007-01b | 2045 | 2046-2048 |     2 | 251.5 |   64. | 6300 |    2 |                      |
-| 2007-01b | 2049 | 2050-2052 |     2 | 253.0 |   65. | 6400 |  2.5 |                      |
-| 2007-01b | 2053 | 2054-2056 |     2 | 254.5 |   68. | 7400 |    1 |                      |
-| 2007-01b | 2057 | 2058-2060 |     2 | 254.5 |   66. | 7500 |    1 |                      |
+| 2007-01b | 2061 |    2062-c |     2 | 256.0 |   65. | 7000 |   20 | LL2 second epoch     |
+| 2007-01b | 2037 | 2038-2040 |     2 | 249.0 |   60. | 7000 |   16 |                      |
+| 2007-01b | 2041 | 2042-2044 |     2 | 250.0 |   63. | 7000 |   21 |                      |
+| 2007-01b | 2045 | 2046-2048 |     2 | 251.5 |   64. | 5500 |   25 |                      |
+| 2007-01b | 2049 | 2050-2052 |     2 | 253.0 |   65. | 6400 |   25 |                      |
+| 2007-01b | 2053 | 2054-2056 |     2 | 254.5 |   68. | 6400 |   25 |                      |
+| 2007-01b | 2057 | 2058-2060 |     2 | 254.5 |   66. | 6000 |   25 |                      |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
-|  2007-01 |  054 |       055 |     2 | 262.5 |   68. | 4200 |    0 | LL1 extreme N        |
-|  2007-01 |  067 |       068 |     2 | 273.0 |   72. | 4200 |    0 |                      |
-|  2007-01 |  072 |       073 |     2 | 277.5 |   74. | 4200 |    0 |                      |
+|  2007-01 |  054 |       055 |     2 | 262.5 |   68. | 4200 |   10 | LL1 extreme N        |
+|  2007-01 |  067 |       068 |     2 | 273.0 |   72. | 4200 |   10 |                      |
+|  2007-01 |  072 |       073 |     2 | 277.5 |   74. | 4200 |   10 |                      |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
-|  2010-01 |  078 |   079-080 |     2 | 248.0 |   62. | 4800 |    0 | Vertical W of LL2    |
+|  2010-01 |  078 |   079-080 |     2 | 248.0 |   62. | 4800 |  2.0 | Vertical W of LL2    |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
-|  2013-02 |  024 |       025 |     1 | 465.0 |  -73. | 1200 |  2.5 | Horizontal LL2       |
+|  2013-02 |  024 |       025 |     1 | 465.0 |  -73. | 1200 |  4.5 | Horizontal LL2       |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
-|  2013-12 |  116 |   117-118 |     1 | 395.0 |  -60. | 1200 |    0 | Horizontal below LL2 |
+|  2013-12 |  116 |   117-118 |     1 | 395.0 | -160. |  500 | 10.5 | Horizontal below LL2 |
+|  2013-12 |  086 |       088 |     1 | 404.0 | -155. |  400 | 11.0 | W of HH269           |
+|  2013-12 |  090 |       089 |     1 | 404.5 | -160. |  500 | 10.5 | Image follows spec   |
+|  2013-12 |  102 |   103-104 |     1 | 402.5 | -150. |  500 | 10.5 | V faint image        |
+|  2013-12 |  111 |   112-113 |     1 | 400.0 | -145. |  500 | 10.5 | W of HH269           |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
 |  2015-02 | 0003 |      0004 |       |  255. |   60. |      |    0 |                      |
 |  2015-02 | 0012 |      0013 |       |  255. |   60. |      |    0 |                      |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
 
 
+
 Run it for a single slit
 #+BEGIN_SRC sh :results verbatim
-  python slit-calibration.py 2013-12-116 1>&2
+  python slit-calibration.py 2006-02-313 # 1>&2
 #+END_SRC
 
 #+RESULTS:
+#+begin_example
+<Row 10 of table
+ values=('2006-02', '313', '312', 2, 278.0, 70.0, 2200, 6.0, 'Image follows spec!')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 313 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 312 Template = Work/SPM2005/pp{}.fits
+ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 278.  278.  278.  278.  278.  278.] jarr = [ -70.   30.  130.  230.  330.  430.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.6577296, -5.43362307), (83.65745278, -5.41632339),
+     (83.65717599, -5.3990237), (83.65689921, -5.38172401),
+     (83.65662244, -5.36442432), (83.65634569, -5.34712464)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.65772353  83.65744672  83.65716992  83.65689314  83.65661637
+  83.65633962] [-5.43361786 -5.41631817 -5.39901848 -5.38171879 -5.36441911 -5.34711943]
+[ 5840.  5845.  5849.  5853.  5857.  5861.] [ 4549.  4811.  5073.  5334.  5596.  5858.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1             c2              c3       
+    ------------- ------------- --------------- ----------------
+    1.00246720442 0.17397528983 0.0163298565033 -0.0384840800552
+#+end_example
+
+
+
+
+*** Different binning between image and spectrum
++ Note that binning along the slit axis differs between image+slit and spectrum for these 2013-12 datasets:
+  + 086
+  + 090
+  + 102
+  + 111
++ It is x2 for the image+slit, but x3 for the spectrum
++ This is now dealt with in the [[id:1D9200A9-45BA-4128-894B-4D4DF84FC2F2][find_slit_coords]] function
+
+
+*** TODO Allow for offsets perpendicular to slit
++ In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure
++ I suspect this is happening with the 2013-12 spectra at least
+
+*** TODO Problems with the flux zero-point of the spectra
+:LOGBOOK:
+CLOCK: [2015-09-10 Thu 10:37]
+:END:
++ The original way I was dealing with this was to use the =zero= column in the table to finesse things by hand so that the "calib image" versus "integrated spectrum" plot goes through the origin
+  + However, I don't like this approach because there is no check that the "continuum" parts of the spectrum (in between the emission lines) still have a sensible value (at the very least, non-negative!)
++ We can do better.  By looking at vignetted edge of the untrimmed spectra exposures, we can see whether the "continuum" values are real continuum or not.
+  + In many cases, it is obvious that there is still a residual constant value that needs to be subtracted
+  + For instance, with 2013-12-086 dataset:
+    + [[file:~/Dropbox/papers/LL-Objects/SPMDIC13/][file:~/Dropbox/papers/LL-Objects/SPMDIC13/]]
+    + The raw spectrum is spm088.fits
+    + The reduced spectrum is spm088_bcrx.fits, spec088-ha.fits, spec088-nii.fits
+    + Unfortunately, hey are not all the same
+      + spm088_bcrx.fits looks like its flux zero point is 16
+      + spec088-ha.fits looks like its flux zero point is 11
+      + spec088-nii.fits looks like its flux zero point is 12
+    + We will try using 11.0
++ So plan is to re-use the =zero= column to be the value that we subtract from the ha and nii spectra pixels *before* summing in wavelength.
++ This works more or less well for 2013-12 and 2010
++ [X] Linear trend in zero-point for 2007-01 LL1 slits
+  + The "continuum" goes negative at the N end of the slits
+  + This would be best dealt with by modifying the images before using them
+  + The problem is seen in all the spectra - it seems to be due to having subtracted the image in superbias.fits, which is obviously wrong, since it has a linear gradient from 1150 to 1230, which is a delta of 80
+    + I thing the real value should be about 1160 to 1170
+    + So if we map the y-axis onto [0, 1], then we need to add 80*y - 10
+    + This is done [[id:4335A38B-52C8-4F0E-8F92-308DC4DBC4F6][below]]
++ Now that we have fixed up the LL1 slits, we still get reasonable calibrations, even when we determine =zero= directly from the spectral images
+  + The only problem is that the Bright Bar is slightly less prominent on the spectra than it is on the calibration image
+  + It can be largely fixed by pushing =zero= up to about 10
+  + This is fine for Ha, but is a bit low for nii in the S end of the slit
+  + But the high vel components are in the N end and not seen in nii, so it doesn't matter
+
+**** Script to fix the 2007 bias subtractions
+:PROPERTIES:
+:dir:      /Users/will/Work/SPM2007/Reduced
+:ID:       4335A38B-52C8-4F0E-8F92-308DC4DBC4F6
+:END:
+#+BEGIN_SRC python :results output verbatim
+  import glob
+  import numpy as np
+  from astropy.io import fits
+  fnlist = glob.glob('spec*-ha.fits') + glob.glob('spec*-nii.fits')
+  for fn in fnlist:
+      print(fn)
+      hdu, = fits.open(fn)
+      ny, nx = hdu.data.shape
+      y = np.linspace(0.0, 1.0, ny).reshape((ny, 1))
+      hdu.data += 0.5*(80*y - 5.0)
+      hdu.writeto(fn.replace('.fits', '-fix.fits'), clobber=True)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+spec014-ha.fits
+spec016-ha.fits
+spec021-ha.fits
+spec025-ha.fits
+spec029-ha.fits
+spec036-ha.fits
+spec040-ha.fits
+spec044-ha.fits
+spec055-ha.fits
+spec068-ha.fits
+spec073-ha.fits
+spec078-ha.fits
+spec016-nii.fits
+spec021-nii.fits
+spec025-nii.fits
+spec029-nii.fits
+spec036-nii.fits
+spec040-nii.fits
+spec044-nii.fits
+spec055-nii.fits
+spec068-nii.fits
+spec073-nii.fits
+spec078-nii.fits
+#+end_example
+
+
 
 ** Program to perform flux calibration: slit-calibration.py
 :PROPERTIES:
@@ -195,7 +324,7 @@ file_templates = {
     'ha' : {
         '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits',
         '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits',
-        '2007-01': 'Work/SPM2007/Reduced/spec{}-ha.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spec{}-ha-fix.fits',
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits',
@@ -204,7 +333,7 @@ file_templates = {
     'nii' : {
         '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits',
         '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits',
-        '2007-01': 'Work/SPM2007/Reduced/spec{}-nii.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spec{}-nii-fix.fits',
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits',
@@ -261,13 +390,16 @@ A function to trace the profile of a slit
 
 The actual photometric standard image we are going to use.  This is from Massimo's ground-based program.  The pixel size is 0.238 arcsec 
 #+BEGIN_SRC python
-wfi_dir = '/Users/will/Work/OrionTreasury/wfi'
-photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
-wphot = WCS(photom.header)
+  wfi_dir = '/Users/will/Work/OrionTreasury/wfi'
+  photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
+  wphot = WCS(photom.header)
 #+END_SRC
 
 
 *** Find the world coordinates of each pixel along the slit 
+:PROPERTIES:
+:ID:       1D9200A9-45BA-4128-894B-4D4DF84FC2F2
+:END:
 + [2015-09-06 Sun] To make this more useful, I will return the entire array of RA and Dec for each pixel along the slit (instead of just RA0, Dec0 for the slit center)
   + This means that the =ds= and =PA= parameters will no longer be needed, but I will leave them in anyway. 
 + Similar to what I did [[id:6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D][here]] and [[id:F6ED03C3-EC32-4444-9746-4E3C2A15CD63][here]]
@@ -281,12 +413,12 @@ wphot = WCS(photom.header)
   + We fix this using =astropy.coordinates.SkyCoord= with the coordinate frame taken from the =radesys= WCS parameter. 
 
 #+BEGIN_SRC python
-  def find_slit_coords(db, hdr):
+  def find_slit_coords(db, hdr, shdr):
       """Find the coordinates of all the pixels along a spectrograph slit
 
       Input arguments are a dict-like 'db' of hand-measured values (must
-      contain 'saxis', 'islit' and 'shift') and a FITS header 'hdr' from
-      the image+slit exposure.
+      contain 'saxis', 'islit' and 'shift') and a FITS headers 'hdr' from
+      the image+slit exposure and 'shdr' from a spectrum exposure
 
       Returns a dict of 'ds' (slit pixel scale), 'PA' (slit position
       angle), 'RA' (array of RA values in degrees along slit), 'Dec'
@@ -298,27 +430,42 @@ wphot = WCS(photom.header)
       dDEC_arcsec = hdr['CD2_'+jstring]*3600
       ds = np.hypot(dRA_arcsec, dDEC_arcsec)
       PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
-
+  
       # Pixel coords of each slit pixel on image (in 0-based convention)
       if jstring == '1':
           # Slit is horizontal in IMAGE coords
-          ns = hdr['NAXIS1']
+          ns = shdr['NAXIS1']
           iarr = np.arange(ns) - float(db['shift'])
           jarr = np.ones(ns)*float(db['islit'])
+          image_binning = hdr['CBIN']
+          spec_binning = shdr['CBIN']
+          # correct for difference in binning between the image+slit and the spectrum
+          iarr *= spec_binning/image_binning
       elif jstring == '2':
           # Slit is vertical in IMAGE coords
-          ns = hdr['NAXIS2']
+          ns = shdr['NAXIS2']
           iarr = np.ones(ns)*float(db['islit'])
           jarr = np.arange(ns) - float(db['shift'])
+          image_binning = hdr['RBIN']
+          spec_binning = shdr['RBIN']
+          jarr *= spec_binning/image_binning
       else:
           raise ValueError('Slit axis (saxis) must be 1 or 2')
 
+      print('iarr =', iarr[::100], 'jarr =', jarr[::100])
+      # Also correct the nominal slit plate scale
+      ds *= spec_binning/image_binning
+    
       # Convert to world coords, using the native frame
       w = WCS(hdr)
       observed_frame = w.wcs.radesys.lower()
-      coords = SkyCoord(*w.all_pix2world(iarr, jarr, 0),
+      # Note it is vital to ensure the pix2world transformation returns
+      # values in the order (RA, Dec), even if the image+slit may have
+      # Dec first
+      coords = SkyCoord(*w.all_pix2world(iarr, jarr, 0, ra_dec_order=True),
                         unit=(u.deg, u.deg), frame=observed_frame)
-  
+      print('coords =', coords[::100])
+      print('Binning along slit: image =', image_binning, 'spectrum =', spec_binning)
       # Make sure to return the coords in the ICRS frame
       return {'ds': ds, 'PA': PA,
               'RA': coords.icrs.ra.value,
@@ -346,13 +493,13 @@ wphot = WCS(photom.header)
       assert spec.shape == calib.shape
       fig, axes = plt.subplots(3, 1)
 
-      vmin, vmax = 0.0, 2.5*np.median(calib) 
+      vmin, vmax = 0.0, np.median(calib) + 5*calib.std()
 
       ypix = np.arange(len(calib))
       ratio = spec/calib
-      mask = (ypix > 10.0) & (ypix < 600.0) \
-             & (ratio > 0.6*np.median(ratio)) \
-             & (ratio < 1.3*np.median(ratio)) 
+      mask = (ypix > 10.0) & (ypix < ypix.max() - 10.0) \
+             & (ratio > np.median(ratio) - 2*ratio.std()) \
+             & (ratio < np.median(ratio) + 2*ratio.std()) 
       ratio_fit = fit_cheb(ypix, ratio, mask=mask)
 
       alpha = 0.8
@@ -371,7 +518,7 @@ wphot = WCS(photom.header)
       axes[1].plot(ypix, spec, alpha=alpha, lw=0.5, label='Uncorrected Integrated Spectrum')
       axes[1].set_xlim(0.0, ypix.max())
       axes[1].set_ylim(vmin, vmax)
-      axes[1].legend(fontsize='xx-small')
+      axes[1].legend(fontsize='xx-small', loc='lower right')
       axes[1].set_xlabel('Slit pixel')
       axes[1].set_ylabel('Profile')
 
@@ -405,6 +552,7 @@ wphot = WCS(photom.header)
       selector_pattern = ''
 #+END_SRC
 
+*** Adjust for on-chip binning
 *** Loop over the slit positions and do the stuff
 #+BEGIN_SRC python
   for row in tab:
@@ -422,7 +570,7 @@ wphot = WCS(photom.header)
       niihdu = fits.open(niifile)[0]
 
       # World coordinates along slit
-      slit_coords = find_slit_coords(row, imhdu.header)
+      slit_coords = find_slit_coords(row, imhdu.header, hahdu.header)
 
       # Find synthetic profile from calibration image
       calib_profile = slit_profile(slit_coords['RA'], slit_coords['Dec'],
@@ -430,10 +578,9 @@ wphot = WCS(photom.header)
 
       # Find actual profile along slit from spectrum
       wavaxis = row['saxis'] - 1  # This always seems to be true
-      ha_profile = hahdu.data.sum(axis=wavaxis)
-      nii_profile = niihdu.data.sum(axis=wavaxis)
+      ha_profile = (hahdu.data - row['zero']).sum(axis=wavaxis)
+      nii_profile = (niihdu.data - row['zero']).sum(axis=wavaxis)
       spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
-      spec_profile -= row['zero']
       plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
       make_three_plots(spec_profile, calib_profile, plt_prefix)
 #+END_SRC
@@ -780,7 +927,7 @@ fig.savefig(figfile)
 :dir:      ~/Dropbox/SPMFEB13/WesternShocks
 :END:
 :LOGBOOK:
-CLOCK: [2015-08-22 Sat 17:29]
+CLOCK: [2015-08-22 Sat 17:29]--[2015-08-22 Sat 18:29] =>  1:00
 :END:
 + These are in [[file:~/Dropbox/SPMFEB13/]]
   + Either in [[file:~/Dropbox/SPMFEB13/WesternShocks/]]

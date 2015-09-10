@@ -33,7 +33,7 @@ file_templates = {
     'ha' : {
         '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits',
         '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits',
-        '2007-01': 'Work/SPM2007/Reduced/spec{}-ha.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spec{}-ha-fix.fits',
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits',
@@ -42,7 +42,7 @@ file_templates = {
     'nii' : {
         '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits',
         '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits',
-        '2007-01': 'Work/SPM2007/Reduced/spec{}-nii.fits',
+        '2007-01': 'Work/SPM2007/Reduced/spec{}-nii-fix.fits',
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits',
@@ -92,13 +92,13 @@ photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
 wphot = WCS(photom.header)
 # Construct\ the\ synthetic\ slit\ from\ the\ reference\ image:1 ends here
 
-# [[file:alba-orion-west.org::*Find%20the%20world%20coordinates%20of%20each%20pixel%20along%20the%20slit][Find\ the\ world\ coordinates\ of\ each\ pixel\ along\ the\ slit:1]]
-def find_slit_coords(db, hdr):
+# [[nil][Find\ the\ world\ coordinates\ of\ each\ pixel\ along\ the\ slit:1]]
+def find_slit_coords(db, hdr, shdr):
     """Find the coordinates of all the pixels along a spectrograph slit
 
     Input arguments are a dict-like 'db' of hand-measured values (must
-    contain 'saxis', 'islit' and 'shift') and a FITS header 'hdr' from
-    the image+slit exposure.
+    contain 'saxis', 'islit' and 'shift') and a FITS headers 'hdr' from
+    the image+slit exposure and 'shdr' from a spectrum exposure
 
     Returns a dict of 'ds' (slit pixel scale), 'PA' (slit position
     angle), 'RA' (array of RA values in degrees along slit), 'Dec'
@@ -114,23 +114,38 @@ def find_slit_coords(db, hdr):
     # Pixel coords of each slit pixel on image (in 0-based convention)
     if jstring == '1':
         # Slit is horizontal in IMAGE coords
-        ns = hdr['NAXIS1']
+        ns = shdr['NAXIS1']
         iarr = np.arange(ns) - float(db['shift'])
         jarr = np.ones(ns)*float(db['islit'])
+        image_binning = hdr['CBIN']
+        spec_binning = shdr['CBIN']
+        # correct for difference in binning between the image+slit and the spectrum
+        iarr *= spec_binning/image_binning
     elif jstring == '2':
         # Slit is vertical in IMAGE coords
-        ns = hdr['NAXIS2']
+        ns = shdr['NAXIS2']
         iarr = np.ones(ns)*float(db['islit'])
         jarr = np.arange(ns) - float(db['shift'])
+        image_binning = hdr['RBIN']
+        spec_binning = shdr['RBIN']
+        jarr *= spec_binning/image_binning
     else:
         raise ValueError('Slit axis (saxis) must be 1 or 2')
 
+    print('iarr =', iarr[::100], 'jarr =', jarr[::100])
+    # Also correct the nominal slit plate scale
+    ds *= spec_binning/image_binning
+  
     # Convert to world coords, using the native frame
     w = WCS(hdr)
     observed_frame = w.wcs.radesys.lower()
-    coords = SkyCoord(*w.all_pix2world(iarr, jarr, 0),
+    # Note it is vital to ensure the pix2world transformation returns
+    # values in the order (RA, Dec), even if the image+slit may have
+    # Dec first
+    coords = SkyCoord(*w.all_pix2world(iarr, jarr, 0, ra_dec_order=True),
                       unit=(u.deg, u.deg), frame=observed_frame)
-
+    print('coords =', coords[::100])
+    print('Binning along slit: image =', image_binning, 'spectrum =', spec_binning)
     # Make sure to return the coords in the ICRS frame
     return {'ds': ds, 'PA': PA,
             'RA': coords.icrs.ra.value,
@@ -155,13 +170,13 @@ def make_three_plots(spec, calib, prefix):
     assert spec.shape == calib.shape
     fig, axes = plt.subplots(3, 1)
 
-    vmin, vmax = 0.0, 2.5*np.median(calib) 
+    vmin, vmax = 0.0, np.median(calib) + 5*calib.std()
 
     ypix = np.arange(len(calib))
     ratio = spec/calib
-    mask = (ypix > 10.0) & (ypix < 600.0) \
-           & (ratio > 0.6*np.median(ratio)) \
-           & (ratio < 1.3*np.median(ratio)) 
+    mask = (ypix > 10.0) & (ypix < ypix.max() - 10.0) \
+           & (ratio > np.median(ratio) - 2*ratio.std()) \
+           & (ratio < np.median(ratio) + 2*ratio.std()) 
     ratio_fit = fit_cheb(ypix, ratio, mask=mask)
 
     alpha = 0.8
@@ -180,7 +195,7 @@ def make_three_plots(spec, calib, prefix):
     axes[1].plot(ypix, spec, alpha=alpha, lw=0.5, label='Uncorrected Integrated Spectrum')
     axes[1].set_xlim(0.0, ypix.max())
     axes[1].set_ylim(vmin, vmax)
-    axes[1].legend(fontsize='xx-small')
+    axes[1].legend(fontsize='xx-small', loc='lower right')
     axes[1].set_xlabel('Slit pixel')
     axes[1].set_ylabel('Profile')
 
@@ -220,7 +235,7 @@ for row in tab:
     niihdu = fits.open(niifile)[0]
 
     # World coordinates along slit
-    slit_coords = find_slit_coords(row, imhdu.header)
+    slit_coords = find_slit_coords(row, imhdu.header, hahdu.header)
 
     # Find synthetic profile from calibration image
     calib_profile = slit_profile(slit_coords['RA'], slit_coords['Dec'],
@@ -228,10 +243,9 @@ for row in tab:
 
     # Find actual profile along slit from spectrum
     wavaxis = row['saxis'] - 1  # This always seems to be true
-    ha_profile = hahdu.data.sum(axis=wavaxis)
-    nii_profile = niihdu.data.sum(axis=wavaxis)
+    ha_profile = (hahdu.data - row['zero']).sum(axis=wavaxis)
+    nii_profile = (niihdu.data - row['zero']).sum(axis=wavaxis)
     spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
-    spec_profile -= row['zero']
     plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
     make_three_plots(spec_profile, calib_profile, plt_prefix)
 # Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1 ends here
