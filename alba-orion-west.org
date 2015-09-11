@@ -181,9 +181,10 @@ Parameters:
 + In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure
 + I suspect this is happening with the 2013-12 spectra at least
 
-*** TODO Problems with the flux zero-point of the spectra
+*** DONE Problems with the flux zero-point of the spectra
+CLOSED: [2015-09-10 Thu 18:00]
 :LOGBOOK:
-CLOCK: [2015-09-10 Thu 10:37]
+CLOCK: [2015-09-10 Thu 10:37]--[2015-09-10 Thu 18:00] =>  7:23
 :END:
 + The original way I was dealing with this was to use the =zero= column in the table to finesse things by hand so that the "calib image" versus "integrated spectrum" plot goes through the origin
   + However, I don't like this approach because there is no check that the "continuum" parts of the spectrum (in between the emission lines) still have a sensible value (at the very least, non-negative!)
@@ -260,6 +261,38 @@ spec078-nii.fits
 #+end_example
 
 
+
+
+**** Script to cut out the ha and nii spectra from the 2015 slits
+:PROPERTIES:
+:dir:      /Users/will/Dropbox/SPMFEB15/archivos
+:END:
+
++ 656.76 - 529.148 = 127.612
+
+
+#+BEGIN_SRC python :results output verbatim
+  import numpy as np
+  from astropy.io import fits
+  jwin = 160
+  for slitid, lineid, j0 in  [['0004', 'ha', 570], ['0004', 'nii', 930],
+                              ['0013', 'ha', 440], ['0013', 'nii', 190],]:
+      fn = 'spm{}o_sub.fits'.format(slitid)
+      hdu, = fits.open(fn)
+      hdu.data = hdu.data[j0:j0+jwin]
+      hdu.header['CRPIX2'] -= j0
+      if (slitid, lineid) == ('0013', 'nii'):
+          hdu.data *= 3.0         # forced to use weaker doublet component
+      if slitid == '0004':
+          hdu.header['CRPIX2'] += 127.5
+      hdu.writeto(                                                                
+          fn.replace('.fits', '-{}.fits'.format(lineid)),
+          clobber=True
+      )
+
+#+END_SRC
+
+#+RESULTS:
 
 ** Program to perform flux calibration: slit-calibration.py
 :PROPERTIES:
