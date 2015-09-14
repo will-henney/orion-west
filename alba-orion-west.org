@@ -124,44 +124,75 @@
 |  2013-12 |  102 |   103-104 |     1 | 402.5 | -150. |  500 | 10.5 | V faint image        |
 |  2013-12 |  111 |   112-113 |     1 | 400.0 | -145. |  500 | 10.5 | W of HH269           |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
-|  2015-02 | 0003 |      0004 |       |  255. |   60. |      |    0 |                      |
-|  2015-02 | 0012 |      0013 |       |  255. |   60. |      |    0 |                      |
+|  2015-02 | 0003 |      0004 |     1 | 463.0 |  -80. | 1150 |    0 |                      |
+|  2015-02 | 0012 |      0013 |     1 | 464.0 |  -60. | 1100 |    0 |                      |
 |----------+------+-----------+-------+-------+-------+------+------+----------------------|
 
 
 
 Run it for a single slit
 #+BEGIN_SRC sh :results verbatim
-  python slit-calibration.py 2006-02-313 # 1>&2
+  python slit-calibration.py 2015-02 # 1>&2
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
-<Row 10 of table
- values=('2006-02', '313', '312', 2, 278.0, 70.0, 2200, 6.0, 'Image follows spec!')
+<Row 28 of table
+ values=(2015-02, 0003, 0004, 1, 463.0, -80.0, 1150, 0.0, --)
  dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
-ID = 313 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 312 Template = Work/SPM2005/pp{}.fits
-ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
-iarr = [ 278.  278.  278.  278.  278.  278.] jarr = [ -70.   30.  130.  230.  330.  430.]
+ID = 0003 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits
+iarr = [  80.  180.  280.  380.  480.  580.  680.  780.  880.  980.] jarr = [ 463.  463.  463.  463.  463.  463.  463.  463.  463.  463.]
 coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
-    [(83.6577296, -5.43362307), (83.65745278, -5.41632339),
-     (83.65717599, -5.3990237), (83.65689921, -5.38172401),
-     (83.65662244, -5.36442432), (83.65634569, -5.34712464)]>
+    [(83.76300486, -5.38914842), (83.75317756, -5.38920898),
+     (83.74335024, -5.38926939), (83.73352293, -5.38932964),
+     (83.72369561, -5.38938973), (83.71386829, -5.38944967),
+     (83.70404097, -5.38950944), (83.69421365, -5.38956906),
+     (83.68438632, -5.38962852), (83.674559, -5.38968782)]>
 Binning along slit: image = 2 spectrum = 2
-[ 83.65772353  83.65744672  83.65716992  83.65689314  83.65661637
-  83.65633962] [-5.43361786 -5.41631817 -5.39901848 -5.38171879 -5.36441911 -5.34711943]
-[ 5840.  5845.  5849.  5853.  5857.  5861.] [ 4549.  4811.  5073.  5334.  5596.  5858.]
+[ 83.7629988   83.75317149  83.74334418  83.73351686  83.72368954
+  83.71386222  83.7040349   83.69420758  83.68438026  83.67455293] [-5.3891432  -5.38920377 -5.38926417 -5.38932442 -5.38938451 -5.38944445
+ -5.38950422 -5.38956384 -5.3896233  -5.38968261]
+[ 4255.  4403.  4551.  4699.  4847.  4995.  5143.  5291.  5439.  5587.] [ 5222.  5221.  5220.  5219.  5218.  5218.  5217.  5216.  5215.  5214.]
 Model: Chebyshev1D
 Inputs: ('x',)
 Outputs: ('y',)
 Model set size: 1
 Degree: 3
 Parameters:
-          c0            c1             c2              c3       
-    ------------- ------------- --------------- ----------------
-    1.00246720442 0.17397528983 0.0163298565033 -0.0384840800552
+          c0              c1               c2               c3       
+    -------------- ---------------- ---------------- ----------------
+    0.969795076839 -0.0662466197281 -0.0234506077588 0.00349115804283
+<Row 29 of table
+ values=(2015-02, 0012, 0013, 1, 464.0, -60.0, 1100, 0.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 0012 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits
+iarr = [  60.  160.  260.  360.  460.  560.  660.  760.  860.  960.] jarr = [ 464.  464.  464.  464.  464.  464.  464.  464.  464.  464.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.76323814, -5.3929956), (83.75342282, -5.39306366),
+     (83.7436075, -5.39313156), (83.73379217, -5.3931993),
+     (83.72397685, -5.39326688), (83.71416152, -5.39333431),
+     (83.70434619, -5.39340158), (83.69453086, -5.39346869),
+     (83.68471553, -5.39353565), (83.6749002, -5.39360244)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.76323207  83.75341675  83.74360143  83.73378611  83.72397078
+  83.71415545  83.70434012  83.69452479  83.68470946  83.67489413] [-5.39299038 -5.39305844 -5.39312634 -5.39319408 -5.39326167 -5.39332909
+ -5.39339636 -5.39346348 -5.39353043 -5.39359723]
+[ 4252.  4399.  4547.  4695.  4843.  4991.  5138.  5286.  5434.  5582.] [ 5164.  5163.  5162.  5161.  5160.  5159.  5158.  5157.  5156.  5155.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1               c2               c3      
+    -------------- ---------------- ---------------- ---------------
+    0.947660660743 -0.0693144909564 -0.0137084134658 0.0188138855791
 #+end_example
 
 
@@ -263,12 +294,18 @@ spec078-nii.fits
 
 
 
-**** Script to cut out the ha and nii spectra from the 2015 slits
+**** DONE Script to cut out the ha and nii spectra from the 2015 slits
+CLOSED: [2015-09-11 Fri 08:32]
 :PROPERTIES:
 :dir:      /Users/will/Dropbox/SPMFEB15/archivos
 :END:
 
-+ 656.76 - 529.148 = 127.612
++ We only have a lamp spectrum for the 0013 setting
+  + So I calculate an offset by hand for the 0004 exposure
+  + 656.76 - 529.148 = 127.612
+  + 654.275 - 525.139 = 129.136
+  + Tweaked it by hand by aligning on WCS in ds9
+    + Strangely, the shift was slightly different for nii and ha
 
 
 #+BEGIN_SRC python :results output verbatim
@@ -276,15 +313,17 @@ spec078-nii.fits
   from astropy.io import fits
   jwin = 160
   for slitid, lineid, j0 in  [['0004', 'ha', 570], ['0004', 'nii', 930],
-                              ['0013', 'ha', 440], ['0013', 'nii', 190],]:
+                              ['0013', 'ha', 440], ['0013', 'nii', 810],]:
       fn = 'spm{}o_sub.fits'.format(slitid)
       hdu, = fits.open(fn)
       hdu.data = hdu.data[j0:j0+jwin]
       hdu.header['CRPIX2'] -= j0
-      if (slitid, lineid) == ('0013', 'nii'):
-          hdu.data *= 3.0         # forced to use weaker doublet component
-      if slitid == '0004':
-          hdu.header['CRPIX2'] += 127.5
+      # if (slitid, lineid) == ('0004', 'nii'):
+      #     hdu.data *= 3.0         # forced to use weaker doublet component
+      if (slitid, lineid) == ('0004', 'ha'):
+          hdu.header['CRPIX2'] += 127.0
+      if (slitid, lineid) == ('0004', 'nii'):
+          hdu.header['CRPIX2'] += 125.0
       hdu.writeto(                                                                
           fn.replace('.fits', '-{}.fits'.format(lineid)),
           clobber=True
@@ -332,8 +371,10 @@ spec078-nii.fits
 + The file types are:
   + fullspec :: The original full spectrum file, which includes ha and nii
     - This is only used for the flux calibration and positioning, summing up in the wavelength direction
+    - [2015-09-11 Fri] /UPDATE: I don't use these any more/
     - So it doesn't matter that it isn't rectified
-    - [ ] Ideally it will be CR-rejected and bias-subtracted, but I am not sure I have those for all datasets
+    - [X] Ideally it will be CR-rejected and bias-subtracted, but I am not sure I have those for all datasets
+      - [2015-09-11 Fri] This wasn't important since I have ended up using the ha and nii spectra instead
     - Note that some of the datasets where two exposures are summed use a format like =117-118= for the file name for the full spectrum
     - Also note that for the 2013-02 dataset I have made symbolic links into the =WesternShocks/= folder for the full spectrum files, so that we don't have to know about the individual night folders (=150213/= and =160213/=) any more. 
   + ha :: The extracted Ha line
@@ -361,7 +402,7 @@ file_templates = {
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits',
-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o-ha.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits',
     },
     'nii' : {
         '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits',
@@ -370,7 +411,7 @@ file_templates = {
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits',
-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o-nii.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits',
     },
     'image' : {
         '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits',
@@ -463,15 +504,20 @@ The actual photometric standard image we are going to use.  This is from Massimo
       dDEC_arcsec = hdr['CD2_'+jstring]*3600
       ds = np.hypot(dRA_arcsec, dDEC_arcsec)
       PA = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
-  
+
       # Pixel coords of each slit pixel on image (in 0-based convention)
       if jstring == '1':
           # Slit is horizontal in IMAGE coords
           ns = shdr['NAXIS1']
           iarr = np.arange(ns) - float(db['shift'])
           jarr = np.ones(ns)*float(db['islit'])
-          image_binning = hdr['CBIN']
-          spec_binning = shdr['CBIN']
+          try:
+              image_binning = hdr['CBIN']
+              spec_binning = shdr['CBIN']
+          except KeyError:
+              image_binning = hdr['CCDXBIN']
+              spec_binning = shdr['CCDXBIN']
+            
           # correct for difference in binning between the image+slit and the spectrum
           iarr *= spec_binning/image_binning
       elif jstring == '2':
@@ -479,8 +525,13 @@ The actual photometric standard image we are going to use.  This is from Massimo
           ns = shdr['NAXIS2']
           iarr = np.ones(ns)*float(db['islit'])
           jarr = np.arange(ns) - float(db['shift'])
-          image_binning = hdr['RBIN']
-          spec_binning = shdr['RBIN']
+          try:
+              image_binning = hdr['RBIN']
+              spec_binning = shdr['RBIN']
+          except KeyError:
+              image_binning = hdr['CCDYBIN']
+              spec_binning = shdr['CCDYBIN']
+            
           jarr *= spec_binning/image_binning
       else:
           raise ValueError('Slit axis (saxis) must be 1 or 2')
@@ -488,7 +539,7 @@ The actual photometric standard image we are going to use.  This is from Massimo
       print('iarr =', iarr[::100], 'jarr =', jarr[::100])
       # Also correct the nominal slit plate scale
       ds *= spec_binning/image_binning
-    
+  
       # Convert to world coords, using the native frame
       w = WCS(hdr)
       observed_frame = w.wcs.radesys.lower()
@@ -505,6 +556,14 @@ The actual photometric standard image we are going to use.  This is from Massimo
               'Dec': coords.icrs.dec.value}
 #+END_SRC
 
+#+BEGIN_SRC python
+  def make_slit_wcs(db, slit_coords):
+      w = WCS(naxis=3)
+      w.wcs.crpix = [1, 1, 1]
+
+      dRA = np.diff(slit_coords['RA'])
+      dDec = np.diff(slit_coords['Dec'])
+#+END_SRC
 
 *** Fit Chebyshev polynomials to along-slit variation
 #+BEGIN_SRC python
@@ -566,6 +625,8 @@ The actual photometric standard image we are going to use.  This is from Massimo
       fig.set_size_inches(5, 8)
       fig.tight_layout()
       fig.savefig(prefix+'.png', dpi=300)
+
+      return ratio_fit
 #+END_SRC
 
 *** Use command line argument to restrict which datasets are processed
@@ -615,7 +676,27 @@ The actual photometric standard image we are going to use.  This is from Massimo
       nii_profile = (niihdu.data - row['zero']).sum(axis=wavaxis)
       spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
       plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
-      make_three_plots(spec_profile, calib_profile, plt_prefix)
+      ratio = make_three_plots(spec_profile, calib_profile, plt_prefix)
+
+      #
+      # Save calibrated spectra to files
+      #
+
+      # Apply basic calibration zero-point and scale
+      hahdu.data = (hahdu.data - row['zero'])/row['norm']
+      niihdu.data = (niihdu.data - row['zero'])/row['norm']
+
+      # Regularize spectral data so that wavelength is x and pos is y
+      if row['saxis'] == 1:
+          hahdu.data = hahdu.data.T
+          niihdu.data = niihdu.data.T
+      # Apply polynomial correction along slit
+      hahdu.data /= ratio[:, None]
+      niihdu.data /= ratio[:, None]
+
+      # Create the WCS object for the calibrated slit spectra
+      wslit = make_slit_wcs(row, slit_coords, imhdu, spechdu)
+      update_header(hahdu.header, row, slit_coords)
 #+END_SRC
 *** Test what is going on 
 #+BEGIN_SRC python

@@ -37,7 +37,7 @@ file_templates = {
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits',
-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o-ha.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits',
     },
     'nii' : {
         '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits',
@@ -46,7 +46,7 @@ file_templates = {
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits',
-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o-nii.fits',
+        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits',
     },
     'image' : {
         '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits',
@@ -117,8 +117,13 @@ def find_slit_coords(db, hdr, shdr):
         ns = shdr['NAXIS1']
         iarr = np.arange(ns) - float(db['shift'])
         jarr = np.ones(ns)*float(db['islit'])
-        image_binning = hdr['CBIN']
-        spec_binning = shdr['CBIN']
+        try:
+            image_binning = hdr['CBIN']
+            spec_binning = shdr['CBIN']
+        except KeyError:
+            image_binning = hdr['CCDXBIN']
+            spec_binning = shdr['CCDXBIN']
+          
         # correct for difference in binning between the image+slit and the spectrum
         iarr *= spec_binning/image_binning
     elif jstring == '2':
@@ -126,8 +131,13 @@ def find_slit_coords(db, hdr, shdr):
         ns = shdr['NAXIS2']
         iarr = np.ones(ns)*float(db['islit'])
         jarr = np.arange(ns) - float(db['shift'])
-        image_binning = hdr['RBIN']
-        spec_binning = shdr['RBIN']
+        try:
+            image_binning = hdr['RBIN']
+            spec_binning = shdr['RBIN']
+        except KeyError:
+            image_binning = hdr['CCDYBIN']
+            spec_binning = shdr['CCDYBIN']
+          
         jarr *= spec_binning/image_binning
     else:
         raise ValueError('Slit axis (saxis) must be 1 or 2')
@@ -135,7 +145,7 @@ def find_slit_coords(db, hdr, shdr):
     print('iarr =', iarr[::100], 'jarr =', jarr[::100])
     # Also correct the nominal slit plate scale
     ds *= spec_binning/image_binning
-  
+
     # Convert to world coords, using the native frame
     w = WCS(hdr)
     observed_frame = w.wcs.radesys.lower()
