@@ -6,6 +6,7 @@ import astropy
 from astropy.table import Table
 from astropy.io import fits
 from astropy.wcs import WCS
+from astropy.wcs.utils import pixel_to_skycoord
 from matplotlib import pyplot as plt
 import seaborn as sns
 from astropy import units as u
@@ -162,6 +163,90 @@ def find_slit_coords(db, hdr, shdr):
             'Dec': coords.icrs.dec.value}
 # Find\ the\ world\ coordinates\ of\ each\ pixel\ along\ the\ slit:1 ends here
 
+# [[file:alba-orion-west.org::*Package%20up%20the%20slit%20coordinates%20for%20use%20in%20a%20FITS%20header][Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1]]
+def make_slit_wcs(db, slit_coords, spechdu):
+    # Input WCS from original spectrum
+    wspec = WCS(spechdu.header)
+    wspec.fix()
+
+    #
+    # First find wavelength scale from the spectrum  
+    #
+
+    # For original spectrum, the wavelength and slit axes are 0-based,
+    # but in FITS axis order instead of python access order, since
+    # that is the way that that the WCS object likes to do it
+    ospec_wavaxis = 2 - db['saxis']
+    ospec_slitaxis = db['saxis'] - 1
+
+    # The rules are that CDi_j is used if it is present, and only if
+    # it is absent should CDELTi be used
+    if wspec.wcs.has_cd():
+        dwav = wspec.wcs.cd[ospec_wavaxis, ospec_wavaxis]
+        # Check that the off-diagonal terms are zero
+        assert(wspec.wcs.cd[0, 1] == wspec.wcs.cd[1, 0] == 0.0)
+    else:
+        dwav = wspec.wcs.cdelt[ospec_wavaxis]
+        if wspec.wcs.has_pc():
+            # If PCi_j is also present, make sure it is identity matrix
+            assert(wspec.wcs.pc == np.eye(2))
+    wav0 = wspec.wcs.crval[ospec_wavaxis]
+    wavpix0 = wspec.wcs.crpix[ospec_wavaxis]
+
+    #
+    # Second, find the displacement scale and ref point from the slit_coords
+    #
+    # The slit_coords should already be in ICRS frame
+    c = SkyCoord(slit_coords['RA'], slit_coords['Dec'], unit=u.deg)
+    # Find vector of separations between adjacent pixels
+    seps = c[:-1].separation(c[1:])
+    # Ditto for the position angles
+    PAs = c[:-1].position_angle(c[1:])
+    # Check that they are all the same as the first one
+    assert(np.allclose(seps/seps[0], 1.0))
+    # assert(np.allclose(PAs/PAs[0], 1.0, rtol=1.e-4))
+    # Then use the first one as the slit pixel size and PA
+    ds, PA, PA_deg = seps[0].deg, PAs.mean().rad, PAs.mean().deg
+    # And for the reference values too
+    RA0, Dec0 = c[0].ra.deg, c[0].dec.deg
+
+    #
+    # Now make a new shiny output WCS, constructed from scratch
+    #
+    w = WCS(naxis=3)
+
+    # Make use of all the values that we calculated above
+    w.wcs.crpix = [wavpix0, 1, 1]
+    w.wcs.cdelt = [dwav, ds, ds]
+    w.wcs.crval = [wav0, RA0, Dec0]
+    # PC order is i_j = [[1_1, 1_2, 1_3], [2_1, 2_2, 2_3], [3_1, 3_2, 3_3]]
+    w.wcs.pc = [[1.0, 0.0, 0.0],
+                [0.0, np.sin(PA), -np.cos(PA)],
+                [0.0, np.cos(PA), np.sin(PA)]]
+
+    #
+    # Finally add in auxillary info
+    #
+    w.wcs.radesys = 'ICRS'
+    w.wcs.ctype = ['AWAV', 'RA---TAN', 'DEC--TAN']
+    w.wcs.specsys = 'TOPOCENT'
+    w.wcs.cunit = [u.Angstrom, u.deg, u.deg]
+    w.wcs.name = 'TopoWav'
+    w.wcs.cname = ['Observed air wavelength', 'Right Ascension', 'Declination']
+    w.wcs.mjdobs = wspec.wcs.mjdobs
+    w.wcs.datfix()              # Sets DATE-OBS from MJD-OBS
+
+    # Check the new pixel values
+    npix = len(slit_coords['RA'])
+    check_coords = pixel_to_skycoord(np.arange(npix), [0]*npix, w, 0)
+    # These should be the same as the ICRS coords in slit_coords
+    print('New coords:', check_coords[::100])
+    print('Displacents in arcsec:', check_coords.separation(c).arcsec[::100])
+    # 15 Sep 2015: They seem to be equal to within about 1e-2 arcsec
+
+    return w
+# Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1 ends here
+
 # [[file:alba-orion-west.org::*Fit%20Chebyshev%20polynomials%20to%20along-slit%20variation][Fit\ Chebyshev\ polynomials\ to\ along-slit\ variation:1]]
 def fit_cheb(x, y, npoly=3, mask=None):
     """Fits a Chebyshev poly to y(x) and returns fitted y-values"""
@@ -220,6 +305,8 @@ def make_three_plots(spec, calib, prefix):
     fig.set_size_inches(5, 8)
     fig.tight_layout()
     fig.savefig(prefix+'.png', dpi=300)
+
+    return ratio_fit
 # Make\ some\ useful\ and\ pretty\ plots:1 ends here
 
 # [[file:alba-orion-west.org::*Use%20command%20line%20argument%20to%20restrict%20which%20datasets%20are%20processed][Use\ command\ line\ argument\ to\ restrict\ which\ datasets\ are\ processed:1]]
@@ -229,7 +316,7 @@ else:
     selector_pattern = ''
 # Use\ command\ line\ argument\ to\ restrict\ which\ datasets\ are\ processed:1 ends here
 
-# [[file:alba-orion-west.org::*Loop%20over%20the%20slit%20positions%20and%20do%20the%20stuff][Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1]]
+# [[nil][Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1]]
 for row in tab:
     full_id = row['Dataset'] + '-' + row['imid']
     if not full_id.startswith(selector_pattern):
@@ -257,7 +344,39 @@ for row in tab:
     nii_profile = (niihdu.data - row['zero']).sum(axis=wavaxis)
     spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
     plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
-    make_three_plots(spec_profile, calib_profile, plt_prefix)
+    ratio = make_three_plots(spec_profile, calib_profile, plt_prefix)
+
+    #
+    # Save calibrated spectra to files
+    #
+
+    for hdu, lineid, restwav  in [[hahdu, 'ha', 6562.79],
+                                  [niihdu, 'nii', 6583.45]]:
+        print('Saving', lineid, 'calibrated spectrum')
+        # Apply basic calibration zero-point and scale
+        hdu.data = (hdu.data - row['zero'])/row['norm']
+        # Regularize spectral data so that wavelength is x and pos is y
+        if row['saxis'] == 1:
+            hdu.data = hdu.data.T
+        # Apply polynomial correction along slit
+        hdu.data /= ratio[:, None]
+        # Extend in the third dimension (degenerate axis perp to slit)
+        hdu.data = hdu.data[None, :, :]
+
+        # Create the WCS object for the calibrated slit spectra
+        wslit = make_slit_wcs(row, slit_coords, hdu)
+        # Set the rest wavelength for this line
+        wslit.wcs.restwav = (restwav*u.Angstrom).to(u.m).value
+        # Remove WCS keywords that might cause problems
+        for i in 1, 2:
+            for j in 1, 2:
+                kwd = 'CD{}_{}'.format(i, j)
+                if kwd in hdu.header:
+                    hdu.header.remove(kwd) 
+        # Then update the header with the new WCS structure
+        hdu.header.update(wslit.to_header())
+        calibfile = 'Calibrated/{:03d}-{}-{}.fits'.format(row.index, full_id, lineid)
+        hdu.writeto(calibfile, clobber=True)
 # Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1 ends here
 
 # [[file:alba-orion-west.org::*Test%20what%20is%20going%20on][Test\ what\ is\ going\ on:1]]
