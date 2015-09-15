@@ -556,10 +556,47 @@ The actual photometric standard image we are going to use.  This is from Massimo
               'Dec': coords.icrs.dec.value}
 #+END_SRC
 
+
+*** Package up the slit coordinates for use in a FITS header
+We also need to create the WCS keywords so that the slit coordinates can be reconstructed from a FITS header.  The general approach is as follows: 
+
++ We use the standard FITS notation for axes: i, j
+  + i = 1, 2, ... are the world coordinate axes
+  + j = 1, 2, ... are the image (data array) coordinate axes
+  + Python arrays have the order reversed
+  + Reference pixel has =CRPIXj= and =CRVALi=
+  + Scale is specified with =CDELTi= and =PCi_j=
+    + =CDELTi= has the pixel scale in arcsec and wavelength
+    + =PCi_j= just has the rotation matrix according to the PA of the slit
++ The calibrated FITS spectra will be regularized so that the image x-axis (j=1 in FITS parlance) is wavelength, and the image y-axis (j=2) is displacement along slit.
+  - Any necessary transpose of the data array is done [[id:C7D141C2-85FF-427D-AF2D-DCC34B14E1A4][in the main loop]]
+  - [ ] We could also have a degenerate third image axis that is perpendicular to the slit (dimension of 1 along this axis).  Is this necessary? Is it wise?
++ We use 3 world coordinate axes, even though there are only two true image axes, so we can specify the variation of both RA and Dec along the slit
+  - The /provisional/ order of the axes is
+    - i = 1 :: RA
+    - i = 2 :: Dec
+    - i = 3 :: Wavelength
+  - So
+    - 
+
 #+BEGIN_SRC python
-  def make_slit_wcs(db, slit_coords):
+  def make_slit_wcs(db, slit_coords, imhdu, spechdu):
+      # Input WCS from image and spectrum
+      wim = WCS(imhdu)
+      wspec = WCS(spechdu)
+
+      # For original spectrum, the wavelength and slit axes 0-based, but
+      # in FITS axis order instead of python access order, since that is
+      # the way that that the WCS object likes to do it'
+      orig_wavaxis = db['saxis'] - 1
+      orig_slitaxis = 2 - db['saxis']
+      # New shiny output WCS, constructed from scratch
       w = WCS(naxis=3)
+
+    
       w.wcs.crpix = [1, 1, 1]
+      w.wcs.cdelt = [ds, ds, dwav]
+      w.wcs.crval = [RA0, Dec0, wav0
 
       dRA = np.diff(slit_coords['RA'])
       dDec = np.diff(slit_coords['Dec'])
@@ -648,6 +685,9 @@ The actual photometric standard image we are going to use.  This is from Massimo
 
 *** Adjust for on-chip binning
 *** Loop over the slit positions and do the stuff
+:PROPERTIES:
+:ID:       C7D141C2-85FF-427D-AF2D-DCC34B14E1A4
+:END:
 #+BEGIN_SRC python
   for row in tab:
       full_id = row['Dataset'] + '-' + row['imid']

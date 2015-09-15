@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2015-09-05 Sat 19:46 -->
+<!-- 2015-09-14 Mon 19:03 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title>Notes on creating spectral maps from Orion West slit spectra</title>
@@ -201,91 +201,107 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgheadline18">1. <span class="todo nilTODO">TODO</span> New general version of the slit flux calibration and astrometry</a>
+<li><a href="#orgheadline28">1. <span class="todo nilTODO">TODO</span> New general version of the slit flux calibration and astrometry</a>
 <ul>
-<li><a href="#orgheadline1">1.1. General policy for the workflow</a></li>
-<li><a href="#orgheadline8">1.2. Outline of steps</a></li>
-<li><a href="#orgheadline9">1.3. Table of all slits</a></li>
-<li><a href="#orgheadline16">1.4. Program to perform flux calibration: slit-calibration.py</a>
+<li><a href="#orgheadline7">1.1. Outline of steps</a></li>
+<li><a href="#orgheadline14">1.2. Table of all slits</a>
 <ul>
-<li><a href="#orgheadline10">1.4.1. Imports</a></li>
-<li><a href="#orgheadline11">1.4.2. Read in the table of all slits</a></li>
-<li><a href="#orgheadline12">1.4.3. Fits files for the spectra and image+slit</a></li>
-<li><a href="#orgheadline13">1.4.4. Construct the synthetic slit from the reference image</a></li>
-<li><a href="#orgheadline14">1.4.5. Loop over the slit positions and do the stuff</a></li>
-<li><a href="#orgheadline15">1.4.6. Test what is going on</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline17">1.5. Run slit-calibration.py</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline21">2. Dealing with the offset between image and spectrum</a>
+<li><a href="#orgheadline9">1.2.1. Different binning between image and spectrum</a></li>
+<li><a href="#orgheadline10">1.2.2. <span class="todo nilTODO">TODO</span> Allow for offsets perpendicular to slit</a></li>
+<li><a href="#orgheadline13">1.2.3. <span class="done nilDONE">DONE</span> Problems with the flux zero-point of the spectra</a>
 <ul>
-<li><a href="#orgheadline2">2.1. Application to the vertical slits</a></li>
-<li><a href="#orgheadline3">2.2. Repeat for the horizontal slits</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline35">3. Datasets that we will use</a>
-<ul>
-<li><a href="#orgheadline22">3.1. Odd slits that we don't want to forget</a></li>
-<li><a href="#orgheadline23">3.2. Dec 2013</a></li>
-<li><a href="#orgheadline24">3.3. Feb 2015</a></li>
-<li><a href="#orgheadline26">3.4. Jan 2007 and Feb 2006</a>
-<ul>
-<li><a href="#orgheadline25">3.4.1. Original database for vertical slits</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline27">3.5. Feb 2013</a>
-<ul>
-<li><a href="#orgheadline5">3.5.1. WCS values</a></li>
-<li><a href="#orgheadline20">3.5.2. Inter-position brightness calibration</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline34">3.6. Jan 2010</a>
-<ul>
-<li><a href="#orgheadline4">3.6.1. WCS values and per-slit weighting</a></li>
-<li><a href="#orgheadline32">3.6.2. Which to use</a>
-<ul>
-<li><a href="#orgheadline19">3.6.2.1. Positions in Alba's set that are acceptable</a></li>
-<li><a href="#orgheadline29">3.6.2.2. Positions in Alba's set that are bad</a></li>
-<li><a href="#orgheadline30">3.6.2.3. Positions over to the NE</a></li>
-<li><a href="#orgheadline31">3.6.2.4. Other positions omitted ny Alba</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline33">3.6.3. Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></a></li>
+<li><a href="#orgheadline11">1.2.3.1. Script to fix the 2007 bias subtractions</a></li>
+<li><a href="#orgheadline12">1.2.3.2. <span class="done nilDONE">DONE</span> Script to cut out the ha and nii spectra from the 2015 slits</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgheadline40">4. Making spectral maps</a>
+<li><a href="#orgheadline26">1.3. Program to perform flux calibration: slit-calibration.py</a>
 <ul>
-<li><a href="#orgheadline36">4.1. Define the output grid</a></li>
-<li><a href="#orgheadline6">4.2. Test with the velocity-integrated emission</a></li>
-<li><a href="#orgheadline7">4.3. Repeat the spectral map for the horizontal slits</a></li>
-<li><a href="#orgheadline37">4.4. <span class="todo nilTODO">TODO</span> Correction for heliocentric velocity</a></li>
-<li><a href="#orgheadline38">4.5. Try to use different velocity ranges</a></li>
-<li><a href="#orgheadline39">4.6. Combine both the horizontal and vertical slits</a></li>
+<li><a href="#orgheadline15">1.3.1. Imports</a></li>
+<li><a href="#orgheadline16">1.3.2. Read in the table of all slits</a></li>
+<li><a href="#orgheadline17">1.3.3. Fits files for the spectra and image+slit</a></li>
+<li><a href="#orgheadline18">1.3.4. Construct the synthetic slit from the reference image</a></li>
+<li><a href="#orgheadline8">1.3.5. Find the world coordinates of each pixel along the slit</a></li>
+<li><a href="#orgheadline20">1.3.6. Package up the slit coordinates for use in a FITS header</a></li>
+<li><a href="#orgheadline21">1.3.7. Fit Chebyshev polynomials to along-slit variation</a></li>
+<li><a href="#orgheadline22">1.3.8. Make some useful and pretty plots</a></li>
+<li><a href="#orgheadline23">1.3.9. Use command line argument to restrict which datasets are processed</a></li>
+<li><a href="#orgheadline24">1.3.10. Adjust for on-chip binning</a></li>
+<li><a href="#orgheadline19">1.3.11. Loop over the slit positions and do the stuff</a></li>
+<li><a href="#orgheadline25">1.3.12. Test what is going on</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline41">5. The multigrid smoothing method</a></li>
-<li><a href="#orgheadline42">6. T diagnostics from linewidths</a></li>
-<li><a href="#orgheadline43">7. The big bowshock</a></li>
-<li><a href="#orgheadline48">8. Coordinates of the slits</a>
-<ul>
-<li><a href="#orgheadline44">8.1. Description from Alba</a></li>
-<li><a href="#orgheadline45">8.2. Brightness correction factors</a></li>
-<li><a href="#orgheadline46">8.3. HORIZONTALES 2013</a></li>
-<li><a href="#orgheadline47">8.4. VERTICALES 2010</a></li>
+<li><a href="#orgheadline27">1.4. Run slit-calibration.py</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline49">9. Proper motions of the Orion West shocks</a></li>
+<li><a href="#orgheadline31">2. Dealing with the offset between image and spectrum</a>
+<ul>
+<li><a href="#orgheadline1">2.1. Application to the vertical slits</a></li>
+<li><a href="#orgheadline2">2.2. Repeat for the horizontal slits</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline45">3. Datasets that we will use</a>
+<ul>
+<li><a href="#orgheadline32">3.1. Odd slits that we don't want to forget</a></li>
+<li><a href="#orgheadline33">3.2. Dec 2013</a></li>
+<li><a href="#orgheadline34">3.3. Feb 2015</a></li>
+<li><a href="#orgheadline36">3.4. Jan 2007 and Feb 2006</a>
+<ul>
+<li><a href="#orgheadline35">3.4.1. Original database for vertical slits</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline37">3.5. Feb 2013</a>
+<ul>
+<li><a href="#orgheadline4">3.5.1. WCS values</a></li>
+<li><a href="#orgheadline30">3.5.2. Inter-position brightness calibration</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline44">3.6. Jan 2010</a>
+<ul>
+<li><a href="#orgheadline3">3.6.1. WCS values and per-slit weighting</a></li>
+<li><a href="#orgheadline42">3.6.2. Which to use</a>
+<ul>
+<li><a href="#orgheadline29">3.6.2.1. Positions in Alba's set that are acceptable</a></li>
+<li><a href="#orgheadline39">3.6.2.2. Positions in Alba's set that are bad</a></li>
+<li><a href="#orgheadline40">3.6.2.3. Positions over to the NE</a></li>
+<li><a href="#orgheadline41">3.6.2.4. Other positions omitted ny Alba</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline43">3.6.3. Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgheadline50">4. Making spectral maps</a>
+<ul>
+<li><a href="#orgheadline46">4.1. Define the output grid</a></li>
+<li><a href="#orgheadline5">4.2. Test with the velocity-integrated emission</a></li>
+<li><a href="#orgheadline6">4.3. Repeat the spectral map for the horizontal slits</a></li>
+<li><a href="#orgheadline47">4.4. <span class="todo nilTODO">TODO</span> Correction for heliocentric velocity</a></li>
+<li><a href="#orgheadline48">4.5. Try to use different velocity ranges</a></li>
+<li><a href="#orgheadline49">4.6. Combine both the horizontal and vertical slits</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline51">5. The multigrid smoothing method</a></li>
+<li><a href="#orgheadline52">6. T diagnostics from linewidths</a></li>
+<li><a href="#orgheadline53">7. The big bowshock</a></li>
+<li><a href="#orgheadline58">8. Coordinates of the slits</a>
+<ul>
+<li><a href="#orgheadline54">8.1. Description from Alba</a></li>
+<li><a href="#orgheadline55">8.2. Brightness correction factors</a></li>
+<li><a href="#orgheadline56">8.3. HORIZONTALES 2013</a></li>
+<li><a href="#orgheadline57">8.4. VERTICALES 2010</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline59">9. Proper motions of the Orion West shocks</a></li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-orgheadline18" class="outline-2">
-<h2 id="orgheadline18"><span class="section-number-2">1</span> <span class="todo TODO">TODO</span> New general version of the slit flux calibration and astrometry</h2>
+<div id="outline-container-orgheadline28" class="outline-2">
+<h2 id="orgheadline28"><span class="section-number-2">1</span> <span class="todo TODO">TODO</span> New general version of the slit flux calibration and astrometry</h2>
 <div class="outline-text-2" id="text-1">
 <ul class="org-ul">
 <li>It would be better to use the <a href="file:///Users/will/Work/OrionTreasury/wfi/">WFI images</a> to flux calibrate the spectra
@@ -301,33 +317,9 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-orgheadline1" class="outline-3">
-<h3 id="orgheadline1"><span class="section-number-3">1.1</span> General policy for the workflow</h3>
+<div id="outline-container-orgheadline7" class="outline-3">
+<h3 id="orgheadline7"><span class="section-number-3">1.1</span> Outline of steps</h3>
 <div class="outline-text-3" id="text-1-1">
-<ul class="org-ul">
-<li>The previous version had used org-babel source blocks that read directly from org-mode tables.
-<ul class="org-ul">
-<li>This is convenient for rapid development</li>
-<li>But it makes the overall logic hard to follow</li>
-<li>And hard to share with anyone not using emacs</li>
-</ul></li>
-<li>So for this implementation I plan to do the following:
-<ol class="org-ol">
-<li>Tangle all python scripts to files</li>
-<li>Write all data tables to files
-<ul class="org-ul">
-<li>Initial input table can be written as TSV from org table</li>
-<li>Do I use JSON or astropy tables written to TSV, or to FITS or &#x2026;?</li>
-</ul></li>
-<li>Do I control it all with a makefile?</li>
-</ol></li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-orgheadline8" class="outline-3">
-<h3 id="orgheadline8"><span class="section-number-3">1.2</span> Outline of steps</h3>
-<div class="outline-text-3" id="text-1-2">
 <ol class="org-ol">
 <li>We use the image+slit in order to find the slit reference position
 <ul class="org-ul">
@@ -335,15 +327,24 @@ for the JavaScript code in this tag.
 </ul></li>
 <li>Compare the spectrum profile (<code>spec</code>) with a synthetic slit (<code>image</code>) on the WFI image
 <ul class="org-ul">
-<li>Similar to <a href="#orgheadline2">Application to the vertical slits</a> and <a href="#orgheadline3">Repeat for the horizontal slits</a></li>
+<li>Similar to <a href="#orgheadline1">Application to the vertical slits</a> and <a href="#orgheadline2">Repeat for the horizontal slits</a></li>
 <li>Find the <code>jshift</code> value that best matches up the profiles</li>
 <li>Find brightness normalization
 <ul class="org-ul">
-<li>Check for calibration gradients along the slit by plotting <code>spec/image</code> against <code>y</code></li>
-<li>Check for zero point errors by plotting  <code>spec</code> against <code>image</code></li>
-<li class="off"><code>[&#xa0;]</code> One problem will be disentangling the above two effects, because if there is a strong systematic brightness gradient along the slit then their effects will be degenerate</li>
+<li>Check for calibration gradients along the slit by plotting <code>spec/image</code> against <code>s</code> (distance along slit)
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-08 Tue] </span></span> It appears that the trends are not linear.  They tend to either curve down near the left hand edge, or curve up at the right hand edge, combined with a more linear increase from left to right</li>
+<li>A cubic would probably capture the behavior well</li>
+<li class="off"><code>[&#xa0;]</code> Fit a chebychev polynomial to the ratio</li>
 </ul></li>
-<li>Write out the slit astrometry and flux calibration to a table, similar to how we did <a href="#orgheadline4">here</a> for the vertical slits and <a href="#orgheadline5">here</a> for the horizontal slits</li>
+<li>Check for zero point errors by plotting  <code>spec</code> against <code>image</code></li>
+<li class="on"><code>[X]</code> One problem will be disentangling the above two effects, because if there is a strong systematic brightness gradient along the slit then their effects will be degenerate
+<ul class="org-ul">
+<li>It turns out this is not too difficult in most cases, so long as we assume that the along-slit variation is a low-order polynomial</li>
+<li>Some slits have a compact region with strong brightness gradients near the middle of the slit, which allows one to clearly see if a zero-point offset is present</li>
+</ul></li>
+</ul></li>
+<li>Write out the slit astrometry and flux calibration to a table, similar to how we did <a href="#orgheadline3">here</a> for the vertical slits and <a href="#orgheadline4">here</a> for the horizontal slits</li>
 </ul></li>
 <li>Project the calibrated spectra onto a common spatial grid
 <ul class="org-ul">
@@ -351,7 +352,7 @@ for the JavaScript code in this tag.
 <ul class="org-ul">
 <li>This requires finding the heliocentric correction</li>
 </ul></li>
-<li>This is what we already did for the <a href="#orgheadline6">vertical</a> and <a href="#orgheadline7">horizontal</a> slits
+<li>This is what we already did for the <a href="#orgheadline5">vertical</a> and <a href="#orgheadline6">horizontal</a> slits
 <ul class="org-ul">
 <li>We need to generalise this slightly so we can treat any PA (maybe that will work out of the box) and both cases for the dimension order of the spectra files (Y-V, or V-Y)</li>
 </ul></li>
@@ -360,22 +361,47 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgheadline9" class="outline-3">
-<h3 id="orgheadline9"><span class="section-number-3">1.3</span> Table of all slits</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-orgheadline14" class="outline-3">
+<h3 id="orgheadline14"><a id="ID-38EBF0CA-1CA6-4420-A9D8-F784FEB57BCC"></a><span class="section-number-3">1.2</span> Table of all slits</h3>
+<div class="outline-text-3" id="text-1-2">
 <ul class="org-ul">
 <li>This does not have all the slits yet, but it will eventually (I hope)</li>
 <li>The Notes column is just to remind us of stuff</li>
 <li>After editing, remember to export the table to file with <code>C-c t e</code></li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-04 Fri] </span></span> Added some new columns:
 <dl class="org-dl">
-<dt>saxis</dt><dd>dimension along the slit length in IMAGE coordinates (1 for x-axis; 2 for y-axis)</dd>
+<dt>saxis</dt><dd>dimension along the slit length in IMAGE coordinates (1 for x-axis; 2 for y-axis)
+<ul class="org-ul">
+<li>This is checked by hand in DS9</li>
+</ul></dd>
+<dt>islit</dt><dd>pixel position of slit along the perpendicular axis (y-axis for saxis=1, x-axis for saxis=2)
+<ul class="org-ul">
+<li>This is measured by hand in DS9</li>
+</ul></dd>
+<dt>shift</dt><dd>pixel offset along the slit between image+slit and spectrum
+<ul class="org-ul">
+<li>This has to be found by trial and error (from plotting slit profile from spectrum and comparing with synthetic slit)</li>
+</ul></dd>
+<dt>norm</dt><dd>the factor we divide the spectrum by so that it is equal to the flux calibration image
+<ul class="org-ul">
+<li>This is for the center of the slit, since we will need to include a polynomial correction term later</li>
+<li>Also found by trial and error - it does not need to be exact since any inaccuracy will get compensated by the leading term of the Chebyshev fit</li>
+</ul></dd>
+<dt>zero</dt><dd>Correction to the zero point of the spectra
+<ul class="org-ul">
+<li>Found by looking at the background in the ha and nii spectra, and a little bit of trial and error so that the upper graph panel of spectrum versus image passes through the origin</li>
+</ul></dd>
 </dl></li>
 </ul>
+
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
 <col  class="org-right" />
 
 <col  class="org-right" />
@@ -398,17 +424,21 @@ for the JavaScript code in this tag.
 <th scope="col" class="org-right">saxis</th>
 <th scope="col" class="org-right">islit</th>
 <th scope="col" class="org-right">shift</th>
+<th scope="col" class="org-right">norm</th>
+<th scope="col" class="org-right">zero</th>
 <th scope="col" class="org-left">Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="org-right">2006-02</td>
-<td class="org-right">323</td>
+<td class="org-right">326</td>
 <td class="org-right">324</td>
 <td class="org-right">2</td>
 <td class="org-right">283.5</td>
-<td class="org-right">60.</td>
+<td class="org-right">74.</td>
+<td class="org-right">900</td>
+<td class="org-right">1.0</td>
 <td class="org-left">LL2 first epoch</td>
 </tr>
 
@@ -418,7 +448,9 @@ for the JavaScript code in this tag.
 <td class="org-right">319</td>
 <td class="org-right">2</td>
 <td class="org-right">280.0</td>
-<td class="org-right">60.</td>
+<td class="org-right">78.</td>
+<td class="org-right">3300</td>
+<td class="org-right">3</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -428,7 +460,9 @@ for the JavaScript code in this tag.
 <td class="org-right">261</td>
 <td class="org-right">2</td>
 <td class="org-right">251.4</td>
-<td class="org-right">60.</td>
+<td class="org-right">55.</td>
+<td class="org-right">3000</td>
+<td class="org-right">1</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -439,6 +473,8 @@ for the JavaScript code in this tag.
 <td class="org-right">2</td>
 <td class="org-right">253.5</td>
 <td class="org-right">60.</td>
+<td class="org-right">6000</td>
+<td class="org-right">4</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -449,6 +485,8 @@ for the JavaScript code in this tag.
 <td class="org-right">2</td>
 <td class="org-right">256.0</td>
 <td class="org-right">60.</td>
+<td class="org-right">6000</td>
+<td class="org-right">6</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -458,7 +496,9 @@ for the JavaScript code in this tag.
 <td class="org-right">282</td>
 <td class="org-right">2</td>
 <td class="org-right">257.7</td>
-<td class="org-right">60.</td>
+<td class="org-right">64.</td>
+<td class="org-right">3600</td>
+<td class="org-right">8</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -468,7 +508,9 @@ for the JavaScript code in this tag.
 <td class="org-right">287</td>
 <td class="org-right">2</td>
 <td class="org-right">261.0</td>
-<td class="org-right">60.</td>
+<td class="org-right">64.</td>
+<td class="org-right">3600</td>
+<td class="org-right">8</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -478,7 +520,9 @@ for the JavaScript code in this tag.
 <td class="org-right">292</td>
 <td class="org-right">2</td>
 <td class="org-right">262.7</td>
-<td class="org-right">60.</td>
+<td class="org-right">65.</td>
+<td class="org-right">4500</td>
+<td class="org-right">6</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -488,7 +532,9 @@ for the JavaScript code in this tag.
 <td class="org-right">297</td>
 <td class="org-right">2</td>
 <td class="org-right">267.0</td>
-<td class="org-right">60.</td>
+<td class="org-right">66.</td>
+<td class="org-right">2600</td>
+<td class="org-right">8</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -498,7 +544,9 @@ for the JavaScript code in this tag.
 <td class="org-right">304</td>
 <td class="org-right">2</td>
 <td class="org-right">270.5</td>
-<td class="org-right">60.</td>
+<td class="org-right">70.</td>
+<td class="org-right">2800</td>
+<td class="org-right">8</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -508,7 +556,9 @@ for the JavaScript code in this tag.
 <td class="org-right">312</td>
 <td class="org-right">2</td>
 <td class="org-right">278.0</td>
-<td class="org-right">60.</td>
+<td class="org-right">70.</td>
+<td class="org-right">2200</td>
+<td class="org-right">6</td>
 <td class="org-left">Image follows spec!</td>
 </tr>
 </tbody>
@@ -517,9 +567,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01b</td>
 <td class="org-right">2061</td>
 <td class="org-right">2062-c</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">256.0</td>
+<td class="org-right">65.</td>
+<td class="org-right">7000</td>
+<td class="org-right">20</td>
 <td class="org-left">LL2 second epoch</td>
 </tr>
 
@@ -527,9 +579,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01b</td>
 <td class="org-right">2037</td>
 <td class="org-right">2038-2040</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
+<td class="org-right">2</td>
+<td class="org-right">249.0</td>
 <td class="org-right">60.</td>
+<td class="org-right">7000</td>
+<td class="org-right">16</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -537,9 +591,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01b</td>
 <td class="org-right">2041</td>
 <td class="org-right">2042-2044</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">250.0</td>
+<td class="org-right">63.</td>
+<td class="org-right">7000</td>
+<td class="org-right">21</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -547,9 +603,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01b</td>
 <td class="org-right">2045</td>
 <td class="org-right">2046-2048</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">251.5</td>
+<td class="org-right">64.</td>
+<td class="org-right">5500</td>
+<td class="org-right">25</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -557,9 +615,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01b</td>
 <td class="org-right">2049</td>
 <td class="org-right">2050-2052</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">253.0</td>
+<td class="org-right">65.</td>
+<td class="org-right">6400</td>
+<td class="org-right">25</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -567,9 +627,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01b</td>
 <td class="org-right">2053</td>
 <td class="org-right">2054-2056</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">254.5</td>
+<td class="org-right">68.</td>
+<td class="org-right">6400</td>
+<td class="org-right">25</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -577,9 +639,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01b</td>
 <td class="org-right">2057</td>
 <td class="org-right">2058-2060</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">254.5</td>
+<td class="org-right">66.</td>
+<td class="org-right">6000</td>
+<td class="org-right">25</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
@@ -588,9 +652,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01</td>
 <td class="org-right">054</td>
 <td class="org-right">055</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">262.5</td>
+<td class="org-right">68.</td>
+<td class="org-right">4200</td>
+<td class="org-right">10</td>
 <td class="org-left">LL1 extreme N</td>
 </tr>
 
@@ -598,9 +664,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01</td>
 <td class="org-right">067</td>
 <td class="org-right">068</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">273.0</td>
+<td class="org-right">72.</td>
+<td class="org-right">4200</td>
+<td class="org-right">10</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -608,9 +676,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2007-01</td>
 <td class="org-right">072</td>
 <td class="org-right">073</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">277.5</td>
+<td class="org-right">74.</td>
+<td class="org-right">4200</td>
+<td class="org-right">10</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
@@ -619,9 +689,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2010-01</td>
 <td class="org-right">078</td>
 <td class="org-right">079-080</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">2</td>
+<td class="org-right">248.0</td>
+<td class="org-right">62.</td>
+<td class="org-right">4800</td>
+<td class="org-right">2.0</td>
 <td class="org-left">Vertical W of LL2</td>
 </tr>
 </tbody>
@@ -630,9 +702,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2013-02</td>
 <td class="org-right">024</td>
 <td class="org-right">025</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">1</td>
+<td class="org-right">465.0</td>
+<td class="org-right">-73.</td>
+<td class="org-right">1200</td>
+<td class="org-right">4.5</td>
 <td class="org-left">Horizontal LL2</td>
 </tr>
 </tbody>
@@ -641,10 +715,60 @@ for the JavaScript code in this tag.
 <td class="org-right">2013-12</td>
 <td class="org-right">116</td>
 <td class="org-right">117-118</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">1</td>
+<td class="org-right">395.0</td>
+<td class="org-right">-160.</td>
+<td class="org-right">500</td>
+<td class="org-right">10.5</td>
 <td class="org-left">Horizontal below LL2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12</td>
+<td class="org-right">086</td>
+<td class="org-right">088</td>
+<td class="org-right">1</td>
+<td class="org-right">404.0</td>
+<td class="org-right">-155.</td>
+<td class="org-right">400</td>
+<td class="org-right">11.0</td>
+<td class="org-left">W of HH269</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12</td>
+<td class="org-right">090</td>
+<td class="org-right">089</td>
+<td class="org-right">1</td>
+<td class="org-right">404.5</td>
+<td class="org-right">-160.</td>
+<td class="org-right">500</td>
+<td class="org-right">10.5</td>
+<td class="org-left">Image follows spec</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12</td>
+<td class="org-right">102</td>
+<td class="org-right">103-104</td>
+<td class="org-right">1</td>
+<td class="org-right">402.5</td>
+<td class="org-right">-150.</td>
+<td class="org-right">500</td>
+<td class="org-right">10.5</td>
+<td class="org-left">V faint image</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12</td>
+<td class="org-right">111</td>
+<td class="org-right">112-113</td>
+<td class="org-right">1</td>
+<td class="org-right">400.0</td>
+<td class="org-right">-145.</td>
+<td class="org-right">500</td>
+<td class="org-right">10.5</td>
+<td class="org-left">W of HH269</td>
 </tr>
 </tbody>
 <tbody>
@@ -652,9 +776,11 @@ for the JavaScript code in this tag.
 <td class="org-right">2015-02</td>
 <td class="org-right">0003</td>
 <td class="org-right">0004</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">1</td>
+<td class="org-right">463.0</td>
+<td class="org-right">-80.</td>
+<td class="org-right">1150</td>
+<td class="org-right">0</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -662,41 +788,291 @@ for the JavaScript code in this tag.
 <td class="org-right">2015-02</td>
 <td class="org-right">0012</td>
 <td class="org-right">0013</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">255.</td>
-<td class="org-right">60.</td>
+<td class="org-right">1</td>
+<td class="org-right">464.0</td>
+<td class="org-right">-60.</td>
+<td class="org-right">1100</td>
+<td class="org-right">0</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
+
+
+
+<p>
+Run it for a single slit
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">python slit-calibration.py 2015-02 <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1&gt;&amp;2</span>
+</pre>
 </div>
+
+<pre class="example">
+&lt;Row 28 of table
+ values=(2015-02, 0003, 0004, 1, 463.0, -80.0, 1150, 0.0, --)
+ dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('saxis', '&lt;i8'), ('islit', '&lt;f8'), ('shift', '&lt;f8'), ('norm', '&lt;i8'), ('zero', '&lt;f8'), ('Notes', '&lt;U20')]&gt;
+ID = 0003 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits
+iarr = [  80.  180.  280.  380.  480.  580.  680.  780.  880.  980.] jarr = [ 463.  463.  463.  463.  463.  463.  463.  463.  463.  463.]
+coords = &lt;SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.76300486, -5.38914842), (83.75317756, -5.38920898),
+     (83.74335024, -5.38926939), (83.73352293, -5.38932964),
+     (83.72369561, -5.38938973), (83.71386829, -5.38944967),
+     (83.70404097, -5.38950944), (83.69421365, -5.38956906),
+     (83.68438632, -5.38962852), (83.674559, -5.38968782)]&gt;
+Binning along slit: image = 2 spectrum = 2
+[ 83.7629988   83.75317149  83.74334418  83.73351686  83.72368954
+  83.71386222  83.7040349   83.69420758  83.68438026  83.67455293] [-5.3891432  -5.38920377 -5.38926417 -5.38932442 -5.38938451 -5.38944445
+ -5.38950422 -5.38956384 -5.3896233  -5.38968261]
+[ 4255.  4403.  4551.  4699.  4847.  4995.  5143.  5291.  5439.  5587.] [ 5222.  5221.  5220.  5219.  5218.  5218.  5217.  5216.  5215.  5214.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1               c2               c3       
+    -------------- ---------------- ---------------- ----------------
+    0.969795076839 -0.0662466197281 -0.0234506077588 0.00349115804283
+&lt;Row 29 of table
+ values=(2015-02, 0012, 0013, 1, 464.0, -60.0, 1100, 0.0, --)
+ dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('saxis', '&lt;i8'), ('islit', '&lt;f8'), ('shift', '&lt;f8'), ('norm', '&lt;i8'), ('zero', '&lt;f8'), ('Notes', '&lt;U20')]&gt;
+ID = 0012 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits
+iarr = [  60.  160.  260.  360.  460.  560.  660.  760.  860.  960.] jarr = [ 464.  464.  464.  464.  464.  464.  464.  464.  464.  464.]
+coords = &lt;SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.76323814, -5.3929956), (83.75342282, -5.39306366),
+     (83.7436075, -5.39313156), (83.73379217, -5.3931993),
+     (83.72397685, -5.39326688), (83.71416152, -5.39333431),
+     (83.70434619, -5.39340158), (83.69453086, -5.39346869),
+     (83.68471553, -5.39353565), (83.6749002, -5.39360244)]&gt;
+Binning along slit: image = 2 spectrum = 2
+[ 83.76323207  83.75341675  83.74360143  83.73378611  83.72397078
+  83.71415545  83.70434012  83.69452479  83.68470946  83.67489413] [-5.39299038 -5.39305844 -5.39312634 -5.39319408 -5.39326167 -5.39332909
+ -5.39339636 -5.39346348 -5.39353043 -5.39359723]
+[ 4252.  4399.  4547.  4695.  4843.  4991.  5138.  5286.  5434.  5582.] [ 5164.  5163.  5162.  5161.  5160.  5159.  5158.  5157.  5156.  5155.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1               c2               c3      
+    -------------- ---------------- ---------------- ---------------
+    0.947660660743 -0.0693144909564 -0.0137084134658 0.0188138855791
+</pre>
 </div>
 
 
-<div id="outline-container-orgheadline16" class="outline-3">
-<h3 id="orgheadline16"><span class="section-number-3">1.4</span> Program to perform flux calibration: slit-calibration.py</h3>
-<div class="outline-text-3" id="text-1-4">
+
+
+<div id="outline-container-orgheadline9" class="outline-4">
+<h4 id="orgheadline9"><span class="section-number-4">1.2.1</span> Different binning between image and spectrum</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<ul class="org-ul">
+<li>Note that binning along the slit axis differs between image+slit and spectrum for these 2013-12 datasets:
+<ul class="org-ul">
+<li>086</li>
+<li>090</li>
+<li>102</li>
+<li>111</li>
+</ul></li>
+<li>It is x2 for the image+slit, but x3 for the spectrum</li>
+<li>This is now dealt with in the <a href="#orgheadline8">find_slit_coords</a> function</li>
+</ul>
 </div>
+</div>
+
 
 <div id="outline-container-orgheadline10" class="outline-4">
-<h4 id="orgheadline10"><span class="section-number-4">1.4.1</span> Imports</h4>
-<div class="outline-text-4" id="text-1-4-1">
+<h4 id="orgheadline10"><span class="section-number-4">1.2.2</span> <span class="todo TODO">TODO</span> Allow for offsets perpendicular to slit</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<ul class="org-ul">
+<li>In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure</li>
+<li>I suspect this is happening with the 2013-12 spectra at least</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline13" class="outline-4">
+<h4 id="orgheadline13"><span class="section-number-4">1.2.3</span> <span class="done DONE">DONE</span> Problems with the flux zero-point of the spectra</h4>
+<div class="outline-text-4" id="text-1-2-3">
+<ul class="org-ul">
+<li>The original way I was dealing with this was to use the <code>zero</code> column in the table to finesse things by hand so that the "calib image" versus "integrated spectrum" plot goes through the origin
+<ul class="org-ul">
+<li>However, I don't like this approach because there is no check that the "continuum" parts of the spectrum (in between the emission lines) still have a sensible value (at the very least, non-negative!)</li>
+</ul></li>
+<li>We can do better.  By looking at vignetted edge of the untrimmed spectra exposures, we can see whether the "continuum" values are real continuum or not.
+<ul class="org-ul">
+<li>In many cases, it is obvious that there is still a residual constant value that needs to be subtracted</li>
+<li>For instance, with 2013-12-086 dataset:
+<ul class="org-ul">
+<li><a href="file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/"><a href="file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/">file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/</a></a></li>
+<li>The raw spectrum is spm088.fits</li>
+<li>The reduced spectrum is spm088_bcrx.fits, spec088-ha.fits, spec088-nii.fits</li>
+<li>Unfortunately, hey are not all the same
+<ul class="org-ul">
+<li>spm088_bcrx.fits looks like its flux zero point is 16</li>
+<li>spec088-ha.fits looks like its flux zero point is 11</li>
+<li>spec088-nii.fits looks like its flux zero point is 12</li>
+</ul></li>
+<li>We will try using 11.0</li>
+</ul></li>
+</ul></li>
+<li>So plan is to re-use the <code>zero</code> column to be the value that we subtract from the ha and nii spectra pixels <b>before</b> summing in wavelength.</li>
+<li>This works more or less well for 2013-12 and 2010</li>
+<li class="on"><code>[X]</code> Linear trend in zero-point for 2007-01 LL1 slits
+<ul class="org-ul">
+<li>The "continuum" goes negative at the N end of the slits</li>
+<li>This would be best dealt with by modifying the images before using them</li>
+<li>The problem is seen in all the spectra - it seems to be due to having subtracted the image in superbias.fits, which is obviously wrong, since it has a linear gradient from 1150 to 1230, which is a delta of 80
+<ul class="org-ul">
+<li>I thing the real value should be about 1160 to 1170</li>
+<li>So if we map the y-axis onto [0, 1], then we need to add 80*y - 10</li>
+<li>This is done <a href="#orgheadline11">below</a></li>
+</ul></li>
+</ul></li>
+<li>Now that we have fixed up the LL1 slits, we still get reasonable calibrations, even when we determine <code>zero</code> directly from the spectral images
+<ul class="org-ul">
+<li>The only problem is that the Bright Bar is slightly less prominent on the spectra than it is on the calibration image</li>
+<li>It can be largely fixed by pushing <code>zero</code> up to about 10</li>
+<li>This is fine for Ha, but is a bit low for nii in the S end of the slit</li>
+<li>But the high vel components are in the N end and not seen in nii, so it doesn't matter</li>
+</ul></li>
+</ul>
+</div>
+
+<div id="outline-container-orgheadline11" class="outline-5">
+<h5 id="orgheadline11"><a id="ID-4335A38B-52C8-4F0E-8F92-308DC4DBC4F6"></a><span class="section-number-5">1.2.3.1</span> Script to fix the 2007 bias subtractions</h5>
+<div class="outline-text-5" id="text-1-2-3-1">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">import</span> glob
+<span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
+<span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
+<span style="color: #dfaf8f;">fnlist</span> = glob.glob(<span style="color: #eee8aa; font-style: italic;">'spec*-ha.fits'</span>) + glob.glob(<span style="color: #eee8aa; font-style: italic;">'spec*-nii.fits'</span>)
+<span style="color: #b9d3ee;">for</span> fn <span style="color: #b9d3ee;">in</span> fnlist:
+    <span style="color: #b9d3ee;">print</span>(fn)
+    hdu, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(fn)
+    <span style="color: #dfaf8f;">ny</span>, <span style="color: #dfaf8f;">nx</span> = hdu.data.shape
+    <span style="color: #dfaf8f;">y</span> = np.linspace(0.0, 1.0, ny).reshape((ny, 1))
+    <span style="color: #dfaf8f;">hdu.data</span> += 0.5*(80*y - 5.0)
+    hdu.writeto(fn.replace(<span style="color: #eee8aa; font-style: italic;">'.fits'</span>, <span style="color: #eee8aa; font-style: italic;">'-fix.fits'</span>), clobber=<span style="color: #cFfBcF;">True</span>)
+</pre>
+</div>
+
+<pre class="example">
+spec014-ha.fits
+spec016-ha.fits
+spec021-ha.fits
+spec025-ha.fits
+spec029-ha.fits
+spec036-ha.fits
+spec040-ha.fits
+spec044-ha.fits
+spec055-ha.fits
+spec068-ha.fits
+spec073-ha.fits
+spec078-ha.fits
+spec016-nii.fits
+spec021-nii.fits
+spec025-nii.fits
+spec029-nii.fits
+spec036-nii.fits
+spec040-nii.fits
+spec044-nii.fits
+spec055-nii.fits
+spec068-nii.fits
+spec073-nii.fits
+spec078-nii.fits
+</pre>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orgheadline12" class="outline-5">
+<h5 id="orgheadline12"><span class="section-number-5">1.2.3.2</span> <span class="done DONE">DONE</span> Script to cut out the ha and nii spectra from the 2015 slits</h5>
+<div class="outline-text-5" id="text-1-2-3-2">
+<ul class="org-ul">
+<li>We only have a lamp spectrum for the 0013 setting
+<ul class="org-ul">
+<li>So I calculate an offset by hand for the 0004 exposure</li>
+<li>656.76 - 529.148 = 127.612</li>
+<li>654.275 - 525.139 = 129.136</li>
+<li>Tweaked it by hand by aligning on WCS in ds9
+<ul class="org-ul">
+<li>Strangely, the shift was slightly different for nii and ha</li>
+</ul></li>
+</ul></li>
+</ul>
+
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
+<span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
+<span style="color: #dfaf8f;">jwin</span> = 160
+<span style="color: #b9d3ee;">for</span> slitid, lineid, j0 <span style="color: #b9d3ee;">in</span>  [[<span style="color: #eee8aa; font-style: italic;">'0004'</span>, <span style="color: #eee8aa; font-style: italic;">'ha'</span>, 570], [<span style="color: #eee8aa; font-style: italic;">'0004'</span>, <span style="color: #eee8aa; font-style: italic;">'nii'</span>, 930],
+                            [<span style="color: #eee8aa; font-style: italic;">'0013'</span>, <span style="color: #eee8aa; font-style: italic;">'ha'</span>, 440], [<span style="color: #eee8aa; font-style: italic;">'0013'</span>, <span style="color: #eee8aa; font-style: italic;">'nii'</span>, 810],]:
+    <span style="color: #dfaf8f;">fn</span> = <span style="color: #eee8aa; font-style: italic;">'spm{}o_sub.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(slitid)
+    hdu, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(fn)
+    <span style="color: #dfaf8f;">hdu.data</span> = hdu.data[j0:j0+jwin]
+    <span style="color: #dfaf8f;">hdu.header</span>[<span style="color: #eee8aa; font-style: italic;">'CRPIX2'</span>] -= j0
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">if (slitid, lineid) == ('0004', 'nii'):</span>
+    <span style="color: #5F7F5F;">#     </span><span style="color: #8b8b83; font-style: italic;">hdu.data *= 3.0         # forced to use weaker doublet component</span>
+    <span style="color: #b9d3ee;">if</span> (slitid, lineid) == (<span style="color: #eee8aa; font-style: italic;">'0004'</span>, <span style="color: #eee8aa; font-style: italic;">'ha'</span>):
+        <span style="color: #dfaf8f;">hdu.header</span>[<span style="color: #eee8aa; font-style: italic;">'CRPIX2'</span>] += 127.0
+    <span style="color: #b9d3ee;">if</span> (slitid, lineid) == (<span style="color: #eee8aa; font-style: italic;">'0004'</span>, <span style="color: #eee8aa; font-style: italic;">'nii'</span>):
+        <span style="color: #dfaf8f;">hdu.header</span>[<span style="color: #eee8aa; font-style: italic;">'CRPIX2'</span>] += 125.0
+    hdu.writeto(                                                                
+        fn.replace(<span style="color: #eee8aa; font-style: italic;">'.fits'</span>, <span style="color: #eee8aa; font-style: italic;">'-{}.fits'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(lineid)),
+        clobber=<span style="color: #cFfBcF;">True</span>
+    )
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline26" class="outline-3">
+<h3 id="orgheadline26"><span class="section-number-3">1.3</span> Program to perform flux calibration: slit-calibration.py</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+
+<div id="outline-container-orgheadline15" class="outline-4">
+<h4 id="orgheadline15"><span class="section-number-4">1.3.1</span> Imports</h4>
+<div class="outline-text-4" id="text-1-3-1">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> os
+<span style="color: #b9d3ee;">import</span> sys
 <span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
 <span style="color: #b9d3ee;">import</span> astropy
 <span style="color: #b9d3ee;">from</span> astropy.table <span style="color: #b9d3ee;">import</span> Table
 <span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
 <span style="color: #b9d3ee;">from</span> astropy.wcs <span style="color: #b9d3ee;">import</span> WCS
+<span style="color: #b9d3ee;">from</span> matplotlib <span style="color: #b9d3ee;">import</span> pyplot <span style="color: #b9d3ee;">as</span> plt
+<span style="color: #b9d3ee;">import</span> seaborn <span style="color: #b9d3ee;">as</span> sns
+<span style="color: #b9d3ee;">from</span> astropy <span style="color: #b9d3ee;">import</span> units <span style="color: #b9d3ee;">as</span> u
+<span style="color: #b9d3ee;">from</span> astropy.coordinates <span style="color: #b9d3ee;">import</span> SkyCoord
+<span style="color: #b9d3ee;">from</span> astropy.modeling <span style="color: #b9d3ee;">import</span> models, fitting
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgheadline11" class="outline-4">
-<h4 id="orgheadline11"><span class="section-number-4">1.4.2</span> Read in the table of all slits</h4>
-<div class="outline-text-4" id="text-1-4-2">
+<div id="outline-container-orgheadline16" class="outline-4">
+<h4 id="orgheadline16"><span class="section-number-4">1.3.2</span> Read in the table of all slits</h4>
+<div class="outline-text-4" id="text-1-3-2">
 <ul class="org-ul">
 <li>We want the ID columns to be read as strings since they contain leading zeros in some cases, which need to be preserved</li>
 <li>This was not happening automatically for the <code>imid</code> column so I use a custom converter</li>
@@ -711,9 +1087,9 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgheadline12" class="outline-4">
-<h4 id="orgheadline12"><span class="section-number-4">1.4.3</span> Fits files for the spectra and image+slit</h4>
-<div class="outline-text-4" id="text-1-4-3">
+<div id="outline-container-orgheadline17" class="outline-4">
+<h4 id="orgheadline17"><span class="section-number-4">1.3.3</span> Fits files for the spectra and image+slit</h4>
+<div class="outline-text-4" id="text-1-3-3">
 <ul class="org-ul">
 <li>These are kept in nested dicts of dicts of template formats, which are keyed
 <ol class="org-ol">
@@ -728,8 +1104,12 @@ for the JavaScript code in this tag.
 <dt>fullspec</dt><dd>The original full spectrum file, which includes ha and nii
 <ul class="org-ul">
 <li>This is only used for the flux calibration and positioning, summing up in the wavelength direction</li>
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-11 Fri] </span></span> <i>UPDATE: I don't use these any more</i></li>
 <li>So it doesn't matter that it isn't rectified</li>
-<li class="off"><code>[&#xa0;]</code> Ideally it will be CR-rejected and bias-subtracted, but I am not sure I have those for all datasets</li>
+<li class="on"><code>[X]</code> Ideally it will be CR-rejected and bias-subtracted, but I am not sure I have those for all datasets
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-11 Fri] </span></span> This wasn't important since I have ended up using the ha and nii spectra instead</li>
+</ul></li>
 <li>Note that some of the datasets where two exposures are summed use a format like <code>117-118</code> for the file name for the full spectrum</li>
 <li>Also note that for the 2013-02 dataset I have made symbolic links into the <code>WesternShocks/</code> folder for the full spectrum files, so that we don't have to know about the individual night folders (<code>150213/</code> and <code>160213/</code>) any more.</li>
 </ul></dd>
@@ -763,20 +1143,20 @@ for the JavaScript code in this tag.
     <span style="color: #eee8aa; font-style: italic;">'ha'</span> : {
         <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-ha.fits'</span>,
+        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-ha-fix.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o-ha.fits'</span>,
+        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits'</span>,
     },
     <span style="color: #eee8aa; font-style: italic;">'nii'</span> : {
         <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-nii.fits'</span>,
+        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-nii-fix.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits'</span>,
         <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o-nii.fits'</span>,
+        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits'</span>,
     },
     <span style="color: #eee8aa; font-style: italic;">'image'</span> : {
         <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits'</span>,
@@ -807,9 +1187,9 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-orgheadline13" class="outline-4">
-<h4 id="orgheadline13"><span class="section-number-4">1.4.4</span> Construct the synthetic slit from the reference image</h4>
-<div class="outline-text-4" id="text-1-4-4">
+<div id="outline-container-orgheadline18" class="outline-4">
+<h4 id="orgheadline18"><span class="section-number-4">1.3.4</span> Construct the synthetic slit from the reference image</h4>
+<div class="outline-text-4" id="text-1-3-4">
 <p>
 A function to trace the profile of a slit
 </p>
@@ -834,7 +1214,10 @@ A function to trace the profile of a slit
 <span style="color: #eee8aa; font-style: italic;">    Find the image intensity for a list of positions (ra and dec)</span>
 <span style="color: #eee8aa; font-style: italic;">    """</span>
     <span style="color: #dfaf8f;">xi</span>, <span style="color: #dfaf8f;">yj</span> = wcs.all_world2pix(ra, dec, 0)
-    <span style="color: #dfaf8f;">ii</span>, <span style="color: #dfaf8f;">jj</span> = <span style="color: #DCDCCC; font-weight: bold;">int</span>(xi + 0.5), <span style="color: #DCDCCC; font-weight: bold;">int</span>(yi + 0.5)
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Find nearest integer pixel</span>
+    <span style="color: #dfaf8f;">ii</span>, <span style="color: #dfaf8f;">jj</span> = np.floor(xi + 0.5), np.floor(yj + 0.5)
+    <span style="color: #b9d3ee;">print</span>(ra[::100], dec[::100])
+    <span style="color: #b9d3ee;">print</span>(ii[::100], jj[::100])
     <span style="color: #b9d3ee;">return</span> np.array([image[j, i] <span style="color: #b9d3ee;">for</span> i, j <span style="color: #b9d3ee;">in</span> <span style="color: #DCDCCC; font-weight: bold;">zip</span>(ii, jj)])
 </pre>
 </div>
@@ -852,31 +1235,331 @@ photom, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(os.p
 </div>
 </div>
 
-<div id="outline-container-orgheadline14" class="outline-4">
-<h4 id="orgheadline14"><span class="section-number-4">1.4.5</span> Loop over the slit positions and do the stuff</h4>
-<div class="outline-text-4" id="text-1-4-5">
+
+<div id="outline-container-orgheadline8" class="outline-4">
+<h4 id="orgheadline8"><a id="ID-1D9200A9-45BA-4128-894B-4D4DF84FC2F2"></a><span class="section-number-4">1.3.5</span> Find the world coordinates of each pixel along the slit</h4>
+<div class="outline-text-4" id="text-1-3-5">
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-06 Sun] </span></span> To make this more useful, I will return the entire array of RA and Dec for each pixel along the slit (instead of just RA0, Dec0 for the slit center)
+<ul class="org-ul">
+<li>This means that the <code>ds</code> and <code>PA</code> parameters will no longer be needed, but I will leave them in anyway.</li>
+</ul></li>
+<li>Similar to what I did <a href="#orgheadline3">here</a> and <a href="#orgheadline4">here</a>
+<ul class="org-ul">
+<li>But simpler really</li>
+</ul></li>
+<li>We need to find the following:
+<ul class="org-ul">
+<li>(<code>RA0</code>, <code>Dec0</code>) of the slit center
+<ul class="org-ul">
+<li>This comes from the WCS header of the image+slit, together with the <code>islit</code> and <code>shift</code> values from the <a href="#orgheadline14">table above</a></li>
+</ul></li>
+<li>Pixel scale along the slit <code>ds</code></li>
+<li><code>PA</code> of the slit</li>
+</ul></li>
+<li>Note that we do the conversion to ICRS frame.  Some of the earlier images are in FK4, which is 1950 epoch!
+<ul class="org-ul">
+<li>We fix this using <code>astropy.coordinates.SkyCoord</code> with the coordinate frame taken from the <code>radesys</code> WCS parameter.</li>
+</ul></li>
+</ul>
+
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #b9d3ee;">for</span> row <span style="color: #b9d3ee;">in</span> tab:
-    <span style="color: #b9d3ee;">print</span>(row)
-    <span style="color: #b9d3ee;">if</span> row[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>] <span style="color: #b9d3ee;">not</span> <span style="color: #b9d3ee;">in</span> (<span style="color: #eee8aa; font-style: italic;">'2012-02'</span>):
-        cycle
-    <span style="color: #dfaf8f;">imslitfile</span> = find_fits_filepath(row, <span style="color: #eee8aa; font-style: italic;">'image'</span>)
-    <span style="color: #dfaf8f;">specfile</span> = find_fits_filepath(row, <span style="color: #eee8aa; font-style: italic;">'fullspec'</span>)
-    <span style="color: #dfaf8f;">hafile</span> =  find_fits_filepath(row, <span style="color: #eee8aa; font-style: italic;">'ha'</span>)
-    fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(imslitfile).info()
-    fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(specfile).info()
-    fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(hafile).info()
+<pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">find_slit_coords</span>(db, hdr, shdr):
+    <span style="color: #eee8aa; font-style: italic;">"""Find the coordinates of all the pixels along a spectrograph slit</span>
+
+<span style="color: #eee8aa; font-style: italic;">    Input arguments are a dict-like 'db' of hand-measured values (must</span>
+<span style="color: #eee8aa; font-style: italic;">    contain 'saxis', 'islit' and 'shift') and a FITS headers 'hdr' from</span>
+<span style="color: #eee8aa; font-style: italic;">    the image+slit exposure and 'shdr' from a spectrum exposure</span>
+
+<span style="color: #eee8aa; font-style: italic;">    Returns a dict of 'ds' (slit pixel scale), 'PA' (slit position</span>
+<span style="color: #eee8aa; font-style: italic;">    angle), 'RA' (array of RA values in degrees along slit), 'Dec'</span>
+<span style="color: #eee8aa; font-style: italic;">    (array of Dec values in degrees along slit)</span>
+
+<span style="color: #eee8aa; font-style: italic;">    """</span>
+    <span style="color: #dfaf8f;">jstring</span> = <span style="color: #DCDCCC; font-weight: bold;">str</span>(db[<span style="color: #eee8aa; font-style: italic;">'saxis'</span>])  <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">which image axis lies along slit</span>
+    <span style="color: #dfaf8f;">dRA_arcsec</span> = hdr[<span style="color: #eee8aa; font-style: italic;">'CD1_'</span>+jstring]*3600*np.cos(np.radians(hdr[<span style="color: #eee8aa; font-style: italic;">'CRVAL2'</span>]))
+    <span style="color: #dfaf8f;">dDEC_arcsec</span> = hdr[<span style="color: #eee8aa; font-style: italic;">'CD2_'</span>+jstring]*3600
+    <span style="color: #dfaf8f;">ds</span> = np.hypot(dRA_arcsec, dDEC_arcsec)
+    <span style="color: #dfaf8f;">PA</span> = np.degrees(np.arctan2(dRA_arcsec, dDEC_arcsec))
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Pixel coords of each slit pixel on image (in 0-based convention)</span>
+    <span style="color: #b9d3ee;">if</span> jstring == <span style="color: #eee8aa; font-style: italic;">'1'</span>:
+        <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Slit is horizontal in IMAGE coords</span>
+        <span style="color: #dfaf8f;">ns</span> = shdr[<span style="color: #eee8aa; font-style: italic;">'NAXIS1'</span>]
+        <span style="color: #dfaf8f;">iarr</span> = np.arange(ns) - <span style="color: #DCDCCC; font-weight: bold;">float</span>(db[<span style="color: #eee8aa; font-style: italic;">'shift'</span>])
+        <span style="color: #dfaf8f;">jarr</span> = np.ones(ns)*<span style="color: #DCDCCC; font-weight: bold;">float</span>(db[<span style="color: #eee8aa; font-style: italic;">'islit'</span>])
+        <span style="color: #b9d3ee;">try</span>:
+            <span style="color: #dfaf8f;">image_binning</span> = hdr[<span style="color: #eee8aa; font-style: italic;">'CBIN'</span>]
+            <span style="color: #dfaf8f;">spec_binning</span> = shdr[<span style="color: #eee8aa; font-style: italic;">'CBIN'</span>]
+        <span style="color: #b9d3ee;">except</span> <span style="color: #ccdddd;">KeyError</span>:
+            <span style="color: #dfaf8f;">image_binning</span> = hdr[<span style="color: #eee8aa; font-style: italic;">'CCDXBIN'</span>]
+            <span style="color: #dfaf8f;">spec_binning</span> = shdr[<span style="color: #eee8aa; font-style: italic;">'CCDXBIN'</span>]
+
+        <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">correct for difference in binning between the image+slit and the spectrum</span>
+        <span style="color: #dfaf8f;">iarr</span> *= spec_binning/image_binning
+    <span style="color: #b9d3ee;">elif</span> jstring == <span style="color: #eee8aa; font-style: italic;">'2'</span>:
+        <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Slit is vertical in IMAGE coords</span>
+        <span style="color: #dfaf8f;">ns</span> = shdr[<span style="color: #eee8aa; font-style: italic;">'NAXIS2'</span>]
+        <span style="color: #dfaf8f;">iarr</span> = np.ones(ns)*<span style="color: #DCDCCC; font-weight: bold;">float</span>(db[<span style="color: #eee8aa; font-style: italic;">'islit'</span>])
+        <span style="color: #dfaf8f;">jarr</span> = np.arange(ns) - <span style="color: #DCDCCC; font-weight: bold;">float</span>(db[<span style="color: #eee8aa; font-style: italic;">'shift'</span>])
+        <span style="color: #b9d3ee;">try</span>:
+            <span style="color: #dfaf8f;">image_binning</span> = hdr[<span style="color: #eee8aa; font-style: italic;">'RBIN'</span>]
+            <span style="color: #dfaf8f;">spec_binning</span> = shdr[<span style="color: #eee8aa; font-style: italic;">'RBIN'</span>]
+        <span style="color: #b9d3ee;">except</span> <span style="color: #ccdddd;">KeyError</span>:
+            <span style="color: #dfaf8f;">image_binning</span> = hdr[<span style="color: #eee8aa; font-style: italic;">'CCDYBIN'</span>]
+            <span style="color: #dfaf8f;">spec_binning</span> = shdr[<span style="color: #eee8aa; font-style: italic;">'CCDYBIN'</span>]
+
+        <span style="color: #dfaf8f;">jarr</span> *= spec_binning/image_binning
+    <span style="color: #b9d3ee;">else</span>:
+        <span style="color: #b9d3ee;">raise</span> <span style="color: #ccdddd;">ValueError</span>(<span style="color: #eee8aa; font-style: italic;">'Slit axis (saxis) must be 1 or 2'</span>)
+
+    <span style="color: #b9d3ee;">print</span>(<span style="color: #eee8aa; font-style: italic;">'iarr ='</span>, iarr[::100], <span style="color: #eee8aa; font-style: italic;">'jarr ='</span>, jarr[::100])
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Also correct the nominal slit plate scale</span>
+    <span style="color: #dfaf8f;">ds</span> *= spec_binning/image_binning
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Convert to world coords, using the native frame</span>
+    <span style="color: #dfaf8f;">w</span> = WCS(hdr)
+    <span style="color: #dfaf8f;">observed_frame</span> = w.wcs.radesys.lower()
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Note it is vital to ensure the pix2world transformation returns</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">values in the order (RA, Dec), even if the image+slit may have</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Dec first</span>
+    <span style="color: #dfaf8f;">coords</span> = SkyCoord(*w.all_pix2world(iarr, jarr, 0, ra_dec_order=<span style="color: #cFfBcF;">True</span>),
+                      unit=(u.deg, u.deg), frame=observed_frame)
+    <span style="color: #b9d3ee;">print</span>(<span style="color: #eee8aa; font-style: italic;">'coords ='</span>, coords[::100])
+    <span style="color: #b9d3ee;">print</span>(<span style="color: #eee8aa; font-style: italic;">'Binning along slit: image ='</span>, image_binning, <span style="color: #eee8aa; font-style: italic;">'spectrum ='</span>, spec_binning)
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Make sure to return the coords in the ICRS frame</span>
+    <span style="color: #b9d3ee;">return</span> {<span style="color: #eee8aa; font-style: italic;">'ds'</span>: ds, <span style="color: #eee8aa; font-style: italic;">'PA'</span>: PA,
+            <span style="color: #eee8aa; font-style: italic;">'RA'</span>: coords.icrs.ra.value,
+            <span style="color: #eee8aa; font-style: italic;">'Dec'</span>: coords.icrs.dec.value}
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline15" class="outline-4">
-<h4 id="orgheadline15"><span class="section-number-4">1.4.6</span> Test what is going on</h4>
-<div class="outline-text-4" id="text-1-4-6">
+
+
+<div id="outline-container-orgheadline20" class="outline-4">
+<h4 id="orgheadline20"><span class="section-number-4">1.3.6</span> Package up the slit coordinates for use in a FITS header</h4>
+<div class="outline-text-4" id="text-1-3-6">
+<p>
+We also need to create the WCS keywords so that the slit coordinates can be reconstructed from a FITS header.  The general approach is as follows: 
+</p>
+
+<ul class="org-ul">
+<li>We use the standard FITS notation for axes: i, j
+<ul class="org-ul">
+<li>i = 1, 2, &#x2026; are the world coordinate axes</li>
+<li>j = 1, 2, &#x2026; are the image (data array) coordinate axes</li>
+<li>Python arrays have the order reversed</li>
+<li>Reference pixel has <code>CRPIXj</code> and <code>CRVALi</code></li>
+<li>Scale is specified with one or more of <code>CDELTi</code> and <code>PCi_j</code></li>
+</ul></li>
+<li>The calibrated FITS spectra will be regularized so that the image x-axis (j=1 in FITS parlance) is wavelength, and the image y-axis (j=2) is displacement along slit.
+<ul class="org-ul">
+<li>Any necessary transpose of the data array is done <a href="#orgheadline19">in the main loop</a></li>
+</ul></li>
+<li>We use 3 world coordinate axes, even though there are only two true image axes, so we can specify the variation of both RA and Dec along the slit
+<ul class="org-ul">
+<li>The <i>provisional</i> order of the axes is
+<dl class="org-dl">
+<dt>i = 1</dt><dd>RA</dd>
+<dt>i = 2</dt><dd>Dec</dd>
+<dt>i = 3</dt><dd>Wavelength</dd>
+</dl></li>
+<li></li>
+</ul></li>
+</ul>
+
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #b9d3ee;">print</span>(wphot.wcs)
+<pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">make_slit_wcs</span>(db, slit_coords):
+    <span style="color: #dfaf8f;">w</span> = WCS(naxis=3)
+    <span style="color: #dfaf8f;">w.wcs.crpix</span> = [1, 1, 1]
+
+    <span style="color: #dfaf8f;">dRA</span> = np.diff(slit_coords[<span style="color: #eee8aa; font-style: italic;">'RA'</span>])
+    <span style="color: #dfaf8f;">dDec</span> = np.diff(slit_coords[<span style="color: #eee8aa; font-style: italic;">'Dec'</span>])
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline21" class="outline-4">
+<h4 id="orgheadline21"><span class="section-number-4">1.3.7</span> Fit Chebyshev polynomials to along-slit variation</h4>
+<div class="outline-text-4" id="text-1-3-7">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">fit_cheb</span>(x, y, npoly=3, mask=<span style="color: #cFfBcF;">None</span>):
+    <span style="color: #eee8aa; font-style: italic;">"""Fits a Chebyshev poly to y(x) and returns fitted y-values"""</span>
+    <span style="color: #dfaf8f;">fitter</span> = fitting.LinearLSQFitter()
+    <span style="color: #dfaf8f;">p_init</span> = models.Chebyshev1D(npoly, domain=[x.<span style="color: #DCDCCC; font-weight: bold;">min</span>(), x.<span style="color: #DCDCCC; font-weight: bold;">max</span>()])
+    <span style="color: #b9d3ee;">if</span> mask <span style="color: #b9d3ee;">is</span> <span style="color: #cFfBcF;">None</span>:
+        <span style="color: #dfaf8f;">mask</span> = np.ones_like(x).astype(<span style="color: #DCDCCC; font-weight: bold;">bool</span>)
+    <span style="color: #dfaf8f;">p</span> = fitter(p_init, x[mask], y[mask])
+    <span style="color: #b9d3ee;">print</span>(p)
+    <span style="color: #b9d3ee;">return</span> p(x)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline22" class="outline-4">
+<h4 id="orgheadline22"><span class="section-number-4">1.3.8</span> Make some useful and pretty plots</h4>
+<div class="outline-text-4" id="text-1-3-8">
+<ul class="org-ul">
+<li>Three-pane plot that we use for manually adjusting the calibration parameters</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-python">sns.set_palette(<span style="color: #eee8aa; font-style: italic;">'RdPu_d'</span>, 3)
+<span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">make_three_plots</span>(spec, calib, prefix):
+    <span style="color: #b9d3ee;">assert</span> spec.shape == calib.shape
+    <span style="color: #dfaf8f;">fig</span>, <span style="color: #dfaf8f;">axes</span> = plt.subplots(3, 1)
+
+    <span style="color: #dfaf8f;">vmin</span>, <span style="color: #dfaf8f;">vmax</span> = 0.0, np.median(calib) + 5*calib.std()
+
+    <span style="color: #dfaf8f;">ypix</span> = np.arange(<span style="color: #DCDCCC; font-weight: bold;">len</span>(calib))
+    <span style="color: #dfaf8f;">ratio</span> = spec/calib
+    <span style="color: #dfaf8f;">mask</span> = (ypix &gt; 10.0) &amp; (ypix &lt; ypix.<span style="color: #DCDCCC; font-weight: bold;">max</span>() - 10.0) \
+           &amp; (ratio &gt; np.median(ratio) - 2*ratio.std()) \
+           &amp; (ratio &lt; np.median(ratio) + 2*ratio.std()) 
+    <span style="color: #dfaf8f;">ratio_fit</span> = fit_cheb(ypix, ratio, mask=mask)
+
+    <span style="color: #dfaf8f;">alpha</span> = 0.8
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">First, plot two profiles against each other to check for zero-point offsets</span>
+    axes[0].plot(calib, spec/ratio_fit, <span style="color: #eee8aa; font-style: italic;">'.'</span>, alpha=alpha)
+    axes[0].plot([vmin, vmax], [vmin, vmax], <span style="color: #eee8aa; font-style: italic;">'-'</span>, alpha=alpha)
+    axes[0].set_xlim(vmin, vmax)
+    axes[0].set_ylim(vmin, vmax)
+    axes[0].set_xlabel(<span style="color: #eee8aa; font-style: italic;">'Calibration Image'</span>)
+    axes[0].set_ylabel(<span style="color: #eee8aa; font-style: italic;">'Corrected Integrated Spectrum'</span>)
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Second, plot each against slit pixel to check spatial offset</span>
+    axes[1].plot(ypix, calib, alpha=alpha, label=<span style="color: #eee8aa; font-style: italic;">'Calibration Image'</span>)
+    axes[1].plot(ypix, spec/ratio_fit, alpha=alpha, lw=1.0, label=<span style="color: #eee8aa; font-style: italic;">'Corrected Integrated Spectrum'</span>)
+    axes[1].plot(ypix, spec, alpha=alpha, lw=0.5, label=<span style="color: #eee8aa; font-style: italic;">'Uncorrected Integrated Spectrum'</span>)
+    axes[1].set_xlim(0.0, ypix.<span style="color: #DCDCCC; font-weight: bold;">max</span>())
+    axes[1].set_ylim(vmin, vmax)
+    axes[1].legend(fontsize=<span style="color: #eee8aa; font-style: italic;">'xx-small'</span>, loc=<span style="color: #eee8aa; font-style: italic;">'lower right'</span>)
+    axes[1].set_xlabel(<span style="color: #eee8aa; font-style: italic;">'Slit pixel'</span>)
+    axes[1].set_ylabel(<span style="color: #eee8aa; font-style: italic;">'Profile'</span>)
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Third, plot ratio to look for spatial trends</span>
+    axes[2].plot(ypix, ratio, alpha=alpha)
+    axes[2].plot(ypix, ratio_fit, alpha=alpha)
+    axes[2].set_xlim(0.0, ypix.<span style="color: #DCDCCC; font-weight: bold;">max</span>())
+    axes[2].set_ylim(0.0, 1.5)
+    axes[2].set_xlabel(<span style="color: #eee8aa; font-style: italic;">'Slit pixel'</span>)
+    axes[2].set_ylabel(<span style="color: #eee8aa; font-style: italic;">'Ratio: Spec / Calib'</span>)
+
+    fig.set_size_inches(5, 8)
+    fig.tight_layout()
+    fig.savefig(prefix+<span style="color: #eee8aa; font-style: italic;">'.png'</span>, dpi=300)
+
+    <span style="color: #b9d3ee;">return</span> ratio_fit
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline23" class="outline-4">
+<h4 id="orgheadline23"><span class="section-number-4">1.3.9</span> Use command line argument to restrict which datasets are processed</h4>
+<div class="outline-text-4" id="text-1-3-9">
+<ul class="org-ul">
+<li>Read a single command line argument to choose which datasets to process
+<ul class="org-ul">
+<li>It can be as specific as a single position:
+<ul class="org-ul">
+<li>E.g, 2006-02-281</li>
+</ul></li>
+<li>Or all positions from one set:
+<ul class="org-ul">
+<li>E.g, 2007-01b</li>
+</ul></li>
+<li>Or all from one year:
+<ul class="org-ul">
+<li>E.g, 2013</li>
+</ul></li>
+<li>Or whatever</li>
+</ul></li>
+<li>The purpose of this is to speed things up when iterating to find the offsets and norms</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">if</span> <span style="color: #DCDCCC; font-weight: bold;">len</span>(sys.argv) &gt; 1:
+    <span style="color: #dfaf8f;">selector_pattern</span> = sys.argv[1]
+<span style="color: #b9d3ee;">else</span>:
+    <span style="color: #dfaf8f;">selector_pattern</span> = <span style="color: #eee8aa; font-style: italic;">''</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline24" class="outline-4">
+<h4 id="orgheadline24"><span class="section-number-4">1.3.10</span> Adjust for on-chip binning</h4>
+</div>
+<div id="outline-container-orgheadline19" class="outline-4">
+<h4 id="orgheadline19"><a id="ID-C7D141C2-85FF-427D-AF2D-DCC34B14E1A4"></a><span class="section-number-4">1.3.11</span> Loop over the slit positions and do the stuff</h4>
+<div class="outline-text-4" id="text-1-3-11">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b9d3ee;">for</span> row <span style="color: #b9d3ee;">in</span> tab:
+    <span style="color: #dfaf8f;">full_id</span> = row[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>] + <span style="color: #eee8aa; font-style: italic;">'-'</span> + row[<span style="color: #eee8aa; font-style: italic;">'imid'</span>]
+    <span style="color: #b9d3ee;">if</span> <span style="color: #b9d3ee;">not</span> full_id.startswith(selector_pattern):
+        <span style="color: #b9d3ee;">continue</span>
+    <span style="color: #b9d3ee;">print</span>(row)
+    <span style="color: #dfaf8f;">imslitfile</span> = find_fits_filepath(row, <span style="color: #eee8aa; font-style: italic;">'image'</span>)
+    <span style="color: #dfaf8f;">specfile</span> = find_fits_filepath(row, <span style="color: #eee8aa; font-style: italic;">'fullspec'</span>)
+    <span style="color: #dfaf8f;">hafile</span> = find_fits_filepath(row, <span style="color: #eee8aa; font-style: italic;">'ha'</span>)
+    <span style="color: #dfaf8f;">niifile</span> = find_fits_filepath(row, <span style="color: #eee8aa; font-style: italic;">'nii'</span>)
+    <span style="color: #dfaf8f;">imhdu</span> = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(imslitfile)[0]
+    <span style="color: #dfaf8f;">spechdu</span> = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(specfile)[0]
+    <span style="color: #dfaf8f;">hahdu</span> = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(hafile)[0]
+    <span style="color: #dfaf8f;">niihdu</span> = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(niifile)[0]
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">World coordinates along slit</span>
+    <span style="color: #dfaf8f;">slit_coords</span> = find_slit_coords(row, imhdu.header, hahdu.header)
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Find synthetic profile from calibration image</span>
+    <span style="color: #dfaf8f;">calib_profile</span> = slit_profile(slit_coords[<span style="color: #eee8aa; font-style: italic;">'RA'</span>], slit_coords[<span style="color: #eee8aa; font-style: italic;">'Dec'</span>],
+                                 photom.data, wphot)
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Find actual profile along slit from spectrum</span>
+    <span style="color: #dfaf8f;">wavaxis</span> = row[<span style="color: #eee8aa; font-style: italic;">'saxis'</span>] - 1  <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">This always seems to be true</span>
+    <span style="color: #dfaf8f;">ha_profile</span> = (hahdu.data - row[<span style="color: #eee8aa; font-style: italic;">'zero'</span>]).<span style="color: #DCDCCC; font-weight: bold;">sum</span>(axis=wavaxis)
+    <span style="color: #dfaf8f;">nii_profile</span> = (niihdu.data - row[<span style="color: #eee8aa; font-style: italic;">'zero'</span>]).<span style="color: #DCDCCC; font-weight: bold;">sum</span>(axis=wavaxis)
+    <span style="color: #dfaf8f;">spec_profile</span> = (ha_profile+1.333*nii_profile)/row[<span style="color: #eee8aa; font-style: italic;">'norm'</span>]
+    <span style="color: #dfaf8f;">plt_prefix</span> = <span style="color: #eee8aa; font-style: italic;">'plots/{:03d}-{}-calib'</span>.<span style="color: #DCDCCC; font-weight: bold;">format</span>(row.index, full_id)
+    <span style="color: #dfaf8f;">ratio</span> = make_three_plots(spec_profile, calib_profile, plt_prefix)
+
+    <span style="color: #5F7F5F;">#</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Save calibrated spectra to files</span>
+    <span style="color: #5F7F5F;">#</span>
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Apply basic calibration zero-point and scale</span>
+    <span style="color: #dfaf8f;">hahdu.data</span> = (hahdu.data - row[<span style="color: #eee8aa; font-style: italic;">'zero'</span>])/row[<span style="color: #eee8aa; font-style: italic;">'norm'</span>]
+    <span style="color: #dfaf8f;">niihdu.data</span> = (niihdu.data - row[<span style="color: #eee8aa; font-style: italic;">'zero'</span>])/row[<span style="color: #eee8aa; font-style: italic;">'norm'</span>]
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Regularize spectral data so that wavelength is x and pos is y</span>
+    <span style="color: #b9d3ee;">if</span> row[<span style="color: #eee8aa; font-style: italic;">'saxis'</span>] == 1:
+        <span style="color: #dfaf8f;">hahdu.data</span> = hahdu.data.T
+        <span style="color: #dfaf8f;">niihdu.data</span> = niihdu.data.T
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Apply polynomial correction along slit</span>
+    <span style="color: #dfaf8f;">hahdu.data</span> /= ratio[:, <span style="color: #cFfBcF;">None</span>]
+    <span style="color: #dfaf8f;">niihdu.data</span> /= ratio[:, <span style="color: #cFfBcF;">None</span>]
+
+    <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Create the WCS object for the calibrated slit spectra</span>
+    <span style="color: #dfaf8f;">wslit</span> = make_slit_wcs(row, slit_coords, imhdu, spechdu)
+    update_header(hahdu.header, row, slit_coords)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline25" class="outline-4">
+<h4 id="orgheadline25"><span class="section-number-4">1.3.12</span> Test what is going on</h4>
+<div class="outline-text-4" id="text-1-3-12">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">print(wphot.wcs)</span>
 <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">for row in tab:</span>
 <span style="color: #5F7F5F;">#     </span><span style="color: #8b8b83; font-style: italic;">print([row[x] for x in ('Dataset', 'imid', 'specid', 'Notes')])</span>
 </pre>
@@ -885,9 +1568,9 @@ photom, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(os.p
 </div>
 </div>
 
-<div id="outline-container-orgheadline17" class="outline-3">
-<h3 id="orgheadline17"><span class="section-number-3">1.5</span> Run slit-calibration.py</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-orgheadline27" class="outline-3">
+<h3 id="orgheadline27"><span class="section-number-3">1.4</span> Run slit-calibration.py</h3>
+<div class="outline-text-3" id="text-1-4">
 <ul class="org-ul">
 <li>For debugging we can redirect stdout to stderr with <code>1&gt;&amp;2</code>
 <ul class="org-ul">
@@ -897,408 +1580,15 @@ photom, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(os.p
 
 <div class="org-src-container">
 
-<pre class="src src-sh">python slit-calibration.py <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1&gt;&amp;2</span>
-</pre>
-</div>
-
-<pre class="example">
-&lt;Row 0 of table
- values=('2006-02', '323', '324', 'LL2 first epoch')
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 323 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 324 Template = Work/SPM2005/pp{}.fits
-ID = 324 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp323-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp324.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec324-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 1 of table
- values=(2006-02, 318, 319, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 318 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 319 Template = Work/SPM2005/pp{}.fits
-ID = 319 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp318-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp319.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec319-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 2 of table
- values=(2006-02, 260, 261, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 260 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 261 Template = Work/SPM2005/pp{}.fits
-ID = 261 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp260-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp261.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec261-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 3 of table
- values=(2006-02, 270, 271, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 270 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 271 Template = Work/SPM2005/pp{}.fits
-ID = 271 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp270-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp271.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec271-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 4 of table
- values=(2006-02, 276, 277, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 276 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 277 Template = Work/SPM2005/pp{}.fits
-ID = 277 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp276-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp277.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec277-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 5 of table
- values=(2006-02, 281, 282, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 281 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 282 Template = Work/SPM2005/pp{}.fits
-ID = 282 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp281-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp282.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec282-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 6 of table
- values=(2006-02, 286, 287, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 286 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 287 Template = Work/SPM2005/pp{}.fits
-ID = 287 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp286-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp287.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec287-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 7 of table
- values=(2006-02, 291, 292, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 291 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 292 Template = Work/SPM2005/pp{}.fits
-ID = 292 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp291-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp292.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec292-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 8 of table
- values=(2006-02, 296, 297, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 296 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 297 Template = Work/SPM2005/pp{}.fits
-ID = 297 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp296-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp297.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec297-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 9 of table
- values=(2006-02, 303, 304, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 303 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 304 Template = Work/SPM2005/pp{}.fits
-ID = 304 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp303-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp304.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec304-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 10 of table
- values=('2006-02', '313', '312', 'Image follows spec!')
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 313 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
-ID = 312 Template = Work/SPM2005/pp{}.fits
-ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
-Filename: /Users/will/Dropbox/Papers/LL-Objects/feb2006/pp313-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2005/pp312.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      30   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/SPMha/spec312-halpha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 11 of table
- values=('2007-01b', '2061', '2062-c', 'LL2 second epoch')
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 2061 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
-ID = 2062-c Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
-ID = 2062 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2061-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2062-c.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2062-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 12 of table
- values=(2007-01b, 2037, 2038-2040, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 2037 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
-ID = 2038-2040 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
-ID = 2038 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2037-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2038-2040.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2038-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 13 of table
- values=(2007-01b, 2041, 2042-2044, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 2041 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
-ID = 2042-2044 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
-ID = 2042 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2041-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2042-2044.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2042-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 14 of table
- values=(2007-01b, 2045, 2046-2048, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 2045 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
-ID = 2046-2048 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
-ID = 2046 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2045-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2046-2048.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2046-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 15 of table
- values=(2007-01b, 2049, 2050-2052, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 2049 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
-ID = 2050-2052 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
-ID = 2050 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2049-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2050-2052.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2050-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 16 of table
- values=(2007-01b, 2053, 2054-2056, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 2053 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
-ID = 2054-2056 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
-ID = 2054 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2053-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2054-2056.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2054-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 17 of table
- values=(2007-01b, 2057, 2058-2060, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 2057 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
-ID = 2058-2060 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
-ID = 2058 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spm2057-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2058-2060.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      35   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2058-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 18 of table
- values=('2007-01', '054', '055', 'LL1 extreme N')
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 054 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
-ID = 055 Template = Work/SPM2007/Reduced/spec{}-transf.fits
-ID = 055 Template = Work/SPM2007/Reduced/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/spm054-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/spec055-transf.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/spec055-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 19 of table
- values=(2007-01, 067, 068, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 067 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
-ID = 068 Template = Work/SPM2007/Reduced/spec{}-transf.fits
-ID = 068 Template = Work/SPM2007/Reduced/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/spm067-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/spec068-transf.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/spec068-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 20 of table
- values=(2007-01, 072, 073, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 072 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
-ID = 073 Template = Work/SPM2007/Reduced/spec{}-transf.fits
-ID = 073 Template = Work/SPM2007/Reduced/spec{}-ha.fits
-Filename: /Users/will/Work/SPM2007/Reduced/spm072-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/spec073-transf.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
-Filename: /Users/will/Work/SPM2007/Reduced/spec073-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 21 of table
- values=('2010-01', '078', '079-080', 'Vertical W of LL2')
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 078 Template = Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits
-ID = 079-080 Template = Dropbox/SPMJAN10/reducciones/spm{}h.fits
-ID = 079 Template = Dropbox/SPMJAN10/reducciones/spec{}-ha.fits
-Filename: /Users/will/Dropbox/SPMJAN10/reducciones/posiciones/spm078-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   int16   
-Filename: /Users/will/Dropbox/SPMJAN10/reducciones/spm079-080h.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (512, 512)   float32   
-Filename: /Users/will/Dropbox/SPMJAN10/reducciones/spec079-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (300, 512)   float32   
-&lt;Row 22 of table
- values=('2013-02', '024', '025', 'Horizontal LL2')
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 024 Template = Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits
-ID = 025 Template = Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits
-ID = 025 Template = Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits
-Filename: /Users/will/Dropbox/SPMFEB13/WesternShocks/spm024_ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (625, 1017)   float32   
-Filename: /Users/will/Dropbox/SPMFEB13/WesternShocks/spm025_bcr.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (625, 1017)   float32   
-Filename: /Users/will/Dropbox/SPMFEB13/WesternShocks/spec025-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU      71   (625, 300)   float32   
-&lt;Row 23 of table
- values=('2013-12', '116', '117-118', 'Horizontal below LL2')
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 116 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits
-ID = 117-118 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits
-ID = 117-118 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits
-Filename: /Users/will/Dropbox/papers/LL-Objects/SPMDIC13/spm116-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     107   (939, 1024)   float32   
-Filename: /Users/will/Dropbox/papers/LL-Objects/SPMDIC13/spm117-118_bcrx.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     107   (615, 1024)   float32   
-Filename: /Users/will/Dropbox/papers/LL-Objects/SPMDIC13/spec117-118-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     107   (615, 300)   float32   
-&lt;Row 24 of table
- values=(2015-02, 0003, 0004, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 0003 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
-ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
-ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o-ha.fits
-Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0003-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     107   (1076, 1024)   float32   
-Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0004o_bcrx.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     143   (979, 1024)   float32   
-Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0004o-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     143   (979, 300)   float32   
-&lt;Row 25 of table
- values=(2015-02, 0012, 0013, --)
- dtype=[('Dataset', '&lt;U8'), ('imid', '&lt;U4'), ('specid', '&lt;U9'), ('Notes', '&lt;U20')]&gt;
-ID = 0012 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
-ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
-ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o-ha.fits
-Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0012-ardec.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     107   (1076, 1024)   float32   
-Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0013o_bcrx.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     143   (979, 1024)   float32   
-Filename: /Users/will/Dropbox/SPMFEB15/archivos/spm0013o-ha.fits
-No.    Name         Type      Cards   Dimensions   Format
-0    PRIMARY     PrimaryHDU     143   (979, 300)   float32
+<pre class="src src-sh">python slit-calibration.py  1&gt;&amp;2
 </pre>
 </div>
 </div>
 </div>
+</div>
 
-<div id="outline-container-orgheadline21" class="outline-2">
-<h2 id="orgheadline21"><span class="section-number-2">2</span> Dealing with the offset between image and spectrum</h2>
+<div id="outline-container-orgheadline31" class="outline-2">
+<h2 id="orgheadline31"><span class="section-number-2">2</span> Dealing with the offset between image and spectrum</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li>It seems that this is not as constant as I had hoped
@@ -1320,8 +1610,8 @@ No.    Name         Type      Cards   Dimensions   Format
 </div>
 
 
-<div id="outline-container-orgheadline2" class="outline-3">
-<h3 id="orgheadline2"><a id="ID-0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B"></a><span class="section-number-3">2.1</span> Application to the vertical slits</h3>
+<div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><a id="ID-0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B"></a><span class="section-number-3">2.1</span> Application to the vertical slits</h3>
 <div class="outline-text-3" id="text-2-1">
 <table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -1508,7 +1798,7 @@ No.    Name         Type      Cards   Dimensions   Format
 <ul class="org-ul">
 <li>Read in the images and spectra, and overplot the profiles</li>
 <li>There are 16 positions now, so we can use a 4 x 4 grid</li>
-<li>The <code>bfac</code> factors are the inter-position image brightness correction factors, calculated <a href="#orgheadline19">below</a> - they multiply all the brightnesses
+<li>The <code>bfac</code> factors are the inter-position image brightness correction factors, calculated <a href="#orgheadline29">below</a> - they multiply all the brightnesses
 <ul class="org-ul">
 <li>On the graphs, I print out <code>bright = 1/bfac</code></li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I am modifying by hand the bfac for 248 from 2.222 to 2.4
@@ -1599,8 +1889,8 @@ fig.savefig(figfile)
 </div>
 
 
-<div id="outline-container-orgheadline3" class="outline-3">
-<h3 id="orgheadline3"><a id="ID-6CE33437-BC17-49AA-B048-5BACCBB8C99B"></a><span class="section-number-3">2.2</span> Repeat for the horizontal slits</h3>
+<div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><a id="ID-6CE33437-BC17-49AA-B048-5BACCBB8C99B"></a><span class="section-number-3">2.2</span> Repeat for the horizontal slits</h3>
 <div class="outline-text-3" id="text-2-2">
 <table id="orgtable2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -1786,13 +2076,13 @@ fig.savefig(figfile)
 <li>This is equivalent to interpolating the bg underneath the slit profile</li>
 <li>It seems to give better results than the previous method</li>
 </ul></li>
-<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-22 Sat] </span></span> The bright and bgrad columns can now be filled in from the calculation <a href="#orgheadline20">down here</a>
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-22 Sat] </span></span> The bright and bgrad columns can now be filled in from the calculation <a href="#orgheadline30">down here</a>
 <ul class="org-ul">
 <li>Note that <b>bright is the reciprocal of bfac</b>, which I used in the table for the vertical slits</li>
 <li>The bgrad is for a linear E-W gradient correction to the brightnesses</li>
 <li>I rounded it to 1 decimal place, since it is not that well determined</li>
 </ul></li>
-<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I redid the calculation of the <code>bright</code> factors, see <a href="#orgheadline20">down here</a>, so we are now using the <code>corrnorm</code> column of the last table</li>
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I redid the calculation of the <code>bright</code> factors, see <a href="#orgheadline30">down here</a>, so we are now using the <code>corrnorm</code> column of the last table</li>
 <li>Also experimented with increasing bgrad from 1.5 to 1.7 for 149, 154, 159</li>
 </ul>
 
@@ -1871,11 +2161,11 @@ fig.savefig(figfile)
 
 
 
-<div id="outline-container-orgheadline35" class="outline-2">
-<h2 id="orgheadline35"><span class="section-number-2">3</span> Datasets that we will use</h2>
+<div id="outline-container-orgheadline45" class="outline-2">
+<h2 id="orgheadline45"><span class="section-number-2">3</span> Datasets that we will use</h2>
 <div class="outline-text-2" id="text-3">
-</div><div id="outline-container-orgheadline22" class="outline-3">
-<h3 id="orgheadline22"><span class="section-number-3">3.1</span> Odd slits that we don't want to forget</h3>
+</div><div id="outline-container-orgheadline32" class="outline-3">
+<h3 id="orgheadline32"><span class="section-number-3">3.1</span> Odd slits that we don't want to forget</h3>
 <div class="outline-text-3" id="text-3-1">
 <ul class="org-ul">
 <li>2007 Jan
@@ -1927,8 +2217,8 @@ fig.savefig(figfile)
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline23" class="outline-3">
-<h3 id="orgheadline23"><span class="section-number-3">3.2</span> Dec 2013</h3>
+<div id="outline-container-orgheadline33" class="outline-3">
+<h3 id="orgheadline33"><span class="section-number-3">3.2</span> Dec 2013</h3>
 <div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
 <li>These are in <a href="file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/"><a href="file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/">file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/</a></a></li>
@@ -1936,8 +2226,8 @@ fig.savefig(figfile)
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline24" class="outline-3">
-<h3 id="orgheadline24"><span class="section-number-3">3.3</span> Feb 2015</h3>
+<div id="outline-container-orgheadline34" class="outline-3">
+<h3 id="orgheadline34"><span class="section-number-3">3.3</span> Feb 2015</h3>
 <div class="outline-text-3" id="text-3-3">
 <ul class="org-ul">
 <li>These are in <a href="file:///Users/will/Dropbox/SPMFEB15/"><a href="file:///Users/will/Dropbox/SPMFEB15/">file:///Users/will/Dropbox/SPMFEB15/</a></a></li>
@@ -1945,8 +2235,8 @@ fig.savefig(figfile)
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline26" class="outline-3">
-<h3 id="orgheadline26"><a id="ID-CB720DCF-0A33-4C51-9A0B-932030BC0E45"></a><span class="section-number-3">3.4</span> Jan 2007 and Feb 2006</h3>
+<div id="outline-container-orgheadline36" class="outline-3">
+<h3 id="orgheadline36"><a id="ID-CB720DCF-0A33-4C51-9A0B-932030BC0E45"></a><span class="section-number-3">3.4</span> Jan 2007 and Feb 2006</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li>These are the HH 505 observations in <a href="file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/"><a href="file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/">file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/</a></a></li>
@@ -1958,8 +2248,8 @@ fig.savefig(figfile)
 <li>They are mainly vertical, but there are a few horizontal slits</li>
 </ul>
 </div>
-<div id="outline-container-orgheadline25" class="outline-4">
-<h4 id="orgheadline25"><span class="section-number-4">3.4.1</span> Original database for vertical slits</h4>
+<div id="outline-container-orgheadline35" class="outline-4">
+<h4 id="orgheadline35"><span class="section-number-4">3.4.1</span> Original database for vertical slits</h4>
 <div class="outline-text-4" id="text-3-4-1">
 <ul class="org-ul">
 <li>Taken from <a href="file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/jw0.csv">jw0.csv</a></li>
@@ -2251,8 +2541,8 @@ fig.savefig(figfile)
 </div>
 
 
-<div id="outline-container-orgheadline27" class="outline-3">
-<h3 id="orgheadline27"><span class="section-number-3">3.5</span> Feb 2013</h3>
+<div id="outline-container-orgheadline37" class="outline-3">
+<h3 id="orgheadline37"><span class="section-number-3">3.5</span> Feb 2013</h3>
 <div class="outline-text-3" id="text-3-5">
 <ul class="org-ul">
 <li>These are in <a href="file:///Users/will/Dropbox/SPMFEB13/">file:///Users/will/Dropbox/SPMFEB13/</a>
@@ -2262,12 +2552,12 @@ fig.savefig(figfile)
 </ul></li>
 </ul>
 </div>
-<div id="outline-container-orgheadline5" class="outline-4">
-<h4 id="orgheadline5"><a id="ID-F6ED03C3-EC32-4444-9746-4E3C2A15CD63"></a><span class="section-number-4">3.5.1</span> WCS values</h4>
+<div id="outline-container-orgheadline4" class="outline-4">
+<h4 id="orgheadline4"><a id="ID-F6ED03C3-EC32-4444-9746-4E3C2A15CD63"></a><span class="section-number-4">3.5.1</span> WCS values</h4>
 <div class="outline-text-4" id="text-3-5-1">
 <ul class="org-ul">
 <li>These are with a different chip, and with binning of 3x2</li>
-<li>Here I calculate a similar table to what I did for the <a href="#orgheadline4">vertical slits</a></li>
+<li>Here I calculate a similar table to what I did for the <a href="#orgheadline3">vertical slits</a></li>
 <li>This time we have dy = 0.52 arcsec</li>
 <li>The PA is within 0.5 deg of 90
 <ul class="org-ul">
@@ -2513,8 +2803,8 @@ fig.savefig(figfile)
 </div>
 
 
-<div id="outline-container-orgheadline20" class="outline-4">
-<h4 id="orgheadline20"><a id="ID-23506DE2-4D98-40C5-961F-4715BE7A1F55"></a><span class="section-number-4">3.5.2</span> Inter-position brightness calibration</h4>
+<div id="outline-container-orgheadline30" class="outline-4">
+<h4 id="orgheadline30"><a id="ID-23506DE2-4D98-40C5-961F-4715BE7A1F55"></a><span class="section-number-4">3.5.2</span> Inter-position brightness calibration</h4>
 <div class="outline-text-4" id="text-3-5-2">
 <ul class="org-ul">
 <li>I have measured brightness in several parts of the image
@@ -2732,7 +3022,7 @@ fig.savefig(figfile)
 <li>So we get &delta; = -1.24 (W/E - 1)</li>
 </ul></li>
 </ul></li>
-<li>The columns "Mean" and "W/E" get copied to columns <code>bfac</code> and <code>bgrad</code> respectively in the <a href="#orgheadline3">table above</a></li>
+<li>The columns "Mean" and "W/E" get copied to columns <code>bfac</code> and <code>bgrad</code> respectively in the <a href="#orgheadline2">table above</a></li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I was not satisfied with the brightness normalizations
 <ul class="org-ul">
 <li>Some slits, notably 149, 154, 159 seem to be too bright in the combined image</li>
@@ -2743,7 +3033,7 @@ fig.savefig(figfile)
 <li>X0 = NX/2 = 312</li>
 <li>From the table, the Xpix values of the reference point can be smaller or larger than that</li>
 <li>So there is a further correction factor dcorr = 1 + &delta; (Xpix - X0)/NX, which we have to <i>multiply</i> the brightness norms by</li>
-<li>I copied the delta values from the table <a href="#orgheadline5">here</a></li>
+<li>I copied the delta values from the table <a href="#orgheadline4">here</a></li>
 </ul></li>
 <li>The result is that the corrections are closer to unity for nearly all the slits</li>
 </ul></li>
@@ -2883,16 +3173,16 @@ fig.savefig(figfile)
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline34" class="outline-3">
-<h3 id="orgheadline34"><span class="section-number-3">3.6</span> Jan 2010</h3>
+<div id="outline-container-orgheadline44" class="outline-3">
+<h3 id="orgheadline44"><span class="section-number-3">3.6</span> Jan 2010</h3>
 <div class="outline-text-3" id="text-3-6">
 <ul class="org-ul">
 <li>Copied files to <a href="file:///Users/will/Dropbox/SPMJAN10/reducciones/">~/Dropbox/SPMJAN10/reducciones/</a></li>
 <li>Looking at which ones to use to see if I agree with Tere</li>
 </ul>
 </div>
-<div id="outline-container-orgheadline4" class="outline-4">
-<h4 id="orgheadline4"><a id="ID-6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D"></a><span class="section-number-4">3.6.1</span> WCS values and per-slit weighting</h4>
+<div id="outline-container-orgheadline3" class="outline-4">
+<h4 id="orgheadline3"><a id="ID-6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D"></a><span class="section-number-4">3.6.1</span> WCS values and per-slit weighting</h4>
 <div class="outline-text-4" id="text-3-6-1">
 <ul class="org-ul">
 <li>Alba's coordinates seem to be for the center of the slit in the image+slit</li>
@@ -3162,11 +3452,11 @@ fig.savefig(figfile)
 </div>
 </div>
 
-<div id="outline-container-orgheadline32" class="outline-4">
-<h4 id="orgheadline32"><span class="section-number-4">3.6.2</span> Which to use</h4>
+<div id="outline-container-orgheadline42" class="outline-4">
+<h4 id="orgheadline42"><span class="section-number-4">3.6.2</span> Which to use</h4>
 <div class="outline-text-4" id="text-3-6-2">
-</div><div id="outline-container-orgheadline19" class="outline-5">
-<h5 id="orgheadline19"><a id="ID-D625BE5F-BE3F-477A-8059-4B0AFEFEED54"></a><span class="section-number-5">3.6.2.1</span> Positions in Alba's set that are acceptable</h5>
+</div><div id="outline-container-orgheadline29" class="outline-5">
+<h5 id="orgheadline29"><a id="ID-D625BE5F-BE3F-477A-8059-4B0AFEFEED54"></a><span class="section-number-5">3.6.2.1</span> Positions in Alba's set that are acceptable</h5>
 <div class="outline-text-5" id="text-3-6-2-1">
 <p>
 202, 124, 206, 133(+), 210, 137, 214, 248(+), 219, 236, 240, 244, 252
@@ -3368,19 +3658,19 @@ fig.savefig(figfile)
 <li>The Inverse column <i>used</i> to agree closely with Alba's values</li>
 <li>But now it does not, because I realised that the radec images have not had the bias subtracted!</li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-17 Mon] </span></span> Dones it again to include more positions - new version is in columns 2 to 4</li>
-<li>Note that values from this table are used <a href="#orgheadline2">above</a> to calculate the slit normalizations</li>
+<li>Note that values from this table are used <a href="#orgheadline1">above</a> to calculate the slit normalizations</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgheadline29" class="outline-5">
-<h5 id="orgheadline29"><span class="section-number-5">3.6.2.2</span> Positions in Alba's set that are bad</h5>
+<div id="outline-container-orgheadline39" class="outline-5">
+<h5 id="orgheadline39"><span class="section-number-5">3.6.2.2</span> Positions in Alba's set that are bad</h5>
 <div class="outline-text-5" id="text-3-6-2-2">
 <p>
 128(+), 101, 145, 157, 173
 </p>
 </div>
-<ol class="org-ol"><li><a id="orgheadline28"></a>Rehabilitation of some of these positions<br  /><div class="outline-text-6" id="text-3-6-2-2-1">
+<ol class="org-ol"><li><a id="orgheadline38"></a>Rehabilitation of some of these positions<br  /><div class="outline-text-6" id="text-3-6-2-2-1">
 <ul class="org-ul">
 <li>From my experience with the image-spectrum calibration, there is often a big difference between the quality of the image and that of hte spectrum</li>
 <li>So we shouldn't rule out a position, just based on a poor image</li>
@@ -3394,16 +3684,16 @@ fig.savefig(figfile)
 </ul>
 </div></li></ol>
 </div>
-<div id="outline-container-orgheadline30" class="outline-5">
-<h5 id="orgheadline30"><span class="section-number-5">3.6.2.3</span> Positions over to the NE</h5>
+<div id="outline-container-orgheadline40" class="outline-5">
+<h5 id="orgheadline40"><span class="section-number-5">3.6.2.3</span> Positions over to the NE</h5>
 <div class="outline-text-5" id="text-3-6-2-3">
 <p>
 spm078, spm085
 </p>
 </div>
 </div>
-<div id="outline-container-orgheadline31" class="outline-5">
-<h5 id="orgheadline31"><span class="section-number-5">3.6.2.4</span> Other positions omitted ny Alba</h5>
+<div id="outline-container-orgheadline41" class="outline-5">
+<h5 id="orgheadline41"><span class="section-number-5">3.6.2.4</span> Other positions omitted ny Alba</h5>
 <div class="outline-text-5" id="text-3-6-2-4">
 <ul class="org-ul">
 <li>spm142 - no spectrum</li>
@@ -3416,8 +3706,8 @@ spm078, spm085
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline33" class="outline-4">
-<h4 id="orgheadline33"><span class="section-number-4">3.6.3</span> Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></h4>
+<div id="outline-container-orgheadline43" class="outline-4">
+<h4 id="orgheadline43"><span class="section-number-4">3.6.3</span> Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></h4>
 <div class="outline-text-4" id="text-3-6-3">
 <pre class="example">
 Acabo de terminar las reducciones de las observaciones de Enero. Al
@@ -3474,8 +3764,8 @@ que son los que anexo a este email.
 </div>
 </div>
 
-<div id="outline-container-orgheadline40" class="outline-2">
-<h2 id="orgheadline40"><span class="section-number-2">4</span> Making spectral maps</h2>
+<div id="outline-container-orgheadline50" class="outline-2">
+<h2 id="orgheadline50"><span class="section-number-2">4</span> Making spectral maps</h2>
 <div class="outline-text-2" id="text-4">
 <ul class="org-ul">
 <li>The plan is to start with a fine orthogonal RA-dec grid
@@ -3495,8 +3785,8 @@ que son los que anexo a este email.
 </ul></li>
 </ul>
 </div>
-<div id="outline-container-orgheadline36" class="outline-3">
-<h3 id="orgheadline36"><span class="section-number-3">4.1</span> Define the output grid</h3>
+<div id="outline-container-orgheadline46" class="outline-3">
+<h3 id="orgheadline46"><span class="section-number-3">4.1</span> Define the output grid</h3>
 <div class="outline-text-3" id="text-4-1">
 <ul class="org-ul">
 <li>1 arcsec is
@@ -3527,8 +3817,8 @@ que son los que anexo a este email.
 </div>
 </div>
 
-<div id="outline-container-orgheadline6" class="outline-3">
-<h3 id="orgheadline6"><a id="ID-23C29E96-4471-454E-A463-D365731119C0"></a><span class="section-number-3">4.2</span> Test with the velocity-integrated emission</h3>
+<div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5"><a id="ID-23C29E96-4471-454E-A463-D365731119C0"></a><span class="section-number-3">4.2</span> Test with the velocity-integrated emission</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 Some positions are a bit problematic - try missing them out: 
@@ -4547,8 +4837,8 @@ This shows the scaled image in ds9
 </div>
 
 
-<div id="outline-container-orgheadline7" class="outline-3">
-<h3 id="orgheadline7"><a id="ID-60833550-A462-4F18-86DE-895625FF3E7A"></a><span class="section-number-3">4.3</span> Repeat the spectral map for the horizontal slits</h3>
+<div id="outline-container-orgheadline6" class="outline-3">
+<h3 id="orgheadline6"><a id="ID-60833550-A462-4F18-86DE-895625FF3E7A"></a><span class="section-number-3">4.3</span> Repeat the spectral map for the horizontal slits</h3>
 <div class="outline-text-3" id="text-4-3">
 <ul class="org-ul">
 <li>We can't use the same program as for the vertical slits because the table has extra columns
@@ -4674,8 +4964,8 @@ This shows the scaled image in ds9
 </div>
 
 
-<div id="outline-container-orgheadline37" class="outline-3">
-<h3 id="orgheadline37"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> Correction for heliocentric velocity</h3>
+<div id="outline-container-orgheadline47" class="outline-3">
+<h3 id="orgheadline47"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> Correction for heliocentric velocity</h3>
 <div class="outline-text-3" id="text-4-4">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-23 Sun] </span></span> I haven't done this yet</li>
@@ -4689,8 +4979,8 @@ This shows the scaled image in ds9
 </div>
 </div>
 
-<div id="outline-container-orgheadline38" class="outline-3">
-<h3 id="orgheadline38"><span class="section-number-3">4.5</span> Try to use different velocity ranges</h3>
+<div id="outline-container-orgheadline48" class="outline-3">
+<h3 id="orgheadline48"><span class="section-number-3">4.5</span> Try to use different velocity ranges</h3>
 <div class="outline-text-3" id="text-4-5">
 <ul class="org-ul">
 <li>It would be more efficient to do these all at the sane time, but for the time being I will do them separately</li>
@@ -4792,8 +5082,8 @@ xpaset -p ds9 scale limits 0 6000
 
 
 
-<div id="outline-container-orgheadline39" class="outline-3">
-<h3 id="orgheadline39"><span class="section-number-3">4.6</span> Combine both the horizontal and vertical slits</h3>
+<div id="outline-container-orgheadline49" class="outline-3">
+<h3 id="orgheadline49"><span class="section-number-3">4.6</span> Combine both the horizontal and vertical slits</h3>
 <div class="outline-text-3" id="text-4-6">
 <div class="org-src-container">
 
@@ -4914,8 +5204,8 @@ Binning 1 - pixels used 0
 </div>
 </div>
 
-<div id="outline-container-orgheadline41" class="outline-2">
-<h2 id="orgheadline41"><span class="section-number-2">5</span> The multigrid smoothing method</h2>
+<div id="outline-container-orgheadline51" class="outline-2">
+<h2 id="orgheadline51"><span class="section-number-2">5</span> The multigrid smoothing method</h2>
 <div class="outline-text-2" id="text-5">
 <div class="org-src-container">
 
@@ -5112,8 +5402,8 @@ Binning 1 - pixels used 1135
 </div>
 
 
-<div id="outline-container-orgheadline42" class="outline-2">
-<h2 id="orgheadline42"><span class="section-number-2">6</span> T diagnostics from linewidths</h2>
+<div id="outline-container-orgheadline52" class="outline-2">
+<h2 id="orgheadline52"><span class="section-number-2">6</span> T diagnostics from linewidths</h2>
 <div class="outline-text-2" id="text-6">
 <ul class="org-ul">
 <li>We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum</li>
@@ -5128,8 +5418,8 @@ Binning 1 - pixels used 1135
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline43" class="outline-2">
-<h2 id="orgheadline43"><span class="section-number-2">7</span> The big bowshock</h2>
+<div id="outline-container-orgheadline53" class="outline-2">
+<h2 id="orgheadline53"><span class="section-number-2">7</span> The big bowshock</h2>
 <div class="outline-text-2" id="text-7">
 <ul class="org-ul">
 <li>There is a giant, possibly double, possibly triple bow</li>
@@ -5142,16 +5432,16 @@ Binning 1 - pixels used 1135
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline48" class="outline-2">
-<h2 id="orgheadline48"><span class="section-number-2">8</span> Coordinates of the slits</h2>
+<div id="outline-container-orgheadline58" class="outline-2">
+<h2 id="orgheadline58"><span class="section-number-2">8</span> Coordinates of the slits</h2>
 <div class="outline-text-2" id="text-8">
 <ul class="org-ul">
 <li>Data received from Alba <span class="timestamp-wrapper"><span class="timestamp">[2015-08-11 Tue]</span></span></li>
 </ul>
 </div>
 
-<div id="outline-container-orgheadline44" class="outline-3">
-<h3 id="orgheadline44"><span class="section-number-3">8.1</span> Description from Alba</h3>
+<div id="outline-container-orgheadline54" class="outline-3">
+<h3 id="orgheadline54"><span class="section-number-3">8.1</span> Description from Alba</h3>
 <div class="outline-text-3" id="text-8-1">
 <pre class="example">
 Todos los datos están en:
@@ -5169,8 +5459,8 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 
 
 
-<div id="outline-container-orgheadline45" class="outline-3">
-<h3 id="orgheadline45"><span class="section-number-3">8.2</span> Brightness correction factors</h3>
+<div id="outline-container-orgheadline55" class="outline-3">
+<h3 id="orgheadline55"><span class="section-number-3">8.2</span> Brightness correction factors</h3>
 <div class="outline-text-3" id="text-8-2">
 <ul class="org-ul">
 <li>The 2010 data in <code>3.CuboWS/0.Datos</code> are <code>.nc.cc.</code> have already had this applied</li>
@@ -5334,8 +5624,8 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 </div>
 </div>
 
-<div id="outline-container-orgheadline46" class="outline-3">
-<h3 id="orgheadline46"><span class="section-number-3">8.3</span> HORIZONTALES 2013</h3>
+<div id="outline-container-orgheadline56" class="outline-3">
+<h3 id="orgheadline56"><span class="section-number-3">8.3</span> HORIZONTALES 2013</h3>
 <div class="outline-text-3" id="text-8-3">
 <table id="orgtable5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -5442,8 +5732,8 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 
 
 
-<div id="outline-container-orgheadline47" class="outline-3">
-<h3 id="orgheadline47"><span class="section-number-3">8.4</span> VERTICALES 2010</h3>
+<div id="outline-container-orgheadline57" class="outline-3">
+<h3 id="orgheadline57"><span class="section-number-3">8.4</span> VERTICALES 2010</h3>
 <div class="outline-text-3" id="text-8-4">
 <ul class="org-ul">
 <li>From the region file <a href="file://ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/1.Posiciones/pos_todas.reg">pos_todas.reg</a> it looks like the PA = 3.03 deg</li>
@@ -5633,8 +5923,8 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 
 
 
-<div id="outline-container-orgheadline49" class="outline-2">
-<h2 id="orgheadline49"><span class="section-number-2">9</span> Proper motions of the Orion West shocks</h2>
+<div id="outline-container-orgheadline59" class="outline-2">
+<h2 id="orgheadline59"><span class="section-number-2">9</span> Proper motions of the Orion West shocks</h2>
 <div class="outline-text-2" id="text-9">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-26 Wed] </span></span> Today I discovered that there is a new Massimo Robberto program that has re-observed the whole of Orion with the ACS F775W filter</li>
@@ -5673,7 +5963,7 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: William Henney</p>
-<p class="date">Created: 2015-09-05 Sat 19:46</p>
+<p class="date">Created: 2015-09-14 Mon 19:03</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
