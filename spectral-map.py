@@ -26,7 +26,7 @@ outweights = np.zeros((NY, NX))
 slit_width = 2.0                # width in arcsec of 150 micron slit
 slit_pix_width = slit_width/pixel_scale
 
-speclist = glob.glob('Calibrated/*-nii.fits')
+speclist = glob.glob('Calibrated/*-ha.fits')
 
 for fn in speclist:
     print('Processing', fn)
@@ -63,7 +63,7 @@ for fn in speclist:
 # 1. The sum of the raw slits 
 # 2. The weights
 # 3. The slits normalized by the weights
-label = 'nii-allvels'
+label = 'ha-allvels'
 fits.HDUList([
     fits.PrimaryHDU(),
     fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
