@@ -241,9 +241,19 @@ def make_slit_wcs(db, slit_coords, spechdu):
     check_coords = pixel_to_skycoord(np.arange(npix), [0]*npix, w, 0)
     # These should be the same as the ICRS coords in slit_coords
     print('New coords:', check_coords[::100])
-    print('Displacents in arcsec:', check_coords.separation(c).arcsec[::100])
+    print('Displacements in arcsec:', check_coords.separation(c).arcsec[::100])
     # 15 Sep 2015: They seem to be equal to within about 1e-2 arcsec
 
+    return w
+# Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1 ends here
+
+# [[file:alba-orion-west.org::*Package%20up%20the%20slit%20coordinates%20for%20use%20in%20a%20FITS%20header][Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1]]
+def fixup4ds9(w):
+    w.wcs.ctype  = ['LINEAR', 'LINEAR', 'LINEAR']
+    # w.wcs.cdelt[1:] *= 3600
+    # w.wcs.units[1:] = 'arcsec', 'arcsec'
+    w.wcs.crval[1], w.wcs.crval[2] = 0.0, 0.0
+    w.wcs.name = 'TopoWavDS9'
     return w
 # Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1 ends here
 
@@ -367,15 +377,19 @@ for row in tab:
         wslit = make_slit_wcs(row, slit_coords, hdu)
         # Set the rest wavelength for this line
         wslit.wcs.restwav = (restwav*u.Angstrom).to(u.m).value
-        # Remove WCS keywords that might cause problems
-        for i in 1, 2:
-            for j in 1, 2:
-                kwd = 'CD{}_{}'.format(i, j)
-                if kwd in hdu.header:
-                    hdu.header.remove(kwd) 
-        # Then update the header with the new WCS structure
-        hdu.header.update(wslit.to_header())
-        calibfile = 'Calibrated/{:03d}-{}-{}.fits'.format(row.index, full_id, lineid)
+        # # Remove WCS keywords that might cause problems
+        # for i in 1, 2:
+        #     for j in 1, 2:
+        #         kwd = 'CD{}_{}'.format(i, j)
+        #         if kwd in hdu.header:
+        #             hdu.header.remove(kwd) 
+        # Then update the header with the new WCS structure as the 'A'
+        # alternate transform
+        hdu.header.update(wslit.to_header(key='A'))
+        # And better not to change the original WCS at all
+        # # And write a bowdlerized version that DS9 can understand as the main WCS
+        # hdu.header.update(fixup4ds9(wslit).to_header(key=' '))
+        calibfile = 'Calibrated/{}-{}.fits'.format(full_id, lineid)
         hdu.writeto(calibfile, clobber=True)
 # Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1 ends here
 

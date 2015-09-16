@@ -132,50 +132,50 @@
 
 Run it for a single slit
 #+BEGIN_SRC sh :results verbatim
-  python slit-calibration.py 2010-01-078 # 1>&2
+  python slit-calibration.py 2006-02-313 # 1>&2
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
-<Row 21 of table
- values=('2010-01', '078', '079-080', 2, 248.0, 62.0, 4800, 2.0, 'Vertical W of LL2')
+<Row 10 of table
+ values=('2006-02', '313', '312', 2, 278.0, 70.0, 2200, 6.0, 'Image follows spec!')
  dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
-ID = 078 Template = Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits
-ID = 079-080 Template = Dropbox/SPMJAN10/reducciones/spm{}h.fits
-ID = 079 Template = Dropbox/SPMJAN10/reducciones/spec{}-ha.fits
-ID = 079 Template = Dropbox/SPMJAN10/reducciones/spec{}-nii.fits
-iarr = [ 248.  248.  248.  248.  248.  248.] jarr = [ -62.   38.  138.  238.  338.  438.]
+ID = 313 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 312 Template = Work/SPM2005/pp{}.fits
+ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 278.  278.  278.  278.  278.  278.] jarr = [ -70.   30.  130.  230.  330.  430.]
 coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
-    [(83.63656721, -5.436557), (83.63752307, -5.41930392),
-     (83.63847887, -5.40205084), (83.63943461, -5.38479775),
-     (83.64039031, -5.36754467), (83.64134595, -5.35029159)]>
+    [(83.6577296, -5.43362307), (83.65745278, -5.41632339),
+     (83.65717599, -5.3990237), (83.65689921, -5.38172401),
+     (83.65662244, -5.36442432), (83.65634569, -5.34712464)]>
 Binning along slit: image = 2 spectrum = 2
-[ 83.63656115  83.637517    83.6384728   83.63942855  83.64038424
-  83.64133988] [-5.43655178 -5.41929871 -5.40204562 -5.38479254 -5.36753945 -5.35028637]
-[ 6159.  6145.  6130.  6116.  6102.  6087.] [ 4505.  4766.  5027.  5288.  5549.  5810.]
+[ 83.65772353  83.65744672  83.65716992  83.65689314  83.65661637
+  83.65633962] [-5.43361786 -5.41631817 -5.39901848 -5.38171879 -5.36441911 -5.34711943]
+[ 5840.  5845.  5849.  5853.  5857.  5861.] [ 4549.  4811.  5073.  5334.  5596.  5858.]
 Model: Chebyshev1D
 Inputs: ('x',)
 Outputs: ('y',)
 Model set size: 1
 Degree: 3
 Parameters:
-          c0            c1              c2               c3       
-    ------------- -------------- ---------------- ----------------
-    0.97351892064 0.120790599919 -0.0664788589445 -0.0160666138543
+          c0            c1             c2              c3       
+    ------------- ------------- --------------- ----------------
+    1.00246720442 0.17397528983 0.0163298565033 -0.0384840800552
 Saving ha calibrated spectrum
 New coords: <SkyCoord (ICRS): (ra, dec) in deg
-    [(83.63656115, -5.43655178), (83.63751693, -5.41929871),
-     (83.63847266, -5.40204563), (83.63942834, -5.38479256),
-     (83.64038396, -5.3675395), (83.64133953, -5.35028644)]>
-Displacents in arcsec: [  5.72499843e-12   2.49695832e-04   5.01476779e-04   7.57413498e-04
-   1.01952032e-03   1.28973083e-03]
+    [(83.65772353, -5.43361786), (83.65744674, -5.41631817),
+     (83.65716996, -5.39901849), (83.6568932, -5.38171882),
+     (83.65661645, -5.36441915), (83.65633972, -5.3471195)]>
+Displacements in arcsec: [  2.28999937e-11   7.30212201e-05   1.50538729e-04   2.36648963e-04
+   3.34741668e-04   4.47426861e-04]
 Saving nii calibrated spectrum
 New coords: <SkyCoord (ICRS): (ra, dec) in deg
-    [(83.63656115, -5.43655178), (83.63751693, -5.41929871),
-     (83.63847266, -5.40204563), (83.63942834, -5.38479256),
-     (83.64038396, -5.3675395), (83.64133953, -5.35028644)]>
-Displacents in arcsec: [  5.72499843e-12   2.49695832e-04   5.01476779e-04   7.57413498e-04
-   1.01952032e-03   1.28973083e-03]
+    [(83.65772353, -5.43361786), (83.65744674, -5.41631817),
+     (83.65716996, -5.39901849), (83.6568932, -5.38171882),
+     (83.65661645, -5.36441915), (83.65633972, -5.3471195)]>
+Displacements in arcsec: [  2.28999937e-11   7.30212201e-05   1.50538729e-04   2.36648963e-04
+   3.34741668e-04   4.47426861e-04]
 #+end_example
 
 
@@ -654,9 +654,21 @@ We also need to create the WCS keywords so that the slit coordinates can be reco
       check_coords = pixel_to_skycoord(np.arange(npix), [0]*npix, w, 0)
       # These should be the same as the ICRS coords in slit_coords
       print('New coords:', check_coords[::100])
-      print('Displacents in arcsec:', check_coords.separation(c).arcsec[::100])
+      print('Displacements in arcsec:', check_coords.separation(c).arcsec[::100])
       # 15 Sep 2015: They seem to be equal to within about 1e-2 arcsec
 
+      return w
+#+END_SRC
+
+Unfortunately, DS9 does not understand this lovely conformant and informative WCS structure that we have devised, so we need to dumb it down:
++ Actually I don't use this any more
+#+BEGIN_SRC python
+  def fixup4ds9(w):
+      w.wcs.ctype  = ['LINEAR', 'LINEAR', 'LINEAR']
+      # w.wcs.cdelt[1:] *= 3600
+      # w.wcs.units[1:] = 'arcsec', 'arcsec'
+      w.wcs.crval[1], w.wcs.crval[2] = 0.0, 0.0
+      w.wcs.name = 'TopoWavDS9'
       return w
 #+END_SRC
 
@@ -797,15 +809,19 @@ We also need to create the WCS keywords so that the slit coordinates can be reco
           wslit = make_slit_wcs(row, slit_coords, hdu)
           # Set the rest wavelength for this line
           wslit.wcs.restwav = (restwav*u.Angstrom).to(u.m).value
-          # Remove WCS keywords that might cause problems
-          for i in 1, 2:
-              for j in 1, 2:
-                  kwd = 'CD{}_{}'.format(i, j)
-                  if kwd in hdu.header:
-                      hdu.header.remove(kwd) 
-          # Then update the header with the new WCS structure
-          hdu.header.update(wslit.to_header())
-          calibfile = 'Calibrated/{:03d}-{}-{}.fits'.format(row.index, full_id, lineid)
+          # # Remove WCS keywords that might cause problems
+          # for i in 1, 2:
+          #     for j in 1, 2:
+          #         kwd = 'CD{}_{}'.format(i, j)
+          #         if kwd in hdu.header:
+          #             hdu.header.remove(kwd) 
+          # Then update the header with the new WCS structure as the 'A'
+          # alternate transform
+          hdu.header.update(wslit.to_header(key='A'))
+          # And better not to change the original WCS at all
+          # # And write a bowdlerized version that DS9 can understand as the main WCS
+          # hdu.header.update(fixup4ds9(wslit).to_header(key=' '))
+          calibfile = 'Calibrated/{}-{}.fits'.format(full_id, lineid)
           hdu.writeto(calibfile, clobber=True)
 
 #+END_SRC
@@ -821,10 +837,1320 @@ We also need to create the WCS keywords so that the slit coordinates can be reco
   + This means that the normal output (e.g., print statements) will show up in the =*Org-Babel Error Output*= buffer 
 
 #+BEGIN_SRC sh :results verbatim
-python slit-calibration.py  1>&2
+python slit-calibration.py  # 1>&2
 #+END_SRC
 
 #+RESULTS:
+#+begin_example
+<Row 0 of table
+ values=('2006-02', '326', '324', 2, 283.5, 74.0, 900, 1.0, 'LL2 first epoch')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 326 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 324 Template = Work/SPM2005/pp{}.fits
+ID = 324 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 324 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 283.5  283.5  283.5  283.5  283.5  283.5] jarr = [ -74.   26.  126.  226.  326.  426.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.05872963, -5.46776112), (83.0584093, -5.45046954),
+     (83.05808898, -5.43317795), (83.05776868, -5.41588636),
+     (83.0574484, -5.39859478), (83.05712814, -5.38130321)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.67290928  83.67267318  83.67243709  83.67220102  83.67196496
+  83.67172891] [-5.43558101 -5.41828808 -5.40099516 -5.38370224 -5.36640932 -5.34911642]
+[ 5612.  5615.  5619.  5622.  5626.  5630.] [ 4520.  4781.  5043.  5304.  5566.  5827.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1              c2              c3       
+    -------------- -------------- --------------- ----------------
+    0.937782927762 0.090142811819 -0.043837994233 -0.0027484138642
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67290928, -5.43558101), (83.67267319, -5.41828809),
+     (83.67243713, -5.40099517), (83.67220107, -5.38370226),
+     (83.67196503, -5.36640936), (83.671729, -5.34911647)]>
+Displacements in arcsec: [  8.58749764e-12   6.20268567e-05   1.26808548e-04   1.96898220e-04
+   2.74517678e-04   3.61494280e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67290928, -5.43558101), (83.67267319, -5.41828809),
+     (83.67243713, -5.40099517), (83.67220107, -5.38370226),
+     (83.67196503, -5.36640936), (83.671729, -5.34911647)]>
+Displacements in arcsec: [  8.58749764e-12   6.20268567e-05   1.26808548e-04   1.96898220e-04
+   2.74517678e-04   3.61494280e-04]
+<Row 1 of table
+ values=(2006-02, 318, 319, 2, 280.0, 78.0, 3300, 3.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 318 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 319 Template = Work/SPM2005/pp{}.fits
+ID = 319 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 319 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 280.  280.  280.  280.  280.  280.] jarr = [ -78.   22.  122.  222.  322.  422.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.67221103, -5.4345169), (83.67193445, -5.4172216),
+     (83.67165789, -5.3999263), (83.67138134, -5.382631),
+     (83.67110482, -5.3653357), (83.6708283, -5.34804041)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.67220496  83.67192838  83.67165182  83.67137528  83.67109875
+  83.67082223] [-5.43451169 -5.41721639 -5.39992109 -5.38262578 -5.36533049 -5.3480352 ]
+[ 5622.  5627.  5631.  5635.  5639.  5643.] [ 4536.  4797.  5059.  5321.  5582.  5844.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1              c2               c3       
+    -------------- -------------- ---------------- ----------------
+    0.889981435889 0.110666602866 -0.0124301970592 -0.0154941738245
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67220496, -5.43451169), (83.6719284, -5.41721639),
+     (83.67165186, -5.3999211), (83.67137534, -5.38262581),
+     (83.67109883, -5.36533053), (83.67082234, -5.34803526)]>
+Displacements in arcsec: [  1.43124961e-11   7.29112642e-05   1.50078204e-04   2.35399109e-04
+   3.32129432e-04   4.42805597e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67220496, -5.43451169), (83.6719284, -5.41721639),
+     (83.67165186, -5.3999211), (83.67137534, -5.38262581),
+     (83.67109883, -5.36533053), (83.67082234, -5.34803526)]>
+Displacements in arcsec: [  1.43124961e-11   7.29112642e-05   1.50078204e-04   2.35399109e-04
+   3.32129432e-04   4.42805597e-04]
+<Row 2 of table
+ values=(2006-02, 260, 261, 2, 251.4, 55.0, 3000, 1.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 260 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 261 Template = Work/SPM2005/pp{}.fits
+ID = 261 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 261 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 251.4  251.4  251.4  251.4  251.4  251.4] jarr = [ -55.   45.  145.  245.  345.  445.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.05691874, -5.46408808), (83.05663285, -5.44687129),
+     (83.05634697, -5.42965451), (83.05606112, -5.41243772),
+     (83.05577528, -5.39522094), (83.05548945, -5.37800417)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.67111639  83.67091437  83.67071236  83.67051036  83.67030837
+  83.6701064 ] [-5.43189927 -5.41468131 -5.39746336 -5.3802454  -5.36302746 -5.34580952]
+[ 5639.  5642.  5645.  5648.  5651.  5654.] [ 4575.  4836.  5096.  5357.  5617.  5877.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1              c2              c3      
+    -------------- -------------- --------------- ---------------
+    0.991771027462 0.185872577335 0.0320286757528 0.0062338263055
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67111639, -5.43189927), (83.67091438, -5.41468131),
+     (83.67071239, -5.39746336), (83.6705104, -5.38024542),
+     (83.67030843, -5.36302748), (83.67010647, -5.34580956)]>
+Displacements in arcsec: [  2.28999937e-11   5.27844711e-05   1.07824904e-04   1.67211516e-04
+   2.32772508e-04   3.06021538e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67111639, -5.43189927), (83.67091438, -5.41468131),
+     (83.67071239, -5.39746336), (83.6705104, -5.38024542),
+     (83.67030843, -5.36302748), (83.67010647, -5.34580956)]>
+Displacements in arcsec: [  2.28999937e-11   5.27844711e-05   1.07824904e-04   1.67211516e-04
+   2.32772508e-04   3.06021538e-04]
+<Row 3 of table
+ values=(2006-02, 270, 271, 2, 253.5, 60.0, 6000, 4.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 270 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 271 Template = Work/SPM2005/pp{}.fits
+ID = 271 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 271 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 253.5  253.5  253.5  253.5  253.5  253.5] jarr = [ -60.   40.  140.  240.  340.  440.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.05647681, -5.4640169), (83.0561316, -5.44675464),
+     (83.0557864, -5.42949239), (83.05544123, -5.41223013),
+     (83.05509608, -5.39496789), (83.05475095, -5.37770565)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.67067483  83.67041372  83.67015261  83.66989153  83.66963045
+  83.6693694 ] [-5.43182595 -5.41456224 -5.39729853 -5.38003483 -5.36277113 -5.34550743]
+[ 5645.  5649.  5653.  5657.  5661.  5665.] [ 4576.  4838.  5099.  5360.  5621.  5882.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1             c2              c3       
+    -------------- ------------ --------------- ----------------
+    0.934859141132 0.1652018095 0.0360151256523 0.00013980451958
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67067483, -5.43182595), (83.67041373, -5.41456224),
+     (83.67015265, -5.39729854), (83.66989158, -5.38003484),
+     (83.66963053, -5.36277115), (83.66936949, -5.34550748)]>
+Displacements in arcsec: [  2.57624929e-11   6.82297013e-05   1.38214523e-04   2.11619850e-04
+   2.89979386e-04   3.74655076e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67067483, -5.43182595), (83.67041373, -5.41456224),
+     (83.67015265, -5.39729854), (83.66989158, -5.38003484),
+     (83.66963053, -5.36277115), (83.66936949, -5.34550748)]>
+Displacements in arcsec: [  2.57624929e-11   6.82297013e-05   1.38214523e-04   2.11619850e-04
+   2.89979386e-04   3.74655076e-04]
+<Row 4 of table
+ values=(2006-02, 276, 277, 2, 256.0, 60.0, 6000, 6.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 276 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 277 Template = Work/SPM2005/pp{}.fits
+ID = 277 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 277 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 256.  256.  256.  256.  256.  256.] jarr = [ -60.   40.  140.  240.  340.  440.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.05603409, -5.46389959), (83.05568586, -5.44664967),
+     (83.05533766, -5.42939975), (83.05498947, -5.41214983),
+     (83.05464131, -5.39489992), (83.05429317, -5.37765002)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.67023271  83.66996852  83.66970435  83.66944019  83.66917604
+  83.66891191] [-5.43170651 -5.41445512 -5.39720373 -5.37995234 -5.36270096 -5.34544959]
+[ 5652.  5656.  5660.  5664.  5668.  5672.] [ 4578.  4839.  5100.  5361.  5622.  5883.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1              c2              c3      
+    -------------- -------------- --------------- ---------------
+    0.985506674427 0.168280364614 0.0329483741257 0.0105802847147
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67023271, -5.43170651), (83.66996854, -5.41445512),
+     (83.66970439, -5.39720373), (83.66944025, -5.37995236),
+     (83.66917612, -5.36270099), (83.66891201, -5.34544963)]>
+Displacements in arcsec: [  1.71749953e-11   6.89723111e-05   1.39654810e-04   2.13670512e-04
+   2.92519406e-04   3.77538912e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67023271, -5.43170651), (83.66996854, -5.41445512),
+     (83.66970439, -5.39720373), (83.66944025, -5.37995236),
+     (83.66917612, -5.36270099), (83.66891201, -5.34544963)]>
+Displacements in arcsec: [  1.71749953e-11   6.89723111e-05   1.39654810e-04   2.13670512e-04
+   2.92519406e-04   3.77538912e-04]
+<Row 5 of table
+ values=(2006-02, 281, 282, 2, 257.7, 64.0, 3600, 8.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 281 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 282 Template = Work/SPM2005/pp{}.fits
+ID = 282 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 282 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 257.7  257.7  257.7  257.7  257.7  257.7] jarr = [ -64.   36.  136.  236.  336.  436.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.05515786, -5.4639996), (83.05481115, -5.44673089),
+     (83.05446446, -5.42946218), (83.05411778, -5.41219347),
+     (83.05377113, -5.39492477), (83.0534245, -5.37765608)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66935606  83.66909347  83.6688309   83.66856834  83.6683058
+  83.66804327] [-5.43180229 -5.41453212 -5.39726194 -5.37999177 -5.36272161 -5.34545146]
+[ 5665.  5669.  5673.  5677.  5681.  5685.] [ 4577.  4838.  5099.  5360.  5622.  5883.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1              c2              c3       
+    ------------- -------------- --------------- ----------------
+    1.00253851429 0.161833645522 0.0133680952114 -0.0126444567019
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66935606, -5.43180229), (83.66909349, -5.41453212),
+     (83.66883094, -5.39726195), (83.6685684, -5.37999179),
+     (83.66830588, -5.36272164), (83.66804337, -5.3454515)]>
+Displacements in arcsec: [  1.14499969e-11   6.86347065e-05   1.39008272e-04   2.12772233e-04
+   2.91449020e-04   3.76393745e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66935606, -5.43180229), (83.66909349, -5.41453212),
+     (83.66883094, -5.39726195), (83.6685684, -5.37999179),
+     (83.66830588, -5.36272164), (83.66804337, -5.3454515)]>
+Displacements in arcsec: [  1.14499969e-11   6.86347065e-05   1.39008272e-04   2.12772233e-04
+   2.91449020e-04   3.76393745e-04]
+<Row 6 of table
+ values=(2006-02, 286, 287, 2, 261.0, 64.0, 3600, 8.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 286 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 287 Template = Work/SPM2005/pp{}.fits
+ID = 287 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 287 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 261.  261.  261.  261.  261.  261.] jarr = [ -64.   36.  136.  236.  336.  436.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.0546046, -5.46394719), (83.05424179, -5.44667985),
+     (83.05387901, -5.42941252), (83.05351624, -5.41214519),
+     (83.0531535, -5.39487786), (83.05279078, -5.37761055)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66880309  83.6685244   83.66824573  83.66796708  83.66768844
+  83.66740982] [-5.43174721 -5.41447833 -5.39720946 -5.37994059 -5.36267172 -5.34540287]
+[ 5674.  5678.  5682.  5686.  5690.  5695.] [ 4578.  4839.  5100.  5361.  5622.  5884.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1              c2               c3       
+    ------------- -------------- ---------------- ----------------
+    0.90267299297 0.148819063205 0.00992678184843 -0.0126086172658
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66880309, -5.43174721), (83.66852442, -5.41447833),
+     (83.66824577, -5.39720947), (83.66796714, -5.3799406),
+     (83.66768852, -5.36267175), (83.66740992, -5.34540291)]>
+Displacements in arcsec: [  8.58749764e-12   7.28056167e-05   1.47240693e-04   2.24857630e-04
+   3.07101139e-04   3.95273197e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66880309, -5.43174721), (83.66852442, -5.41447833),
+     (83.66824577, -5.39720947), (83.66796714, -5.3799406),
+     (83.66768852, -5.36267175), (83.66740992, -5.34540291)]>
+Displacements in arcsec: [  8.58749764e-12   7.28056167e-05   1.47240693e-04   2.24857630e-04
+   3.07101139e-04   3.95273197e-04]
+<Row 7 of table
+ values=(2006-02, 291, 292, 2, 262.7, 65.0, 4500, 6.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 291 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 292 Template = Work/SPM2005/pp{}.fits
+ID = 292 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 292 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 262.7  262.7  262.7  262.7  262.7  262.7] jarr = [ -65.   35.  135.  235.  335.  435.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.05416481, -5.46384309), (83.05384842, -5.44665942),
+     (83.05353205, -5.42947575), (83.05321571, -5.41229209),
+     (83.05289937, -5.39510843), (83.05258306, -5.37792478)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66836383  83.66813116  83.66789849  83.66766584  83.66743321
+  83.66720058] [-5.43164099 -5.414456   -5.39727102 -5.38008604 -5.36290106 -5.3457161 ]
+[ 5680.  5684.  5687.  5691.  5694.  5698.] [ 4579.  4839.  5099.  5359.  5619.  5879.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1              c2               c3       
+    ------------- -------------- --------------- -----------------
+    1.00067304159 0.160513844297 0.0120645681669 -0.00616447747887
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66836383, -5.43164099), (83.66813117, -5.414456),
+     (83.66789853, -5.39727103), (83.66766589, -5.38008605),
+     (83.66743327, -5.36290109), (83.66720067, -5.34571614)]>
+Displacements in arcsec: [  1.14499969e-11   6.05687755e-05   1.23034034e-04   1.89181649e-04
+   2.60628760e-04   3.38777909e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66836383, -5.43164099), (83.66813117, -5.414456),
+     (83.66789853, -5.39727103), (83.66766589, -5.38008605),
+     (83.66743327, -5.36290109), (83.66720067, -5.34571614)]>
+Displacements in arcsec: [  1.14499969e-11   6.05687755e-05   1.23034034e-04   1.89181649e-04
+   2.60628760e-04   3.38777909e-04]
+<Row 8 of table
+ values=(2006-02, 296, 297, 2, 267.0, 66.0, 2600, 8.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 296 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 297 Template = Work/SPM2005/pp{}.fits
+ID = 297 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 297 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 267.  267.  267.  267.  267.  267.] jarr = [ -66.   34.  134.  234.  334.  434.]
+coords = <SkyCoord (FK4: equinox=B1950.000, obstime=B1950.000): (ra, dec) in deg
+    [(83.05318453, -5.46382238), (83.0528729, -5.44657699),
+     (83.0525613, -5.4293316), (83.05224971, -5.41208621),
+     (83.05193814, -5.39484083), (83.05162658, -5.37759546)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66738372  83.6671561   83.6669285   83.66670091  83.66647333
+  83.66624577] [-5.43161555 -5.41436887 -5.39712218 -5.3798755  -5.36262883 -5.34538216]
+[ 5695.  5698.  5702.  5705.  5709.  5712.] [ 4580.  4840.  5101.  5362.  5623.  5884.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1             c2              c3       
+    -------------- ------------- --------------- ----------------
+    0.920184723839 0.16317934092 0.0081146408662 -0.0104826256303
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66738372, -5.43161555), (83.66715612, -5.41436887),
+     (83.66692853, -5.39712219), (83.66670096, -5.37987552),
+     (83.6664734, -5.36262885), (83.66624585, -5.3453822)]>
+Displacements in arcsec: [  2.86249921e-12   5.94760042e-05   1.20903632e-04   1.86116574e-04
+   2.56767114e-04   3.34279964e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66738372, -5.43161555), (83.66715612, -5.41436887),
+     (83.66692853, -5.39712219), (83.66670096, -5.37987552),
+     (83.6664734, -5.36262885), (83.66624585, -5.3453822)]>
+Displacements in arcsec: [  2.86249921e-12   5.94760042e-05   1.20903632e-04   1.86116574e-04
+   2.56767114e-04   3.34279964e-04]
+<Row 9 of table
+ values=(2006-02, 303, 304, 2, 270.5, 70.0, 2800, 8.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 303 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 304 Template = Work/SPM2005/pp{}.fits
+ID = 304 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 304 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 270.5  270.5  270.5  270.5  270.5  270.5] jarr = [ -70.   30.  130.  230.  330.  430.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.6663405, -5.43285584), (83.66612466, -5.41556767),
+     (83.66590884, -5.3982795), (83.66569303, -5.38099133),
+     (83.66547723, -5.36370317), (83.66526145, -5.34641501)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66633443  83.6661186   83.66590277  83.66568696  83.66547117
+  83.66525538] [-5.43285063 -5.41556246 -5.39827429 -5.38098612 -5.36369795 -5.3464098 ]
+[ 5711.  5714.  5717.  5721.  5724.  5727.] [ 4561.  4822.  5084.  5345.  5607.  5868.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1              c2               c3       
+    -------------- -------------- ---------------- ----------------
+    0.920082499736 0.132892297467 0.00481472435237 -0.0244247971388
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66633443, -5.43285063), (83.66611861, -5.41556246),
+     (83.66590281, -5.3982743), (83.66568701, -5.38098614),
+     (83.66547123, -5.36369799), (83.66525546, -5.34640986)]>
+Displacements in arcsec: [  5.72499843e-12   5.69760944e-05   1.17971418e-04   1.86595529e-04
+   2.65761292e-04   3.57641334e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66633443, -5.43285063), (83.66611861, -5.41556246),
+     (83.66590281, -5.3982743), (83.66568701, -5.38098614),
+     (83.66547123, -5.36369799), (83.66525546, -5.34640986)]>
+Displacements in arcsec: [  5.72499843e-12   5.69760944e-05   1.17971418e-04   1.86595529e-04
+   2.65761292e-04   3.57641334e-04]
+<Row 10 of table
+ values=('2006-02', '313', '312', 2, 278.0, 70.0, 2200, 6.0, 'Image follows spec!')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 313 Template = Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits
+ID = 312 Template = Work/SPM2005/pp{}.fits
+ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits
+ID = 312 Template = Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits
+iarr = [ 278.  278.  278.  278.  278.  278.] jarr = [ -70.   30.  130.  230.  330.  430.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.6577296, -5.43362307), (83.65745278, -5.41632339),
+     (83.65717599, -5.3990237), (83.65689921, -5.38172401),
+     (83.65662244, -5.36442432), (83.65634569, -5.34712464)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.65772353  83.65744672  83.65716992  83.65689314  83.65661637
+  83.65633962] [-5.43361786 -5.41631817 -5.39901848 -5.38171879 -5.36441911 -5.34711943]
+[ 5840.  5845.  5849.  5853.  5857.  5861.] [ 4549.  4811.  5073.  5334.  5596.  5858.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1             c2              c3       
+    ------------- ------------- --------------- ----------------
+    1.00246720442 0.17397528983 0.0163298565033 -0.0384840800552
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.65772353, -5.43361786), (83.65744674, -5.41631817),
+     (83.65716996, -5.39901849), (83.6568932, -5.38171882),
+     (83.65661645, -5.36441915), (83.65633972, -5.3471195)]>
+Displacements in arcsec: [  2.28999937e-11   7.30212201e-05   1.50538729e-04   2.36648963e-04
+   3.34741668e-04   4.47426861e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.65772353, -5.43361786), (83.65744674, -5.41631817),
+     (83.65716996, -5.39901849), (83.6568932, -5.38171882),
+     (83.65661645, -5.36441915), (83.65633972, -5.3471195)]>
+Displacements in arcsec: [  2.28999937e-11   7.30212201e-05   1.50538729e-04   2.36648963e-04
+   3.34741668e-04   4.47426861e-04]
+<Row 11 of table
+ values=('2007-01b', '2061', '2062-c', 2, 256.0, 65.0, 7000, 20.0, 'LL2 second epoch')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 2061 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2062-c Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2062 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+ID = 2062 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits
+iarr = [ 256.  256.  256.  256.  256.  256.] jarr = [ -65.   35.  135.  235.  335.  435.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.67502547, -5.43793388), (83.67443849, -5.42073519),
+     (83.67385154, -5.40353649), (83.67326462, -5.38633779),
+     (83.67267774, -5.36913909), (83.67209089, -5.35194041)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.67501941  83.67443242  83.67384547  83.67325856  83.67267168
+  83.67208483] [-5.43792867 -5.42072997 -5.40353127 -5.38633257 -5.36913388 -5.35193519]
+[ 5580.  5589.  5598.  5607.  5615.  5624.] [ 4484.  4744.  5004.  5265.  5525.  5785.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.900349679225 0.0877391654333 -0.0203950087522 0.0133046767369
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67501941, -5.43792867), (83.67443247, -5.42072997),
+     (83.67384556, -5.40353128), (83.67325869, -5.38633259),
+     (83.67267185, -5.36913391), (83.67208504, -5.35193524)]>
+Displacements in arcsec: [  2.00374945e-11   1.52756199e-04   3.06823168e-04   4.63501380e-04
+   6.24055573e-04   7.89698030e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67501941, -5.43792867), (83.67443247, -5.42072997),
+     (83.67384556, -5.40353128), (83.67325869, -5.38633259),
+     (83.67267185, -5.36913391), (83.67208504, -5.35193524)]>
+Displacements in arcsec: [  2.00374945e-11   1.52756199e-04   3.06823168e-04   4.63501380e-04
+   6.24055573e-04   7.89698030e-04]
+<Row 12 of table
+ values=(2007-01b, 2037, 2038-2040, 2, 249.0, 60.0, 7000, 16.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 2037 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2038-2040 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2038 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+ID = 2038 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits
+iarr = [ 249.  249.  249.  249.  249.  249.] jarr = [ -60.   40.  140.  240.  340.  440.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.67314611, -5.44332573), (83.67259306, -5.42610746),
+     (83.67204003, -5.40888917), (83.67148704, -5.39167089),
+     (83.67093408, -5.37445261), (83.67038115, -5.35723434)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.67314005  83.67258699  83.67203397  83.67148097  83.67092801
+  83.67037508] [-5.44332052 -5.42610224 -5.40888396 -5.39166568 -5.3744474  -5.35722913]
+[ 5608.  5617.  5625.  5633.  5642.  5650.] [ 4403.  4663.  4923.  5184.  5444.  5705.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2              c3       
+    -------------- --------------- --------------- ----------------
+    0.954100297963 0.0786872131875 -0.036334601769 0.00068519034093
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67314005, -5.44332052), (83.67258703, -5.42610224),
+     (83.67203405, -5.40888397), (83.6714811, -5.3916657),
+     (83.67092818, -5.37444744), (83.67037529, -5.35722919)]>
+Displacements in arcsec: [ 0.          0.00014436  0.00029076  0.00044121  0.00059763  0.00076181]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67314005, -5.44332052), (83.67258703, -5.42610224),
+     (83.67203405, -5.40888397), (83.6714811, -5.3916657),
+     (83.67092818, -5.37444744), (83.67037529, -5.35722919)]>
+Displacements in arcsec: [ 0.          0.00014436  0.00029076  0.00044121  0.00059763  0.00076181]
+<Row 13 of table
+ values=(2007-01b, 2041, 2042-2044, 2, 250.0, 63.0, 7000, 21.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 2041 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2042-2044 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2042 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+ID = 2042 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits
+iarr = [ 250.  250.  250.  250.  250.  250.] jarr = [ -63.   37.  137.  237.  337.  437.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.66822515, -5.44328616), (83.66766792, -5.42606952),
+     (83.66711072, -5.40885287), (83.66655355, -5.39163623),
+     (83.66599642, -5.37441958), (83.66543931, -5.35720295)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66821909  83.66766186  83.66710466  83.66654749  83.66599035
+  83.66543324] [-5.44328095 -5.4260643  -5.40884766 -5.39163101 -5.37441437 -5.35719773]
+[ 5682.  5691.  5699.  5708.  5716.  5724.] [ 4403.  4664.  4924.  5184.  5445.  5705.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.891551453403 0.0776776432924 -0.0485270492523 0.0111908956569
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66821909, -5.44328095), (83.6676619, -5.4260643),
+     (83.66710474, -5.40884767), (83.66654761, -5.39163103),
+     (83.66599051, -5.37441441), (83.66543345, -5.3571978)]>
+Displacements in arcsec: [  2.86249921e-12   1.45424092e-04   2.92848283e-04   4.44240974e-04
+   6.01484265e-04   7.66338898e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66821909, -5.44328095), (83.6676619, -5.4260643),
+     (83.66710474, -5.40884767), (83.66654761, -5.39163103),
+     (83.66599051, -5.37441441), (83.66543345, -5.3571978)]>
+Displacements in arcsec: [  2.86249921e-12   1.45424092e-04   2.92848283e-04   4.44240974e-04
+   6.01484265e-04   7.66338898e-04]
+<Row 14 of table
+ values=(2007-01b, 2045, 2046-2048, 2, 251.5, 64.0, 5500, 25.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 2045 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2046-2048 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2046 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+ID = 2046 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits
+iarr = [ 251.5  251.5  251.5  251.5  251.5  251.5] jarr = [ -64.   36.  136.  236.  336.  436.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.66605163, -5.44334042), (83.66553564, -5.42606452),
+     (83.66501967, -5.40878861), (83.66450373, -5.3915127),
+     (83.66398782, -5.3742368), (83.66347194, -5.3569609)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66604557  83.66552957  83.6650136   83.66449766  83.66398176
+  83.66346588] [-5.44333521 -5.4260593  -5.40878339 -5.39150749 -5.37423158 -5.35695568]
+[ 5715.  5723.  5731.  5738.  5746.  5754.] [ 4402.  4664.  4925.  5186.  5448.  5709.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.974769129939 0.0998942726486 -0.0521883784397 0.0300479280415
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66604557, -5.44333521), (83.66552961, -5.4260593),
+     (83.66501368, -5.4087834), (83.66449778, -5.39150751),
+     (83.66398191, -5.37423162), (83.66346607, -5.35695575)]>
+Displacements in arcsec: [  2.86249921e-12   1.35169145e-04   2.72523433e-04   4.14203854e-04
+   5.62241875e-04   7.18517410e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66604557, -5.44333521), (83.66552961, -5.4260593),
+     (83.66501368, -5.4087834), (83.66449778, -5.39150751),
+     (83.66398191, -5.37423162), (83.66346607, -5.35695575)]>
+Displacements in arcsec: [  2.86249921e-12   1.35169145e-04   2.72523433e-04   4.14203854e-04
+   5.62241875e-04   7.18517410e-04]
+<Row 15 of table
+ values=(2007-01b, 2049, 2050-2052, 2, 253.0, 65.0, 6400, 25.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 2049 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2050-2052 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2050 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+ID = 2050 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits
+iarr = [ 253.  253.  253.  253.  253.  253.] jarr = [ -65.   35.  135.  235.  335.  435.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.66403557, -5.44332049), (83.66356493, -5.42607417),
+     (83.66309432, -5.40882783), (83.66262373, -5.3915815),
+     (83.66215318, -5.37433518), (83.66168265, -5.35708886)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.6640295   83.66355886  83.66308825  83.66261767  83.66214711
+  83.66167658] [-5.44331528 -5.42606895 -5.40882262 -5.39157629 -5.37432996 -5.35708364]
+[ 5745.  5753.  5760.  5767.  5774.  5781.] [ 4403.  4663.  4924.  5185.  5446.  5707.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.921274118784 0.0816424352418 -0.0551335404263 0.0252937403116
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.6640295, -5.44331528), (83.6635589, -5.42606895),
+     (83.66308832, -5.40882263), (83.66261777, -5.39157631),
+     (83.66214725, -5.37433), (83.66167675, -5.35708371)]>
+Displacements in arcsec: [  1.43124961e-11   1.23132135e-04   2.48639987e-04   3.78840094e-04
+   5.15907775e-04   6.61828535e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.6640295, -5.44331528), (83.6635589, -5.42606895),
+     (83.66308832, -5.40882263), (83.66261777, -5.39157631),
+     (83.66214725, -5.37433), (83.66167675, -5.35708371)]>
+Displacements in arcsec: [  1.43124961e-11   1.23132135e-04   2.48639987e-04   3.78840094e-04
+   5.15907775e-04   6.61828535e-04]
+<Row 16 of table
+ values=(2007-01b, 2053, 2054-2056, 2, 254.5, 68.0, 6400, 25.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 2053 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2054-2056 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2054 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+ID = 2054 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits
+iarr = [ 254.5  254.5  254.5  254.5  254.5  254.5] jarr = [ -68.   32.  132.  232.  332.  432.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.66223974, -5.43809419), (83.66169211, -5.42089816),
+     (83.66114451, -5.40370213), (83.66059694, -5.3865061),
+     (83.66004941, -5.36931008), (83.6595019, -5.35211406)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.66223368  83.66168605  83.66113845  83.66059088  83.66004334
+  83.65949583] [-5.43808897 -5.42089295 -5.40369692 -5.38650089 -5.36930487 -5.35210885]
+[ 5772.  5781.  5789.  5797.  5806.  5814.] [ 4482.  4742.  5002.  5262.  5522.  5782.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.918243421876 0.0526616509226 -0.0398912486254 0.0150285079026
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66223368, -5.43808897), (83.66168609, -5.42089295),
+     (83.66113853, -5.40369692), (83.660591, -5.38650091),
+     (83.6600435, -5.3693049), (83.65949603, -5.3521089)]>
+Displacements in arcsec: [  2.28999937e-11   1.42513177e-04   2.86405299e-04   4.33042403e-04
+   5.83747687e-04   7.39783015e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.66223368, -5.43808897), (83.66168609, -5.42089295),
+     (83.66113853, -5.40369692), (83.660591, -5.38650091),
+     (83.6600435, -5.3693049), (83.65949603, -5.3521089)]>
+Displacements in arcsec: [  2.28999937e-11   1.42513177e-04   2.86405299e-04   4.33042403e-04
+   5.83747687e-04   7.39783015e-04]
+<Row 17 of table
+ values=(2007-01b, 2057, 2058-2060, 2, 254.5, 66.0, 6000, 25.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 2057 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits
+ID = 2058-2060 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits
+ID = 2058 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits
+ID = 2058 Template = Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits
+iarr = [ 254.5  254.5  254.5  254.5  254.5  254.5] jarr = [ -66.   34.  134.  234.  334.  434.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.65952076, -5.43815979), (83.65901719, -5.42097433),
+     (83.65851365, -5.40378887), (83.65801014, -5.38660341),
+     (83.65750666, -5.36941796), (83.6570032, -5.35223251)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.6595147   83.65901113  83.65850759  83.65800407  83.65750059
+  83.65699713] [-5.43815458 -5.42096912 -5.40378366 -5.3865982  -5.36941274 -5.3522273 ]
+[ 5813.  5821.  5829.  5836.  5844.  5852.] [ 4481.  4741.  5001.  5260.  5520.  5780.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.976311223187 0.0883861483045 -0.0383329097668 0.0423975487533
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.6595147, -5.43815458), (83.65901117, -5.42096912),
+     (83.65850766, -5.40378367), (83.65800418, -5.38659822),
+     (83.65750074, -5.36941278), (83.65699732, -5.35222735)]>
+Displacements in arcsec: [  2.28999937e-11   1.30996400e-04   2.63493024e-04   3.98971677e-04
+   5.38859965e-04   6.84508252e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.6595147, -5.43815458), (83.65901117, -5.42096912),
+     (83.65850766, -5.40378367), (83.65800418, -5.38659822),
+     (83.65750074, -5.36941278), (83.65699732, -5.35222735)]>
+Displacements in arcsec: [  2.28999937e-11   1.30996400e-04   2.63493024e-04   3.98971677e-04
+   5.38859965e-04   6.84508252e-04]
+<Row 18 of table
+ values=('2007-01', '054', '055', 2, 262.5, 68.0, 4200, 10.0, 'LL1 extreme N')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 054 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
+ID = 055 Template = Work/SPM2007/Reduced/spec{}-transf.fits
+ID = 055 Template = Work/SPM2007/Reduced/spec{}-ha-fix.fits
+ID = 055 Template = Work/SPM2007/Reduced/spec{}-nii-fix.fits
+iarr = [ 262.5  262.5  262.5  262.5  262.5  262.5] jarr = [ -68.   32.  132.  232.  332.  432.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.77285169, -5.48878211), (83.77278744, -5.47148237),
+     (83.7727232, -5.45418262), (83.77265896, -5.43688287),
+     (83.77259473, -5.41958312), (83.7725305, -5.40228336)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.77284563  83.77278138  83.77271714  83.7726529   83.77258866
+  83.77252443] [-5.48877689 -5.47147715 -5.4541774  -5.43687765 -5.41957789 -5.40227814]
+[ 4107.  4108.  4109.  4110.  4111.  4112.] [ 3715.  3977.  4238.  4500.  4762.  5023.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3       
+    -------------- --------------- ---------------- ----------------
+    0.976918301083 0.0999898531684 -0.0472579003498 0.00842269463483
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.77284563, -5.48877689), (83.77278139, -5.47147716),
+     (83.77271715, -5.45417743), (83.77265291, -5.4368777),
+     (83.77258868, -5.41957799), (83.77252445, -5.40227829)]>
+Displacements in arcsec: [  2.86249921e-12   2.67248915e-05   8.97388558e-05   1.94055598e-04
+   3.40045727e-04   5.27768258e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.77284563, -5.48877689), (83.77278139, -5.47147716),
+     (83.77271715, -5.45417743), (83.77265291, -5.4368777),
+     (83.77258868, -5.41957799), (83.77252445, -5.40227829)]>
+Displacements in arcsec: [  2.86249921e-12   2.67248915e-05   8.97388558e-05   1.94055598e-04
+   3.40045727e-04   5.27768258e-04]
+<Row 19 of table
+ values=(2007-01, 067, 068, 2, 273.0, 72.0, 4200, 10.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 067 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
+ID = 068 Template = Work/SPM2007/Reduced/spec{}-transf.fits
+ID = 068 Template = Work/SPM2007/Reduced/spec{}-ha-fix.fits
+ID = 068 Template = Work/SPM2007/Reduced/spec{}-nii-fix.fits
+iarr = [ 273.  273.  273.  273.  273.  273.] jarr = [ -72.   28.  128.  228.  328.  428.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.77130626, -5.48904065), (83.77117784, -5.47173182),
+     (83.77104942, -5.45442298), (83.77092101, -5.43711413),
+     (83.77079261, -5.41980528), (83.77066422, -5.40249643)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.7713002   83.77117177  83.77104336  83.77091495  83.77078655
+  83.77065815] [-5.48903543 -5.4717266  -5.45441776 -5.43710891 -5.41980006 -5.40249121]
+[ 4130.  4132.  4134.  4136.  4138.  4140.] [ 3711.  3973.  4235.  4497.  4758.  5020.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.945750600496 0.0695057800694 -0.0459947234442 0.0327650820448
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.7713002, -5.48903543), (83.77117178, -5.4717266),
+     (83.77104338, -5.45441778), (83.77091498, -5.43710896),
+     (83.77078659, -5.41980015), (83.7706582, -5.40249136)]>
+Displacements in arcsec: [  1.71749953e-11   3.98560611e-05   1.08212941e-04   2.15607029e-04
+   3.64449079e-04   5.55346024e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.7713002, -5.48903543), (83.77117178, -5.4717266),
+     (83.77104338, -5.45441778), (83.77091498, -5.43710896),
+     (83.77078659, -5.41980015), (83.7706582, -5.40249136)]>
+Displacements in arcsec: [  1.71749953e-11   3.98560611e-05   1.08212941e-04   2.15607029e-04
+   3.64449079e-04   5.55346024e-04]
+<Row 20 of table
+ values=(2007-01, 072, 073, 2, 277.5, 74.0, 4200, 10.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 072 Template = Work/SPM2007/Reduced/spm{}-ardec.fits
+ID = 073 Template = Work/SPM2007/Reduced/spec{}-transf.fits
+ID = 073 Template = Work/SPM2007/Reduced/spec{}-ha-fix.fits
+ID = 073 Template = Work/SPM2007/Reduced/spec{}-nii-fix.fits
+iarr = [ 277.5  277.5  277.5  277.5  277.5  277.5] jarr = [ -74.   26.  126.  226.  326.  426.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.77054404, -5.48899134), (83.77047005, -5.47172396),
+     (83.77039607, -5.45445657), (83.77032209, -5.43718918),
+     (83.77024812, -5.41992178), (83.77017415, -5.40265439)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.77053797  83.77046399  83.77039001  83.77031603  83.77024205
+  83.77016808] [-5.48898612 -5.47171874 -5.45445135 -5.43718396 -5.41991656 -5.40264917]
+[ 4142.  4143.  4144.  4145.  4146.  4147.] [ 3712.  3973.  4234.  4495.  4757.  5018.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1              c2              c3      
+    ------------- -------------- --------------- ---------------
+    1.01714756115 0.183308648813 -0.064352825188 0.0186477040766
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.77053797, -5.48898612), (83.77046399, -5.47171874),
+     (83.77039002, -5.45445137), (83.77031604, -5.43718401),
+     (83.77024208, -5.41991665), (83.77016811, -5.40264931)]>
+Displacements in arcsec: [  1.14499969e-11   2.76265823e-05   8.78862108e-05   1.86930886e-04
+   3.25403307e-04   5.03417020e-04]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.77053797, -5.48898612), (83.77046399, -5.47171874),
+     (83.77039002, -5.45445137), (83.77031604, -5.43718401),
+     (83.77024208, -5.41991665), (83.77016811, -5.40264931)]>
+Displacements in arcsec: [  1.14499969e-11   2.76265823e-05   8.78862108e-05   1.86930886e-04
+   3.25403307e-04   5.03417020e-04]
+<Row 21 of table
+ values=('2010-01', '078', '079-080', 2, 248.0, 62.0, 4800, 2.0, 'Vertical W of LL2')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 078 Template = Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits
+ID = 079-080 Template = Dropbox/SPMJAN10/reducciones/spm{}h.fits
+ID = 079 Template = Dropbox/SPMJAN10/reducciones/spec{}-ha.fits
+ID = 079 Template = Dropbox/SPMJAN10/reducciones/spec{}-nii.fits
+iarr = [ 248.  248.  248.  248.  248.  248.] jarr = [ -62.   38.  138.  238.  338.  438.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.63656721, -5.436557), (83.63752307, -5.41930392),
+     (83.63847887, -5.40205084), (83.63943461, -5.38479775),
+     (83.64039031, -5.36754467), (83.64134595, -5.35029159)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.63656115  83.637517    83.6384728   83.63942855  83.64038424
+  83.64133988] [-5.43655178 -5.41929871 -5.40204562 -5.38479254 -5.36753945 -5.35028637]
+[ 6159.  6145.  6130.  6116.  6102.  6087.] [ 4505.  4766.  5027.  5288.  5549.  5810.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0            c1              c2               c3       
+    ------------- -------------- ---------------- ----------------
+    0.97351892064 0.120790599919 -0.0664788589445 -0.0160666138543
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.63656115, -5.43655178), (83.63751693, -5.41929871),
+     (83.63847266, -5.40204563), (83.63942834, -5.38479256),
+     (83.64038396, -5.3675395), (83.64133953, -5.35028644)]>
+Displacements in arcsec: [  5.72499843e-12   2.49695832e-04   5.01476779e-04   7.57413498e-04
+   1.01952032e-03   1.28973083e-03]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.63656115, -5.43655178), (83.63751693, -5.41929871),
+     (83.63847266, -5.40204563), (83.63942834, -5.38479256),
+     (83.64038396, -5.3675395), (83.64133953, -5.35028644)]>
+Displacements in arcsec: [  5.72499843e-12   2.49695832e-04   5.01476779e-04   7.57413498e-04
+   1.01952032e-03   1.28973083e-03]
+<Row 22 of table
+ values=('2013-02', '024', '025', 1, 465.0, -73.0, 1200, 4.5, 'Horizontal LL2')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 024 Template = Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits
+ID = 025 Template = Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits
+ID = 025 Template = Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits
+ID = 025 Template = Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits
+iarr = [  73.  173.  273.  373.  473.  573.  673.] jarr = [ 465.  465.  465.  465.  465.  465.  465.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.61802513, -5.376003), (83.63276384, -5.37615545),
+     (83.64750255, -5.37630755), (83.66224127, -5.37645929),
+     (83.67698, -5.37661069), (83.69171873, -5.37676173),
+     (83.70645746, -5.37691241)]>
+Binning along slit: image = 3 spectrum = 3
+[ 83.61801906  83.63275777  83.64749648  83.66223521  83.67697393
+  83.69171266  83.70645139] [-5.37599778 -5.37615024 -5.37630233 -5.37645408 -5.37660547 -5.37675651
+ -5.37690719]
+[ 6438.  6216.  5995.  5773.  5551.  5329.  5107.] [ 5421.  5418.  5416.  5414.  5412.  5409.  5407.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.897547014087 -0.279011960021 -0.0466688584384 0.0433833228673
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.61801906, -5.37599778), (83.63275778, -5.37614913),
+     (83.6474965, -5.37630013), (83.66223523, -5.37645077),
+     (83.67697396, -5.37660106), (83.69171269, -5.376751),
+     (83.70645141, -5.37690058)]>
+Displacements in arcsec: [  1.14499969e-11   3.96634619e-03   7.93270663e-03   1.18990952e-02
+   1.58655260e-02   1.98320128e-02   2.37985698e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.61801906, -5.37599778), (83.63275778, -5.37614913),
+     (83.6474965, -5.37630013), (83.66223523, -5.37645077),
+     (83.67697396, -5.37660106), (83.69171269, -5.376751),
+     (83.70645141, -5.37690058)]>
+Displacements in arcsec: [  1.14499969e-11   3.96634619e-03   7.93270663e-03   1.18990952e-02
+   1.58655260e-02   1.98320128e-02   2.37985698e-02]
+<Row 23 of table
+ values=('2013-12', '116', '117-118', 1, 395.0, -160.0, 500, 10.5, 'Horizontal below LL2')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 116 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits
+ID = 117-118 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits
+ID = 117-118 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits
+ID = 117-118 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits
+iarr = [  240.   390.   540.   690.   840.   990.  1140.] jarr = [ 395.  395.  395.  395.  395.  395.  395.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.63782536, -5.39056432), (83.65254471, -5.39115353),
+     (83.66726409, -5.39174238), (83.68198349, -5.39233088),
+     (83.69670292, -5.39291903), (83.71142238, -5.39350682),
+     (83.72614186, -5.39409426)]>
+Binning along slit: image = 2 spectrum = 3
+[ 83.6378193   83.65253864  83.66725802  83.68197743  83.69669686
+  83.71141631  83.72613579] [-5.39055911 -5.39114831 -5.39173716 -5.39232566 -5.39291381 -5.3935016
+ -5.39408904]
+[ 6140.  5919.  5697.  5475.  5254.  5032.  4810.] [ 5201.  5192.  5183.  5174.  5165.  5156.  5147.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3      
+    -------------- --------------- ---------------- ---------------
+    0.821875424529 -0.239241663869 -0.0855808778874 0.0217275884339
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.6378193, -5.39055911), (83.65253869, -5.39114723),
+     (83.6672581, -5.391735), (83.68197754, -5.39232241),
+     (83.696697, -5.39290947), (83.71141649, -5.39349618),
+     (83.72613599, -5.39408253)]>
+Displacements in arcsec: [  8.58749764e-12   3.90644584e-03   7.81291882e-03   1.17194459e-02
+   1.56260539e-02   1.95327698e-02   2.34396205e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.6378193, -5.39055911), (83.65253869, -5.39114723),
+     (83.6672581, -5.391735), (83.68197754, -5.39232241),
+     (83.696697, -5.39290947), (83.71141649, -5.39349618),
+     (83.72613599, -5.39408253)]>
+Displacements in arcsec: [  8.58749764e-12   3.90644584e-03   7.81291882e-03   1.17194459e-02
+   1.56260539e-02   1.95327698e-02   2.34396205e-02]
+<Row 24 of table
+ values=('2013-12', '086', '088', 1, 404.0, -155.0, 400, 11.0, 'W of HH269')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 086 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits
+ID = 088 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits
+ID = 088 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits
+ID = 088 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits
+iarr = [  232.5   382.5   532.5   682.5   832.5   982.5  1132.5] jarr = [ 404.  404.  404.  404.  404.  404.  404.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.70503837, -5.38691652), (83.71975962, -5.38746739),
+     (83.73448091, -5.3880179), (83.74920222, -5.38856806),
+     (83.76392355, -5.38911787), (83.7786449, -5.38966733),
+     (83.79336628, -5.39021643)]>
+Binning along slit: image = 2 spectrum = 3
+[ 83.7050323   83.71975356  83.73447484  83.74919615  83.76391748
+  83.77863883  83.79336021] [-5.3869113  -5.38746217 -5.38801268 -5.38856285 -5.38911265 -5.38966211
+ -5.39021121]
+[ 5128.  4906.  4685.  4463.  4241.  4020.  3798.] [ 5256.  5247.  5239.  5231.  5223.  5214.  5206.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1               c2              c3      
+    -------------- --------------- ----------------- --------------
+    0.962371536532 -0.171822853733 -0.00800057519847 0.032898826588
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.7050323, -5.3869113), (83.71975359, -5.38746108),
+     (83.73447492, -5.38801052), (83.74919626, -5.38855959),
+     (83.76391762, -5.38910832), (83.77863901, -5.38965669),
+     (83.79336041, -5.3902047)]>
+Displacements in arcsec: [  2.57624929e-11   3.90438996e-03   7.80879325e-03   1.17132231e-02
+   1.56176926e-02   1.95222150e-02   2.34268034e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.7050323, -5.3869113), (83.71975359, -5.38746108),
+     (83.73447492, -5.38801052), (83.74919626, -5.38855959),
+     (83.76391762, -5.38910832), (83.77863901, -5.38965669),
+     (83.79336041, -5.3902047)]>
+Displacements in arcsec: [  2.57624929e-11   3.90438996e-03   7.80879325e-03   1.17132231e-02
+   1.56176926e-02   1.95222150e-02   2.34268034e-02]
+<Row 25 of table
+ values=('2013-12', '090', '089', 1, 404.5, -160.0, 500, 10.5, 'Image follows spec')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 090 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits
+ID = 089 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits
+ID = 089 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits
+ID = 089 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits
+iarr = [  240.   390.   540.   690.   840.   990.  1140.] jarr = [ 404.5  404.5  404.5  404.5  404.5  404.5  404.5]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.70289354, -5.39031548), (83.71761004, -5.39088022),
+     (83.73232657, -5.39144462), (83.74704312, -5.39200866),
+     (83.7617597, -5.39257235), (83.77647631, -5.39313568),
+     (83.79119293, -5.39369866)]>
+Binning along slit: image = 2 spectrum = 3
+[ 83.70288747  83.71760397  83.7323205   83.74703706  83.76175364
+  83.77647024  83.79118686] [-5.39031026 -5.39087501 -5.3914394  -5.39200344 -5.39256713 -5.39313046
+ -5.39369344]
+[ 5160.  4939.  4717.  4495.  4274.  4052.  3831.] [ 5204.  5196.  5187.  5179.  5170.  5162.  5153.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1              c2               c3      
+    -------------- -------------- ---------------- ---------------
+    0.946403263088 -0.17760603942 -0.0400361730578 0.0133636094106
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.70288747, -5.39031026), (83.71760401, -5.39087392),
+     (83.73232058, -5.39143723), (83.74703717, -5.39200019),
+     (83.76175378, -5.39256279), (83.77647041, -5.39312504),
+     (83.79118706, -5.39368693)]>
+Displacements in arcsec: [  1.14499969e-11   3.90446361e-03   7.80894385e-03   1.17134571e-02
+   1.56180199e-02   1.95226486e-02   2.34273595e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.70288747, -5.39031026), (83.71760401, -5.39087392),
+     (83.73232058, -5.39143723), (83.74703717, -5.39200019),
+     (83.76175378, -5.39256279), (83.77647041, -5.39312504),
+     (83.79118706, -5.39368693)]>
+Displacements in arcsec: [  1.14499969e-11   3.90446361e-03   7.80894385e-03   1.17134571e-02
+   1.56180199e-02   1.95226486e-02   2.34273595e-02]
+<Row 26 of table
+ values=('2013-12', '102', '103-104', 1, 402.5, -150.0, 500, 10.5, 'V faint image')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 102 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits
+ID = 103-104 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits
+ID = 103-104 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits
+ID = 103-104 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits
+iarr = [  225.   375.   525.   675.   825.   975.  1125.] jarr = [ 402.5  402.5  402.5  402.5  402.5  402.5  402.5]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.67286954, -5.38733731), (83.68750475, -5.38782312),
+     (83.70213998, -5.38830859), (83.71677523, -5.38879371),
+     (83.7314105, -5.38927848), (83.74604579, -5.3897629),
+     (83.7606811, -5.39024697)]>
+Binning along slit: image = 2 spectrum = 3
+[ 83.67286348  83.68749868  83.70213391  83.71676916  83.73140443
+  83.74603973  83.76067503] [-5.38733209 -5.38781791 -5.38830337 -5.38878849 -5.38927326 -5.38975768
+ -5.39024175]
+[ 5612.  5392.  5172.  4951.  4731.  4511.  4290.] [ 5249.  5242.  5235.  5227.  5220.  5213.  5205.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1              c2               c3       
+    -------------- --------------- ---------------- ----------------
+    0.814023170562 -0.331091398395 -0.0424957932603 -0.0093605337649
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67286348, -5.38733209), (83.68749871, -5.38781684),
+     (83.70213397, -5.38830123), (83.71676925, -5.38878528),
+     (83.73140455, -5.38926897), (83.74603986, -5.38975232),
+     (83.76067519, -5.39023532)]>
+Displacements in arcsec: [  2.28999937e-11   3.85850181e-03   7.71703354e-03   1.15756246e-02
+   1.54343048e-02   1.92931035e-02   2.31520505e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.67286348, -5.38733209), (83.68749871, -5.38781684),
+     (83.70213397, -5.38830123), (83.71676925, -5.38878528),
+     (83.73140455, -5.38926897), (83.74603986, -5.38975232),
+     (83.76067519, -5.39023532)]>
+Displacements in arcsec: [  2.28999937e-11   3.85850181e-03   7.71703354e-03   1.15756246e-02
+   1.54343048e-02   1.92931035e-02   2.31520505e-02]
+<Row 27 of table
+ values=('2013-12', '111', '112-113', 1, 400.0, -145.0, 500, 10.5, 'W of HH269')
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 111 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits
+ID = 112-113 Template = Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits
+ID = 112-113 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits
+ID = 112-113 Template = Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits
+iarr = [  217.5   367.5   517.5   667.5   817.5   967.5  1117.5] jarr = [ 400.  400.  400.  400.  400.  400.  400.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.71896553, -5.38972956), (83.73360279, -5.39019753),
+     (83.74824007, -5.39066516), (83.76287737, -5.39113243),
+     (83.77751469, -5.39159935), (83.79215202, -5.39206593),
+     (83.80678937, -5.39253215)]>
+Binning along slit: image = 2 spectrum = 3
+[ 83.71895946  83.73359672  83.748234    83.7628713   83.77750862
+  83.79214595  83.8067833 ] [-5.38972434 -5.39019231 -5.39065994 -5.39112721 -5.39159413 -5.39206071
+ -5.39252693]
+[ 4918.  4698.  4477.  4257.  4037.  3816.  3596.] [ 5213.  5206.  5199.  5192.  5185.  5178.  5171.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0             c1              c2              c3      
+    ------------- --------------- --------------- ---------------
+    0.96864226528 -0.244276731771 0.0770948683989 0.0511131781401
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.71895946, -5.38972434), (83.73359676, -5.39019124),
+     (83.74823407, -5.39065779), (83.7628714, -5.39112399),
+     (83.77750875, -5.39158984), (83.79214611, -5.39205535),
+     (83.80678348, -5.3925205)]>
+Displacements in arcsec: [  1.14499969e-11   3.86109164e-03   7.72218639e-03   1.15832872e-02
+   1.54443971e-02   1.93055190e-02   2.31666558e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.71895946, -5.38972434), (83.73359676, -5.39019124),
+     (83.74823407, -5.39065779), (83.7628714, -5.39112399),
+     (83.77750875, -5.39158984), (83.79214611, -5.39205535),
+     (83.80678348, -5.3925205)]>
+Displacements in arcsec: [  1.14499969e-11   3.86109164e-03   7.72218639e-03   1.15832872e-02
+   1.54443971e-02   1.93055190e-02   2.31666558e-02]
+<Row 28 of table
+ values=(2015-02, 0003, 0004, 1, 463.0, -80.0, 1150, 0.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 0003 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits
+ID = 0004 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits
+iarr = [  80.  180.  280.  380.  480.  580.  680.  780.  880.  980.] jarr = [ 463.  463.  463.  463.  463.  463.  463.  463.  463.  463.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.76300486, -5.38914842), (83.75317756, -5.38920898),
+     (83.74335024, -5.38926939), (83.73352293, -5.38932964),
+     (83.72369561, -5.38938973), (83.71386829, -5.38944967),
+     (83.70404097, -5.38950944), (83.69421365, -5.38956906),
+     (83.68438632, -5.38962852), (83.674559, -5.38968782)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.7629988   83.75317149  83.74334418  83.73351686  83.72368954
+  83.71386222  83.7040349   83.69420758  83.68438026  83.67455293] [-5.3891432  -5.38920377 -5.38926417 -5.38932442 -5.38938451 -5.38944445
+ -5.38950422 -5.38956384 -5.3896233  -5.38968261]
+[ 4255.  4403.  4551.  4699.  4847.  4995.  5143.  5291.  5439.  5587.] [ 5222.  5221.  5220.  5219.  5218.  5218.  5217.  5216.  5215.  5214.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1               c2               c3       
+    -------------- ---------------- ---------------- ----------------
+    0.969795076839 -0.0662466197281 -0.0234506077588 0.00349115804283
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.7629988, -5.3891432), (83.75317148, -5.389203),
+     (83.74334417, -5.38926263), (83.73351686, -5.38932211),
+     (83.72368954, -5.38938143), (83.71386223, -5.3894406),
+     (83.70403492, -5.3894996), (83.6942076, -5.38955845),
+     (83.6843803, -5.38961714), (83.67455299, -5.38967568)]>
+Displacements in arcsec: [  8.58749764e-12   2.77185864e-03   5.54373697e-03   8.31565447e-03
+   1.10876306e-02   1.38596848e-02   1.66318366e-02   1.94041055e-02
+   2.21765108e-02   2.49490722e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.7629988, -5.3891432), (83.75317148, -5.389203),
+     (83.74334417, -5.38926263), (83.73351686, -5.38932211),
+     (83.72368954, -5.38938143), (83.71386223, -5.3894406),
+     (83.70403492, -5.3894996), (83.6942076, -5.38955845),
+     (83.6843803, -5.38961714), (83.67455299, -5.38967568)]>
+Displacements in arcsec: [  8.58749764e-12   2.77185864e-03   5.54373697e-03   8.31565447e-03
+   1.10876306e-02   1.38596848e-02   1.66318366e-02   1.94041055e-02
+   2.21765108e-02   2.49490722e-02]
+<Row 29 of table
+ values=(2015-02, 0012, 0013, 1, 464.0, -60.0, 1100, 0.0, --)
+ dtype=[('Dataset', '<U8'), ('imid', '<U4'), ('specid', '<U9'), ('saxis', '<i8'), ('islit', '<f8'), ('shift', '<f8'), ('norm', '<i8'), ('zero', '<f8'), ('Notes', '<U20')]>
+ID = 0012 Template = Dropbox/SPMFEB15/archivos/spm{}-ardec.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits
+ID = 0013 Template = Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits
+iarr = [  60.  160.  260.  360.  460.  560.  660.  760.  860.  960.] jarr = [ 464.  464.  464.  464.  464.  464.  464.  464.  464.  464.]
+coords = <SkyCoord (FK5: equinox=J2000.000): (ra, dec) in deg
+    [(83.76323814, -5.3929956), (83.75342282, -5.39306366),
+     (83.7436075, -5.39313156), (83.73379217, -5.3931993),
+     (83.72397685, -5.39326688), (83.71416152, -5.39333431),
+     (83.70434619, -5.39340158), (83.69453086, -5.39346869),
+     (83.68471553, -5.39353565), (83.6749002, -5.39360244)]>
+Binning along slit: image = 2 spectrum = 2
+[ 83.76323207  83.75341675  83.74360143  83.73378611  83.72397078
+  83.71415545  83.70434012  83.69452479  83.68470946  83.67489413] [-5.39299038 -5.39305844 -5.39312634 -5.39319408 -5.39326167 -5.39332909
+ -5.39339636 -5.39346348 -5.39353043 -5.39359723]
+[ 4252.  4399.  4547.  4695.  4843.  4991.  5138.  5286.  5434.  5582.] [ 5164.  5163.  5162.  5161.  5160.  5159.  5158.  5157.  5156.  5155.]
+Model: Chebyshev1D
+Inputs: ('x',)
+Outputs: ('y',)
+Model set size: 1
+Degree: 3
+Parameters:
+          c0              c1               c2               c3      
+    -------------- ---------------- ---------------- ---------------
+    0.947660660743 -0.0693144909564 -0.0137084134658 0.0188138855791
+Saving ha calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.76323207, -5.39299038), (83.75341675, -5.39305767),
+     (83.74360142, -5.3931248), (83.7337861, -5.39319178),
+     (83.72397078, -5.39325859), (83.71415545, -5.39332525),
+     (83.70434013, -5.39339175), (83.69452481, -5.39345809),
+     (83.68470949, -5.39352428), (83.67489417, -5.39359031)]>
+Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8.30128974e-03
+   1.10684626e-02   1.38357006e-02   1.66030200e-02   1.93704370e-02
+   2.21379680e-02   2.49056291e-02]
+Saving nii calibrated spectrum
+New coords: <SkyCoord (ICRS): (ra, dec) in deg
+    [(83.76323207, -5.39299038), (83.75341675, -5.39305767),
+     (83.74360142, -5.3931248), (83.7337861, -5.39319178),
+     (83.72397078, -5.39325859), (83.71415545, -5.39332525),
+     (83.70434013, -5.39339175), (83.69452481, -5.39345809),
+     (83.68470949, -5.39352428), (83.67489417, -5.39359031)]>
+Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8.30128974e-03
+   1.10684626e-02   1.38357006e-02   1.66030200e-02   1.93704370e-02
+   2.21379680e-02   2.49056291e-02]
+#+end_example
+
+
+* TODO New version of spectral map
+
+** Program to generate spectral map: spectral-map.py
+:PROPERTIES:
+:ID:       20ADFA6F-DE49-454E-B433-D684CF3FB826
+:header-args: :tangle spectral-map.py :comments link
+:END:
++ This based on previous versions for the [[id:23C29E96-4471-454E-A463-D365731119C0][vertical]] and [[id:60833550-A462-4F18-86DE-895625FF3E7A][horizontal]] slits
++ We will start off with bigger pixels and same pixel dims, so bigger area
++ It is much more general than the earlier versions since the spectra are already flux-calibrated and all the WCS info comes from the spectrum files themselves, instead of from tables
++ It is also much simpler and more efficient:
+
+#+BEGIN_SRC python
+  import glob
+  import numpy as np
+  from astropy.io import fits
+  from astropy.wcs import WCS
+  from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
+
+  #
+  # First set up WCS for the output image
+  #
+  pixel_scale = 0.5               # arcsec
+  NX, NY = 4096, 4096
+  dRA, dDec = -pixel_scale/3600., pixel_scale/3600.
+  RA0, Dec0 = 83.61, -5.423
+  w = WCS(naxis=2)
+  w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
+  w.wcs.cdelt = [dRA, dDec]
+  w.wcs.crval = [RA0, Dec0]
+  w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
+  w.wcs.cunit = ['deg', 'deg']
+
+  # Arrays to hold the output image
+  outimage = np.zeros((NY, NX))
+  outweights = np.zeros((NY, NX))
+
+  slit_width = 2.0                # width in arcsec of 150 micron slit
+  slit_pix_width = slit_width/pixel_scale
+
+  speclist = glob.glob('Calibrated/*-nii.fits')
+
+  for fn in speclist:
+      print('Processing', fn)
+      spechdu, = fits.open(fn)
+      wspec = WCS(spechdu.header, key='A')
+
+      # Just the entire spectrum for now
+      profile = spechdu.data[0].sum(axis=-1)
+
+      # Find celestial coordinates for each pixel along the slit
+      NS = len(profile)
+      slit_coords = pixel_to_skycoord(range(NS), [0]*NS, wspec, 0)
+
+      # Convert to pixel coordinates in output image
+      xp, yp = skycoord_to_pixel(slit_coords, w, 0)
+
+      for x, y, bright in zip(xp, yp, profile):
+          # Find output pixels corresponding to corners of slit pixel
+          # (approximate as square)
+          i1 = int(0.5 + x - slit_pix_width/2)
+          i2 = int(0.5 + x + slit_pix_width/2)
+          j1 = int(0.5 + y - slit_pix_width/2)
+          j2 = int(0.5 + y + slit_pix_width/2)
+          # Make sure we don't go outside the output grid
+          i1, i2 = max(0, i1), max(0, i2)
+          i1, i2 = min(NX, i1), min(NX, i2)
+          j1, j2 = max(0, j1), max(0, j2)
+          j1, j2 = min(NY, j1), min(NY, j2)
+          # Fill in the square
+          outimage[j1:j2, i1:i2] += bright
+          outweights[j1:j2, i1:i2] += 1.0
+
+  # Save everything as different images in a single fits file:
+  # 1. The sum of the raw slits 
+  # 2. The weights
+  # 3. The slits normalized by the weights
+  label = 'nii-allvels'
+  fits.HDUList([
+      fits.PrimaryHDU(),
+      fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
+      fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
+      fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
+      ]).writeto('new-slits-{}.fits'.format(label), clobber=True)
+
+#+END_SRC
+
+
+** Load the spectral map into ds9
+This shows the scaled image in ds9
+#+BEGIN_SRC sh
+xpaset -p ds9 fits $PWD/new-slits-nii-allvels.fits[3]
+#+END_SRC
+
+#+RESULTS:
+
 
 * Dealing with the offset between image and spectrum
 + It seems that this is not as constant as I had hoped
