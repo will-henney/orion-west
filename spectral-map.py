@@ -1,17 +1,23 @@
 # [[nil][Program\ to\ generate\ spectral\ map:\ spectral-map\.py:1]]
 import glob
+import sys
 import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
 
+if len(sys.argv) > 1:
+    line_id = sys.argv[1]
+else:
+    line_id = 'ha'
+
 #
 # First set up WCS for the output image
 #
 pixel_scale = 0.5               # arcsec
-NX, NY = 4096, 4096
+NX, NY = 2048, 2048
 dRA, dDec = -pixel_scale/3600., pixel_scale/3600.
-RA0, Dec0 = 83.61, -5.423
+RA0, Dec0 = 83.69, -5.429
 w = WCS(naxis=2)
 w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
 w.wcs.cdelt = [dRA, dDec]
@@ -26,7 +32,7 @@ outweights = np.zeros((NY, NX))
 slit_width = 2.0                # width in arcsec of 150 micron slit
 slit_pix_width = slit_width/pixel_scale
 
-speclist = glob.glob('Calibrated/*-ha.fits')
+speclist = glob.glob('Calibrated/*-{}.fits'.format(line_id))
 
 for fn in speclist:
     print('Processing', fn)
@@ -63,7 +69,7 @@ for fn in speclist:
 # 1. The sum of the raw slits 
 # 2. The weights
 # 3. The slits normalized by the weights
-label = 'ha-allvels'
+label = line_id + '-allvels'
 fits.HDUList([
     fits.PrimaryHDU(),
     fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
