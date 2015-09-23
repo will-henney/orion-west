@@ -5,11 +5,18 @@ import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
+import astropy.units as u
 
 if len(sys.argv) > 1:
     line_id = sys.argv[1]
+    wavrest = float(sys.argv[2])
 else:
-    line_id = 'ha'
+    line_id, wavrest = 'ha', 6562.79
+
+def waves2pixels(waves, w):
+    n = len(waves)
+    pixels, _, _ = w.all_world2pix(waves, [0]*n, [0]*n, 0)
+    return pixels
 
 #
 # First set up WCS for the output image
@@ -34,18 +41,58 @@ slit_pix_width = slit_width/pixel_scale
 
 speclist = glob.glob('Calibrated/*-{}.fits'.format(line_id))
 
+# Window widths for line and BG
+dwline = 7.0
+
+# Limits of non-vignetted portion of the slit
+good_pixels = {
+    '2006-02': (5, None),
+    '2007-01': (10, None),
+    '2010-01': (10, None),
+    '2013-02': (None, -20),
+    '2013-12': (None, -10),
+    '2015-02-0003': (None, -80),
+    '2015-02-0012': (None, -15),
+}
+
 for fn in speclist:
     print('Processing', fn)
     spechdu, = fits.open(fn)
     wspec = WCS(spechdu.header, key='A')
 
-    # Just the entire spectrum for now
-    profile = spechdu.data[0].sum(axis=-1)
+    # Trim to good portion of the slit
+    goodslice = slice(None, None)
+    for k, v in good_pixels.items():
+        if k in fn:
+            goodslice = slice(*v)
+          
+    # Find per-slit weight
+    slit_weight = spechdu.header['WEIGHT']
+
+    # Find sign of delta wavelength
+    dwav = wspec.wcs.get_cdelt()[0]*wspec.wcs.get_pc()[0, 0]
+    sgn = np.sign(dwav)         # Need to take slices backwards if this is negative
+
+    # Eliminate degenerate 3rd dimension from data array and trim off bad bits
+    spec2d = spechdu.data[0]
+
+    # Find pixel indices for line 
+    waves = [wavrest-dwline/2, wavrest+dwline/2]
+    # Convert to SI to conform to stupid FITS standards
+    waves = (waves*u.Angstrom).to(u.m).value
+    i1, i2 = waves2pixels(waves, wspec)
+
+    # Just the entire line for now
+    profile = spec2d[:, i1:i2:sgn].sum(axis=-1)
 
     # Find celestial coordinates for each pixel along the slit
     NS = len(profile)
     slit_coords = pixel_to_skycoord(range(NS), [0]*NS, wspec, 0)
 
+    # Trim off bad parts of slit
+    profile = profile[goodslice]
+    slit_coords = slit_coords[goodslice]
+  
     # Convert to pixel coordinates in output image
     xp, yp = skycoord_to_pixel(slit_coords, w, 0)
 
@@ -62,8 +109,8 @@ for fn in speclist:
         j1, j2 = max(0, j1), max(0, j2)
         j1, j2 = min(NY, j1), min(NY, j2)
         # Fill in the square
-        outimage[j1:j2, i1:i2] += bright
-        outweights[j1:j2, i1:i2] += 1.0
+        outimage[j1:j2, i1:i2] += bright*slit_weight
+        outweights[j1:j2, i1:i2] += slit_weight
 
 # Save everything as different images in a single fits file:
 # 1. The sum of the raw slits 

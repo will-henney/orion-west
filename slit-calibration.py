@@ -1,4 +1,4 @@
-# [[file:alba-orion-west.org::*Imports][Imports:1]]
+# [[file:alba-orion-west.org::*Imports][slit-calib-imports]]
 import os
 import sys
 import numpy as np
@@ -12,15 +12,15 @@ import seaborn as sns
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.modeling import models, fitting
-# Imports:1 ends here
+# slit-calib-imports ends here
 
-# [[file:alba-orion-west.org::*Read%20in%20the%20table%20of%20all%20slits][Read\ in\ the\ table\ of\ all\ slits:1]]
+# [[file:alba-orion-west.org::*Read%20in%20the%20table%20of%20all%20slits][read-slit-table]]
 converters = {'imid': [astropy.io.ascii.convert_numpy(np.str)]}
 tab = Table.read('all-slits-input.tab',
                  format='ascii.tab', converters=converters)
-# Read\ in\ the\ table\ of\ all\ slits:1 ends here
+# read-slit-table ends here
 
-# [[file:alba-orion-west.org::*Fits%20files%20for%20the%20spectra%20and%20image+slit][Fits\ files\ for\ the\ spectra\ and\ image+slit:1]]
+# [[file:alba-orion-west.org::*Fits%20files%20for%20the%20spectra%20and%20image+slit][slit-calib-filenames]]
 file_templates = {
     'fullspec' : {
         '2006-02': 'Work/SPM2005/pp{}.fits',
@@ -68,11 +68,11 @@ def find_fits_filepath(db, filetype):
     if filetype in ('ha', 'nii') and db['Dataset'] not in ['2013-12']:
         id_ = id_.split('-')[0]
     template = file_templates[filetype][db['Dataset']]
-    print('ID =', id_, 'Template =', template)
     path = template.format(id_)
+    print('~/'+path)
     homedir = os.path.expanduser('~')
     return os.path.join(homedir, path)
-# Fits\ files\ for\ the\ spectra\ and\ image+slit:1 ends here
+# slit-calib-filenames ends here
 
 # [[file:alba-orion-west.org::*Construct%20the%20synthetic%20slit%20from%20the%20reference%20image][Construct\ the\ synthetic\ slit\ from\ the\ reference\ image:1]]
 def slit_profile(ra, dec, image, wcs):
@@ -271,7 +271,7 @@ def fit_cheb(x, y, npoly=3, mask=None):
 
 # [[file:alba-orion-west.org::*Make%20some%20useful%20and%20pretty%20plots][Make\ some\ useful\ and\ pretty\ plots:1]]
 sns.set_palette('RdPu_d', 3)
-def make_three_plots(spec, calib, prefix):
+def make_three_plots(spec, calib, prefix, niirat=None):
     assert spec.shape == calib.shape
     fig, axes = plt.subplots(3, 1)
 
@@ -282,8 +282,11 @@ def make_three_plots(spec, calib, prefix):
     mask = (ypix > 10.0) & (ypix < ypix.max() - 10.0) \
            & (ratio > np.median(ratio) - 2*ratio.std()) \
            & (ratio < np.median(ratio) + 2*ratio.std()) 
-    ratio_fit = fit_cheb(ypix, ratio, mask=mask)
-
+    try:
+        ratio_fit = fit_cheb(ypix, ratio, mask=mask)
+    except:
+        ratio_fit = np.ones_like(ypix)
+      
     alpha = 0.8
 
     # First, plot two profiles against each other to check for zero-point offsets
@@ -307,10 +310,13 @@ def make_three_plots(spec, calib, prefix):
     # Third, plot ratio to look for spatial trends
     axes[2].plot(ypix, ratio, alpha=alpha)
     axes[2].plot(ypix, ratio_fit, alpha=alpha)
+    if niirat is not None:
+        axes[2].plot(ypix, niirat, 'b')
     axes[2].set_xlim(0.0, ypix.max())
     axes[2].set_ylim(0.0, 1.5)
     axes[2].set_xlabel('Slit pixel')
     axes[2].set_ylabel('Ratio: Spec / Calib')
+
 
     fig.set_size_inches(5, 8)
     fig.tight_layout()
@@ -325,6 +331,53 @@ if len(sys.argv) > 1:
 else:
     selector_pattern = ''
 # Use\ command\ line\ argument\ to\ restrict\ which\ datasets\ are\ processed:1 ends here
+
+# [[file:alba-orion-west.org::*Remove%20background%20and%20sum%20over%20wavelength%20across%20line][Remove\ background\ and\ sum\ over\ wavelength\ across\ line:1]]
+def extract_profile(data, wcs, wavrest, dw=7.0):
+    data = remove_bg_and_regularize(data, wcs, wavrest)
+    # pixel limits for line extraction
+    lineslice = wavs2slice([wavrest-dw/2, wavrest+dw/2], wcs)
+    return data[:, lineslice].sum(axis=1)
+# Remove\ background\ and\ sum\ over\ wavelength\ across\ line:1 ends here
+
+# [[file:alba-orion-west.org::*Remove%20background%20and%20sum%20over%20wavelength%20across%20line][Remove\ background\ and\ sum\ over\ wavelength\ across\ line:1]]
+def wavs2slice(wavs, wcs):
+    """Convert a wavelength interval `wavs` (length-2 sequence) to a slice of the relevant axis`"""
+    assert len(wavs) == 2
+    isT = row['saxis'] == 1
+    if isT:
+        _, xpixels = wcs.all_world2pix([0, 0], wavs, 0)
+    else:
+        xpixels, _ = wcs.all_world2pix(wavs, [0, 0], 0)
+    print('Wav:', wavs, 'Pixel:', xpixels)
+    i1, i2 = np.maximum(0, (xpixels+0.5).astype(int))
+    return slice(min(i1, i2), max(i1, i2))
+
+def remove_bg_and_regularize(data, wcs, wavrest, dwbg_in=7.0, dwbg_out=10.0):
+    '''
+    Transpose data if necessary, and then subtract off the background (blue and red of line)
+    '''
+    isT = row['saxis'] == 1
+    # Make sure array axis order is (position, wavelength)
+    if isT:
+        data = data.T
+    if row['Dataset'] == '2015-02':
+        # Don't try this for the newest data, I already removed the BG
+        return data
+    # pixel limits for blue, red bg extraction
+    bslice = wavs2slice([wavrest-dwbg_out/2, wavrest-dwbg_in/2], wcs)
+    rslice = wavs2slice([wavrest+dwbg_in/2, wavrest+dwbg_out/2], wcs)
+    # extract backgrounds on blue and red sides
+    bgblu = data[:, bslice].mean(axis=1)
+    bgred = data[:, rslice].mean(axis=1)
+    # take weighted average, accounting for cases where the bg region
+    # does not fit in the image
+    weight_blu = data[:, bslice].size
+    weight_red = data[:, rslice].size
+    print('Background weights:', weight_blu, weight_red)
+    bg = (bgblu*weight_blu + bgred*weight_red)/(weight_blu + weight_red)
+    return data - bg[:, None]
+# Remove\ background\ and\ sum\ over\ wavelength\ across\ line:1 ends here
 
 # [[nil][Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1]]
 for row in tab:
@@ -350,11 +403,12 @@ for row in tab:
 
     # Find actual profile along slit from spectrum
     wavaxis = row['saxis'] - 1  # This always seems to be true
-    ha_profile = (hahdu.data - row['zero']).sum(axis=wavaxis)
-    nii_profile = (niihdu.data - row['zero']).sum(axis=wavaxis)
+    ha_profile = extract_profile(hahdu.data, WCS(hahdu.header), 6562.79)
+    # Take the nii/ha calibration correction factor  from the table
+    nii_profile = row['r(nii)']*extract_profile(niihdu.data, WCS(niihdu.header), 6583.45)
     spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
     plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
-    ratio = make_three_plots(spec_profile, calib_profile, plt_prefix)
+    ratio = make_three_plots(spec_profile, calib_profile, plt_prefix, niirat=nii_profile/ha_profile)
 
     #
     # Save calibrated spectra to files
@@ -364,10 +418,10 @@ for row in tab:
                                   [niihdu, 'nii', 6583.45]]:
         print('Saving', lineid, 'calibrated spectrum')
         # Apply basic calibration zero-point and scale
-        hdu.data = (hdu.data - row['zero'])/row['norm']
+        hdu.data = remove_bg_and_regularize(hdu.data, WCS(hdu.header), restwav)/row['norm']
         # Regularize spectral data so that wavelength is x and pos is y
-        if row['saxis'] == 1:
-            hdu.data = hdu.data.T
+        # This is now done by the bg subtraction function
+
         # Apply polynomial correction along slit
         hdu.data /= ratio[:, None]
         # Extend in the third dimension (degenerate axis perp to slit)
@@ -386,6 +440,9 @@ for row in tab:
         # Then update the header with the new WCS structure as the 'A'
         # alternate transform
         hdu.header.update(wslit.to_header(key='A'))
+        # Also save the normalization factor as a per-slit weight to use later
+        hdu.header['WEIGHT'] = row['norm']
+
         # And better not to change the original WCS at all
         # # And write a bowdlerized version that DS9 can understand as the main WCS
         # hdu.header.update(fixup4ds9(wslit).to_header(key=' '))

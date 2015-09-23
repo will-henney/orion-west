@@ -1,6 +1,5 @@
 *~
 /.DS_Store
 /Calibrated/.DS_Store
-/new-slits-ha-allvels.fits
-/new-slits-nii-allvels.fits
+/new-slits-*.fits
 /wfpc2-mosaic-f658-over-f656.fits
