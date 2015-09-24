@@ -7624,6 +7624,7 @@ from rebin_utils import downsample, oversample
 from astropy.io import fits
 
 nlist = [1, 2, 4, 8, 16, 32, 64]
+mingoods = [2, 2, 2, 1, 1, 1, 2]
 
 try: 
     infile = sys.argv[1]
@@ -7637,7 +7638,7 @@ im = hdulist['scaled'].data
 w = hdulist['weight'].data
 m = w > 0.0
 
-for n in nlist:
+for n, mingood in zip(nlist, mingoods):
     im[~m] = 0.0
     outfile = infile.replace('.fits', '-bin{:03d}.fits'.format(n))
     print('Saving', outfile)
@@ -7648,7 +7649,7 @@ for n in nlist:
         fits.ImageHDU(data=oversample(w, n), header=hdr, name='weight'),
     ]).writeto(outfile, clobber=True)
     # Now do the rebinning by a factor of two
-    [im,], m, w = downsample([im,], m, weights=w)
+    [im,], m, w = downsample([im,], m, weights=w, mingood=mingood)
 
 #+END_SRC
 
@@ -7680,38 +7681,52 @@ python multibin-map.py new-slits-nii-allvels.fits
 : Saving new-slits-nii-allvels-bin064.fits
 
 #+BEGIN_SRC sh :results silent
-xpaset -p ds9 fits $PWD/new-slits-ha-allvels-bin016.fits
+xpaset -p ds9 fits $PWD/new-slits-ha-allvels-bin064.fits
 #+END_SRC
 
 
 ** TODO Program to combine different grids: multibin-combine.py
+:PROPERTIES:
+:header-args: :tangle multibin-combine.py :comments link
+:END:
+
 #+BEGIN_SRC python
 import sys
 from astropy.io import fits
 import numpy as np
 
 try: 
-    inprefix = sys.argv[1]
+    prefix = sys.argv[1]
 except:
-    print('Usage:', sys.argv[0], 'FITSFILE')
+    print('Usage:', sys.argv[0], 'FITSFILE_PREFIX')
     sys.exit()
 
-nlist = [1, 2, 4, 8, 16, 32, 64]
+nlist = [1, 2, 4, 8, 16, 32]
 minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
 outim = np.zeros((2048, 2048))
 for n, minw in reversed(list(zip(nlist, minweights))):
-    fn = 'all-vert-sum-bin{:03d}.fits'.format(n)
+    fn = '{}-bin{:03d}.fits'.format(prefix, n)
     hdulist = fits.open(fn)
     im = hdulist['scaled'].data
     hdr = hdulist['scaled'].header
     w = hdulist['weight'].data
-    m = w*im >= minw*1e5
+    m = w*im >= minw*3e4
     outim[m] = im[m]
-fits.PrimaryHDU(header=hdr, data=outim).writeto('all-vert-sum-multibin.fits', clobber=True)
+fits.PrimaryHDU(header=hdr, data=outim).writeto(prefix + '-multibin.fits', clobber=True)
 #+END_SRC
 
 
 ** TODO Perform the combining
+#+BEGIN_SRC sh :results silent
+python multibin-combine.py new-slits-ha-allvels
+python multibin-combine.py new-slits-nii-allvels
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/new-slits-ha-allvels-multibin.fits
+#+END_SRC
+
+
 ** DONE Calculate [N II]/Ha ratio and [N II] + Ha sum
 CLOSED: [2015-09-23 Wed 13:41]
 + [2015-09-16 Wed] I suspect that much of the remaining issues with the spectra calibration are down to variations in throughput between [N II] and Ha
