@@ -6,19 +6,34 @@ from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
 import astropy.units as u
+from astropy import constants as const
+from helio_utils import helio_topo_from_header
 
-if len(sys.argv) > 1:
+if len(sys.argv) == 3:
     line_id = sys.argv[1]
-    wavrest = float(sys.argv[2])
+    vrange = sys.argv[2]
+elif len(sys.argv) == 2:
+    line_id = sys.argv[1]
+    vrange = None
 else:
-    line_id, wavrest = 'ha', 6562.79
+    print('Usage: {} LINE_ID [VRANGE]'.format(sys.argv[0]))
 
 def waves2pixels(waves, w):
     n = len(waves)
     pixels, _, _ = w.all_world2pix(waves, [0]*n, [0]*n, 0)
     return pixels
 
-#
+LIGHT_SPEED_KMS = const.c.to('km/s').value
+def vels2waves(vels, restwav, hdr):
+    """Heliocentric radial velocity (in km/s) to observed wavelength (in
+    m, or whatever units restwav is in)
+
+    """
+    # Heliocentric correction
+    vels = np.array(vels) + helio_topo_from_header(hdr)
+    waves = restwav*(1.0 + vels/LIGHT_SPEED_KMS)
+    return waves
+
 # First set up WCS for the output image
 #
 pixel_scale = 0.5               # arcsec
@@ -42,7 +57,7 @@ slit_pix_width = slit_width/pixel_scale
 speclist = glob.glob('Calibrated/*-{}.fits'.format(line_id))
 
 # Window widths for line and BG
-dwline = 7.0
+dwline = 7.0*u.Angstrom
 
 # Limits of non-vignetted portion of the slit
 good_pixels = {
@@ -65,7 +80,7 @@ for fn in speclist:
     for k, v in good_pixels.items():
         if k in fn:
             goodslice = slice(*v)
-          
+        
     # Find per-slit weight
     slit_weight = spechdu.header['WEIGHT']
 
@@ -76,13 +91,26 @@ for fn in speclist:
     # Eliminate degenerate 3rd dimension from data array and trim off bad bits
     spec2d = spechdu.data[0]
 
-    # Find pixel indices for line 
-    waves = [wavrest-dwline/2, wavrest+dwline/2]
-    # Convert to SI to conform to stupid FITS standards
-    waves = (waves*u.Angstrom).to(u.m).value
-    i1, i2 = waves2pixels(waves, wspec)
+    # Rest wavelength from FITS header is in meters
+    wavrest = wspec.wcs.restwav*u.m
 
-    # Just the entire line for now
+    # Find wavelength limits for line extraction window
+    if vrange is None:
+        # Original case: use a window of wavelength full width dwline
+        waves =  wavrest + np.array([-0.5, 0.5])*dwline
+    else:
+        # Extract velocity limits from the vrange command line argument
+        # vrange should be of a form like '-100+100' or '+020+030'
+        v1, v2 = float(vrange[:4]), float(vrange[-4:])
+        print('Velocity window:', v1, 'to', v2)
+        waves = vels2waves([v1, v2], wavrest,  spechdu.header)
+    print('Wavelength window: {:.2f} to {:.2f}'.format(*waves.to(u.Angstrom)))
+
+    # Find pixel indices for line extraction window
+    i1, i2 = waves2pixels(waves, wspec)
+    print('Pixel window:', i1, 'to', i2)
+
+    # Extract profile for this wavelength or velocity window
     profile = spec2d[:, i1:i2:sgn].sum(axis=-1)
 
     # Find celestial coordinates for each pixel along the slit
@@ -92,7 +120,7 @@ for fn in speclist:
     # Trim off bad parts of slit
     profile = profile[goodslice]
     slit_coords = slit_coords[goodslice]
-  
+
     # Convert to pixel coordinates in output image
     xp, yp = skycoord_to_pixel(slit_coords, w, 0)
 
@@ -116,7 +144,11 @@ for fn in speclist:
 # 1. The sum of the raw slits 
 # 2. The weights
 # 3. The slits normalized by the weights
-label = line_id + '-allvels'
+if vrange is None:
+    label = line_id + '-allvels'
+else:
+    label = line_id + vrange
+  
 fits.HDUList([
     fits.PrimaryHDU(),
     fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),

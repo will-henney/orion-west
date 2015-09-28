@@ -7339,6 +7339,171 @@ nii.data *= tha/(tnii*ha.data)
 nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
 #+END_SRC
 * TODO New version of spectral map
+** Convert wavelengths to velocities
+:PROPERTIES:
+:header-args: :tangle wavs2vels.py :comments link
+:END:
++ The main difficulty here is calculating the heliocentric correction
+  + I had to install pyslalib from github
+  + The observatory ID for the SPM 2m telescope is 'SANPM83'
+
+*** Module to find heliocentric correction: helio_utils.py
+:PROPERTIES:
+:header-args: :tangle helio_utils.py :comments link
+:END:
+
+#+BEGIN_SRC python
+  import numpy as np
+  from astropy.io import fits
+  from astropy import coordinates as coord
+  from astropy import units as u
+  from astropy.wcs import WCS
+  from pyslalib.slalib import sla_dcs2c, sla_evp, sla_rverot, sla_obs
+
+  def ra_dec_from_header(hdr):
+      ra = coord.Longitude(hdr['RA'], u.hour)
+      dec = coord.Latitude(hdr['DEC'], u.deg)
+      return ra, dec
+
+  def ra_dec_from_header_wcs(hdr):
+      w = WCS(hdr, key='A').celestial
+      ra = coord.Longitude(w.wcs.crval[0], u.deg)
+      dec = coord.Latitude(w.wcs.crval[1], u.deg)
+      return ra, dec
+
+  def mjd_from_header(hdr):
+      return float(hdr.get('MJD-OBS'))
+
+  def obs_lat_SPM():
+      obs_id, obs_name, obs_long, obs_lat, obs_height = sla_obs(0, "SANPM83")
+      return coord.Latitude(obs_lat, u.radian)
+
+  def st_from_header(hdr):
+      return coord.Longitude(hdr['ST'], u.hour)
+
+  def helio_topo_from_header(hdr):
+      ra, dec = ra_dec_from_header_wcs(hdr)
+      mjd = mjd_from_header(hdr)
+      st = st_from_header(hdr)
+      obs_lat = obs_lat_SPM()
+      return helio_topo_correction(ra, dec, mjd, st, obs_lat)
+
+  def helio_topo_correction(ra, dec, mjd, st, obs_lat):
+      """Find radial velocity correction in km/s due to transformation
+      between topocentric and heliocentric frame.  Positive when
+      observatory is moving away from source in heliocentric frame.
+ 
+      Parameters
+      ----------
+      ra : :class:`~astropy.coordinates.Longitude` 
+          Right ascension of source
+      dec : :class:`~astropy.coordinates.Latitude` 
+          Declination of source
+      mjd : float
+          Modified Julian Date of observation
+      st : :class:`~astropy.coordinates.Angle`
+          Sideral Time of observation
+      obs_lat : :class:`~astropy.coordinates.Latitude` 
+          Latitude of observatory
+
+      """
+      return helio_geo_correction(ra, dec, mjd, st) + geo_topo_correction(ra, dec, st, obs_lat)
+
+  def helio_geo_correction(ra, dec, mjd, st):
+      """Motion of earth's center in heliocentric frame"""
+      # line-of-sight unit vector to astronomical object
+      k_los = sla_dcs2c(ra.radian, dec.radian)
+      # Velocity and position of earth in barycentric and heliocentric frames
+      # Units are AU and AU/s
+      vel_bary, pos_bary, vel_hel, pos_hel = sla_evp(mjd, 2000.0)
+      # Radial velocity correction (km/s) due to helio-geocentric transformation  
+      # Positive when earth is moving away from object
+      return u.AU.to(u.km, -np.dot(vel_hel, k_los))
+
+  def geo_topo_correction(ra, dec, st, obs_lat):
+      """Motion of telescope in geocentric frame"""
+      return sla_rverot(obs_lat.radian, ra.radian, dec.radian, st.radian)
+#+END_SRC
+*** Script to test obtaining heliocentric correction from spectrum headers
+:PROPERTIES:
+:header-args: :noweb yes
+:END:
+#+name: more-observational-parameters
+#+BEGIN_SRC python :return outtab
+  import glob
+  from astropy.io import fits
+  from helio_utils import helio_topo_from_header
+  outtab = [['File', 'Date', 'JD', 'ST', 'RA', 'Dec', 'Helio'], None]
+  speclist = glob.glob('Calibrated/*-ha.fits')
+  for fn in speclist:
+      hdr = fits.open(fn)[0].header
+      id_ = fn.split('/')[-1].split('.')[0]
+      outtab.append([id_, hdr.get('DATE-OBS'),
+                     hdr.get('MJD-OBS') or hdr.get('JD'),
+                     hdr.get('ST'), hdr.get('RA'), hdr.get('DEC'),
+                     '{:.2f}'.format(helio_topo_from_header(hdr))
+      ])
+#+END_SRC
+
+#+RESULTS: more-observational-parameters
+| File             |       Date |      JD |         ST |         RA |        Dec | Helio |
+|------------------+------------+---------+------------+------------+------------+-------|
+| 2006-02-260-ha   | 2006-02-05 | 53771.0 |   03:42:12 |   05:34:53 |  -05:21:09 | 20.87 |
+| 2006-02-270-ha   | 2006-02-05 | 53771.0 |   04:40:33 |   05:34:55 |  -05:21:11 | 20.97 |
+| 2006-02-276-ha   | 2006-02-05 | 53771.0 |   05:15:29 |   05:34:56 |  -05:21:11 | 21.03 |
+| 2006-02-281-ha   | 2006-02-05 | 53771.0 |   05:46:32 |   05:34:56 |  -05:21:11 | 21.08 |
+| 2006-02-286-ha   | 2006-02-05 | 53771.0 |   06:18:13 |   05:34:57 |  -05:21:10 | 21.14 |
+| 2006-02-291-ha   | 2006-02-05 | 53771.0 |   06:50:25 |   05:34:57 |  -05:21:10 | 21.19 |
+| 2006-02-296-ha   | 2006-02-05 | 53771.0 |   07:21:26 |   05:34:58 |  -05:21:09 | 21.24 |
+| 2006-02-303-ha   | 2006-02-05 | 53771.0 |   08:00:43 |   05:34:57 |  -05:21:06 | 21.30 |
+| 2006-02-313-ha   | 2006-02-05 | 53771.0 |   08:50:24 |   05:34:56 |  -05:20:58 | 21.37 |
+| 2006-02-318-ha   | 2006-02-05 | 53771.0 |   09:27:04 |   05:35:02 |  -05:20:47 | 21.40 |
+| 2006-02-326-ha   | 2006-02-05 | 53771.0 |   09:57:26 |   05:35:04 |  -05:20:34 | 21.42 |
+| 2007-01-054-ha   | 2007-01-10 | 54110.0 |   07:06:37 |   05:35:27 |  -05:24:59 | 11.87 |
+| 2007-01-067-ha   | 2007-01-10 | 54110.0 |   08:42:40 |   05:35:29 |  -05:24:45 | 12.01 |
+| 2007-01-072-ha   | 2007-01-10 | 54110.0 |   09:15:23 |   05:35:30 |  -05:24:37 | 12.05 |
+| 2007-01b-2037-ha | 2007-01-13 | 54113.0 |   03:52:24 |   05:34:59 |  -05:21:44 | 12.83 |
+| 2007-01b-2041-ha | 2007-01-13 | 54113.0 |   04:26:32 |   05:34:59 |  -05:21:45 | 12.89 |
+| 2007-01b-2045-ha | 2007-01-13 | 54113.0 |   04:58:44 |   05:34:59 |  -05:21:46 | 12.95 |
+| 2007-01b-2049-ha | 2007-01-13 | 54113.0 |   05:31:17 |   05:34:59 |  -05:21:46 | 13.00 |
+| 2007-01b-2053-ha | 2007-01-13 | 54113.0 |   06:08:30 |   05:34:59 |  -05:21:25 | 13.07 |
+| 2007-01b-2057-ha | 2007-01-13 | 54113.0 |   06:42:14 |   05:34:59 |  -05:21:24 | 13.13 |
+| 2007-01b-2061-ha | 2007-01-13 | 54113.0 |   07:17:30 |   05:35:04 |  -05:21:23 | 13.18 |
+| 2010-01-078-ha   | 2010-01-15 | 55211.0 |   06:52:49 | 05:35:07.3 |  -05:22:10 | 14.06 |
+| 2010-01-124-ha   | 2010-01-16 | 55212.0 |   03:40:00 | 05:34:57.6 |  -05:24:10 | 14.13 |
+| 2010-01-128-ha   | 2010-01-16 | 55212.0 |   04:12:20 | 05:34:58.1 |  -05:24:12 | 14.19 |
+| 2010-01-133-ha   | 2010-01-16 | 55212.0 |   04:46:47 | 05:34:59.0 |  -05:23:54 | 14.24 |
+| 2010-01-137-ha   | 2010-01-16 | 55212.0 |   05:16:29 | 05:34:59.4 |  -05:23:54 | 14.30 |
+| 2010-01-145-ha   | 2010-01-16 | 55212.0 |   06:00:23 | 05:34:59.6 |  -05:23:51 | 14.37 |
+| 2010-01-157-ha   | 2010-01-16 | 55212.0 |   07:18:44 | 05:35:00.3 |  -05:23:52 | 14.50 |
+| 2010-01-202-ha   | 2010-01-17 | 55213.0 |   02:42:07 | 05:34:56.3 |  -05:23:19 | 14.44 |
+| 2010-01-206-ha   | 2010-01-17 | 55213.0 |   03:11:47 | 05:34:56.5 |  -05:23:23 | 14.48 |
+| 2010-01-210-ha   | 2010-01-17 | 55213.0 |   03:40:46 | 05:34:57.2 |  -05:23:27 | 14.53 |
+| 2010-01-214-ha   | 2010-01-17 | 55213.0 |   04:11:15 | 05:34:57.5 |  -05:23:30 | 14.58 |
+| 2010-01-219-ha   | 2010-01-17 | 55213.0 |   04:46:31 | 05:34:57.6 |  -05:23:34 | 14.64 |
+| 2010-01-236-ha   | 2010-01-17 | 55213.0 |   06:31:24 | 05:34:59.7 |  -05:23:34 | 14.82 |
+| 2010-01-240-ha   | 2010-01-17 | 55213.0 |   07:00:20 | 05:34:59.7 |  -05:23:33 | 14.86 |
+| 2010-01-244-ha   | 2010-01-17 | 55213.0 |   07:29:14 | 05:34:59.6 |  -05:23:33 | 14.91 |
+| 2010-01-248-ha   | 2010-01-17 | 55213.0 |   07:59:47 | 05:35:01.1 |  -05:23:29 | 14.95 |
+| 2010-01-252-ha   | 2010-01-17 | 55213.0 |   08:29:45 | 05:34:59.7 |  -05:23:26 | 15.00 |
+| 2013-02-024-ha   | 2013-02-16 | 56339.0 |   05:57:04 | 05:35:07.5 | -5:21:27.0 | 23.80 |
+| 2013-02-029-ha   | 2013-02-16 | 56339.0 |   06:18:25 | 05:34:57.1 | -5:23:45.0 | 23.84 |
+| 2013-02-033-ha   | 2013-02-16 | 56339.0 |   06:47:54 | 05:34:57.9 | -5:23:47.0 | 23.89 |
+| 2013-02-149-ha   | 2013-02-18 | 56341.0 |   07:16:44 | 05:35:15.7 | -5:25:16.0 | 24.31 |
+| 2013-02-154-ha   | 2013-02-18 | 56341.0 |   07:50:00 | 05:35:15.7 |  -5:25:8.0 | 24.36 |
+| 2013-02-159-ha   | 2013-02-18 | 56341.0 |   08:20:58 | 05:35:15.9 | -5:24:55.0 | 24.40 |
+| 2013-02-165-ha   | 2013-02-18 | 56341.0 |   08:59:40 | 05:35:14.4 |  -5:26:3.0 | 24.44 |
+| 2013-02-169-ha   | 2013-02-18 | 56341.0 |   09:28:04 | 05:35:15.2 | -5:25:30.0 | 24.47 |
+| 2013-02-226-ha   | 2013-02-19 | 56342.0 |   04:54:51 | 05:35:08.6 |  -5:25:7.0 | 24.24 |
+| 2013-02-232-ha   | 2013-02-19 | 56342.0 |   05:16:09 | 05:35:11.5 | -5:25:17.0 | 24.28 |
+| 2013-02-237-ha   | 2013-02-19 | 56342.0 |   05:48:30 | 05:35:12.2 | -5:25:30.0 | 24.33 |
+| 2013-12-086-ha   | 2013-12-11 | 56637.0 |   06:04:43 | 05:35:43.1 | -5:22:47.0 | -1.59 |
+| 2013-12-090-ha   | 2013-12-11 | 56637.0 |   06:15:11 | 05:35:43.2 | -5:22:49.0 | -1.57 |
+| 2013-12-102-ha   | 2013-12-11 | 56637.0 |   07:25:18 | 05:35:37.0 | -5:22:39.0 | -1.44 |
+| 2013-12-111-ha   | 2013-12-11 | 56637.0 |   08:13:33 | 05:35:48.4 | -5:22:41.0 | -1.39 |
+| 2013-12-116-ha   | 2013-12-11 | 56637.0 |   08:49:55 | 05:35:28.9 | -5:22:39.0 | -1.30 |
+| 2015-02-0003-ha  | 2015-02-03 | 57056.0 | 6:09:40.70 | 05:35:42.2 | -5:22:55.0 | 20.43 |
+| 2015-02-0012-ha  | 2015-02-03 | 57056.0 | 6:57:37.56 | 05:35:42.9 |  -5:23:7.0 | 20.51 |
 
 ** Program to generate spectral map: spectral-map.py
 :PROPERTIES:
@@ -7353,201 +7518,345 @@ nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
 + [2015-09-23 Wed] Now cuts off vignetted sections at ends of slit
 
 #+BEGIN_SRC python
-    import glob
-    import sys
-    import numpy as np
-    from astropy.io import fits
-    from astropy.wcs import WCS
-    from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
-    import astropy.units as u
+  import glob
+  import sys
+  import numpy as np
+  from astropy.io import fits
+  from astropy.wcs import WCS
+  from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
+  import astropy.units as u
+  from astropy import constants as const
+  from helio_utils import helio_topo_from_header
 
-    if len(sys.argv) > 1:
-        line_id = sys.argv[1]
-        wavrest = float(sys.argv[2])
-    else:
-        line_id, wavrest = 'ha', 6562.79
+  if len(sys.argv) == 3:
+      line_id = sys.argv[1]
+      vrange = sys.argv[2]
+  elif len(sys.argv) == 2:
+      line_id = sys.argv[1]
+      vrange = None
+  else:
+      print('Usage: {} LINE_ID [VRANGE]'.format(sys.argv[0]))
 
-    def waves2pixels(waves, w):
-        n = len(waves)
-        pixels, _, _ = w.all_world2pix(waves, [0]*n, [0]*n, 0)
-        return pixels
+  def waves2pixels(waves, w):
+      n = len(waves)
+      pixels, _, _ = w.all_world2pix(waves, [0]*n, [0]*n, 0)
+      return pixels
 
-    #
-    # First set up WCS for the output image
-    #
-    pixel_scale = 0.5               # arcsec
-    NX, NY = 2048, 2048
-    dRA, dDec = -pixel_scale/3600., pixel_scale/3600.
-    RA0, Dec0 = 83.69, -5.429
-    w = WCS(naxis=2)
-    w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
-    w.wcs.cdelt = [dRA, dDec]
-    w.wcs.crval = [RA0, Dec0]
-    w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
-    w.wcs.cunit = ['deg', 'deg']
+  LIGHT_SPEED_KMS = const.c.to('km/s').value
+  def vels2waves(vels, restwav, hdr):
+      """Heliocentric radial velocity (in km/s) to observed wavelength (in
+      m, or whatever units restwav is in)
 
-    # Arrays to hold the output image
-    outimage = np.zeros((NY, NX))
-    outweights = np.zeros((NY, NX))
+      """
+      # Heliocentric correction
+      vels = np.array(vels) + helio_topo_from_header(hdr)
+      waves = restwav*(1.0 + vels/LIGHT_SPEED_KMS)
+      return waves
 
-    slit_width = 2.0                # width in arcsec of 150 micron slit
-    slit_pix_width = slit_width/pixel_scale
+  # First set up WCS for the output image
+  #
+  pixel_scale = 0.5               # arcsec
+  NX, NY = 2048, 2048
+  dRA, dDec = -pixel_scale/3600., pixel_scale/3600.
+  RA0, Dec0 = 83.69, -5.429
+  w = WCS(naxis=2)
+  w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
+  w.wcs.cdelt = [dRA, dDec]
+  w.wcs.crval = [RA0, Dec0]
+  w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
+  w.wcs.cunit = ['deg', 'deg']
 
-    speclist = glob.glob('Calibrated/*-{}.fits'.format(line_id))
+  # Arrays to hold the output image
+  outimage = np.zeros((NY, NX))
+  outweights = np.zeros((NY, NX))
 
-    # Window widths for line and BG
-    dwline = 7.0
+  slit_width = 2.0                # width in arcsec of 150 micron slit
+  slit_pix_width = slit_width/pixel_scale
 
-    # Limits of non-vignetted portion of the slit
-    good_pixels = {
-        '2006-02': (5, None),
-        '2007-01': (10, None),
-        '2010-01': (10, None),
-        '2013-02': (None, -20),
-        '2013-12': (None, -10),
-        '2015-02-0003': (None, -80),
-        '2015-02-0012': (None, -15),
-    }
+  speclist = glob.glob('Calibrated/*-{}.fits'.format(line_id))
 
-    for fn in speclist:
-        print('Processing', fn)
-        spechdu, = fits.open(fn)
-        wspec = WCS(spechdu.header, key='A')
+  # Window widths for line and BG
+  dwline = 7.0*u.Angstrom
 
-        # Trim to good portion of the slit
-        goodslice = slice(None, None)
-        for k, v in good_pixels.items():
-            if k in fn:
-                goodslice = slice(*v)
-              
-        # Find per-slit weight
-        slit_weight = spechdu.header['WEIGHT']
+  # Limits of non-vignetted portion of the slit
+  good_pixels = {
+      '2006-02': (5, None),
+      '2007-01': (10, None),
+      '2010-01': (10, None),
+      '2013-02': (None, -20),
+      '2013-12': (None, -10),
+      '2015-02-0003': (None, -80),
+      '2015-02-0012': (None, -15),
+  }
 
-        # Find sign of delta wavelength
-        dwav = wspec.wcs.get_cdelt()[0]*wspec.wcs.get_pc()[0, 0]
-        sgn = np.sign(dwav)         # Need to take slices backwards if this is negative
+  for fn in speclist:
+      print('Processing', fn)
+      spechdu, = fits.open(fn)
+      wspec = WCS(spechdu.header, key='A')
 
-        # Eliminate degenerate 3rd dimension from data array and trim off bad bits
-        spec2d = spechdu.data[0]
+      # Trim to good portion of the slit
+      goodslice = slice(None, None)
+      for k, v in good_pixels.items():
+          if k in fn:
+              goodslice = slice(*v)
+          
+      # Find per-slit weight
+      slit_weight = spechdu.header['WEIGHT']
 
-        # Find pixel indices for line 
-        waves = [wavrest-dwline/2, wavrest+dwline/2]
-        # Convert to SI to conform to stupid FITS standards
-        waves = (waves*u.Angstrom).to(u.m).value
-        i1, i2 = waves2pixels(waves, wspec)
+      # Find sign of delta wavelength
+      dwav = wspec.wcs.get_cdelt()[0]*wspec.wcs.get_pc()[0, 0]
+      sgn = np.sign(dwav)         # Need to take slices backwards if this is negative
 
-        # Just the entire line for now
-        profile = spec2d[:, i1:i2:sgn].sum(axis=-1)
+      # Eliminate degenerate 3rd dimension from data array and trim off bad bits
+      spec2d = spechdu.data[0]
 
-        # Find celestial coordinates for each pixel along the slit
-        NS = len(profile)
-        slit_coords = pixel_to_skycoord(range(NS), [0]*NS, wspec, 0)
+      # Rest wavelength from FITS header is in meters
+      wavrest = wspec.wcs.restwav*u.m
 
-        # Trim off bad parts of slit
-        profile = profile[goodslice]
-        slit_coords = slit_coords[goodslice]
-      
-        # Convert to pixel coordinates in output image
-        xp, yp = skycoord_to_pixel(slit_coords, w, 0)
+      # Find wavelength limits for line extraction window
+      if vrange is None:
+          # Original case: use a window of wavelength full width dwline
+          waves =  wavrest + np.array([-0.5, 0.5])*dwline
+      else:
+          # Extract velocity limits from the vrange command line argument
+          # vrange should be of a form like '-100+100' or '+020+030'
+          v1, v2 = float(vrange[:4]), float(vrange[-4:])
+          print('Velocity window:', v1, 'to', v2)
+          waves = vels2waves([v1, v2], wavrest,  spechdu.header)
+      print('Wavelength window: {:.2f} to {:.2f}'.format(*waves.to(u.Angstrom)))
 
-        for x, y, bright in zip(xp, yp, profile):
-            # Find output pixels corresponding to corners of slit pixel
-            # (approximate as square)
-            i1 = int(0.5 + x - slit_pix_width/2)
-            i2 = int(0.5 + x + slit_pix_width/2)
-            j1 = int(0.5 + y - slit_pix_width/2)
-            j2 = int(0.5 + y + slit_pix_width/2)
-            # Make sure we don't go outside the output grid
-            i1, i2 = max(0, i1), max(0, i2)
-            i1, i2 = min(NX, i1), min(NX, i2)
-            j1, j2 = max(0, j1), max(0, j2)
-            j1, j2 = min(NY, j1), min(NY, j2)
-            # Fill in the square
-            outimage[j1:j2, i1:i2] += bright*slit_weight
-            outweights[j1:j2, i1:i2] += slit_weight
+      # Find pixel indices for line extraction window
+      i1, i2 = waves2pixels(waves, wspec)
+      print('Pixel window:', i1, 'to', i2)
 
-    # Save everything as different images in a single fits file:
-    # 1. The sum of the raw slits 
-    # 2. The weights
-    # 3. The slits normalized by the weights
-    label = line_id + '-allvels'
-    fits.HDUList([
-        fits.PrimaryHDU(),
-        fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
-        fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
-        fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
-        ]).writeto('new-slits-{}.fits'.format(label), clobber=True)
+      # Extract profile for this wavelength or velocity window
+      profile = spec2d[:, i1:i2:sgn].sum(axis=-1)
+
+      # Find celestial coordinates for each pixel along the slit
+      NS = len(profile)
+      slit_coords = pixel_to_skycoord(range(NS), [0]*NS, wspec, 0)
+
+      # Trim off bad parts of slit
+      profile = profile[goodslice]
+      slit_coords = slit_coords[goodslice]
+  
+      # Convert to pixel coordinates in output image
+      xp, yp = skycoord_to_pixel(slit_coords, w, 0)
+
+      for x, y, bright in zip(xp, yp, profile):
+          # Find output pixels corresponding to corners of slit pixel
+          # (approximate as square)
+          i1 = int(0.5 + x - slit_pix_width/2)
+          i2 = int(0.5 + x + slit_pix_width/2)
+          j1 = int(0.5 + y - slit_pix_width/2)
+          j2 = int(0.5 + y + slit_pix_width/2)
+          # Make sure we don't go outside the output grid
+          i1, i2 = max(0, i1), max(0, i2)
+          i1, i2 = min(NX, i1), min(NX, i2)
+          j1, j2 = max(0, j1), max(0, j2)
+          j1, j2 = min(NY, j1), min(NY, j2)
+          # Fill in the square
+          outimage[j1:j2, i1:i2] += bright*slit_weight
+          outweights[j1:j2, i1:i2] += slit_weight
+
+  # Save everything as different images in a single fits file:
+  # 1. The sum of the raw slits 
+  # 2. The weights
+  # 3. The slits normalized by the weights
+  if vrange is None:
+      label = line_id + '-allvels'
+  else:
+      label = line_id + vrange
+    
+  fits.HDUList([
+      fits.PrimaryHDU(),
+      fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
+      fits.ImageHDU(header=w.to_header(), data=outweights, name='weight'),
+      fits.ImageHDU(header=w.to_header(), data=outimage/outweights, name='scaled'),
+      ]).writeto('new-slits-{}.fits'.format(label), clobber=True)
 
 #+END_SRC
 
 
 ** Run spectral-map.py for the nii or ha spectra
 #+BEGIN_SRC sh :results verbatim
-python spectral-map.py ha 6562.79
+python spectral-map.py ha 
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
 Processing Calibrated/2006-02-260-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-270-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-276-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-281-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-286-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-291-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-296-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-303-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-313-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-318-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2006-02-326-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 29.4842762305 to 189.47647283
 Processing Calibrated/2007-01-054-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01-067-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01-072-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01b-2037-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01b-2041-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01b-2045-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01b-2049-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01b-2053-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01b-2057-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2007-01b-2061-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-078-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-124-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-128-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-133-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-137-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-145-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-157-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-202-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-206-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-210-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-214-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-219-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-236-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-240-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-244-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-248-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2010-01-252-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-024-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-029-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-033-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-149-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-154-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-159-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-165-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-169-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-226-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-232-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-02-237-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 52.3403043162 to 212.332500916
 Processing Calibrated/2013-12-086-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 75.1963324019 to 235.188529002
 Processing Calibrated/2013-12-090-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 75.1963324019 to 235.188529002
 Processing Calibrated/2013-12-102-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 75.1963324019 to 235.188529002
 Processing Calibrated/2013-12-111-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 75.1963324019 to 235.188529002
 Processing Calibrated/2013-12-116-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 75.1963324019 to 235.188529002
 Processing Calibrated/2015-02-0003-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 12.4518606084 to 134.322989897
 Processing Calibrated/2015-02-0012-ha.fits
+Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
+Pixel window: 13.2364321915 to 135.385683307
 #+end_example
 
 #+BEGIN_SRC sh :results verbatim
-python spectral-map.py nii 6583.45
+python spectral-map.py nii 
 #+END_SRC
 
 #+RESULTS:
@@ -7609,6 +7918,35 @@ Processing Calibrated/2013-12-116-nii.fits
 Processing Calibrated/2015-02-0003-nii.fits
 Processing Calibrated/2015-02-0012-nii.fits
 #+end_example
+
+
+#+BEGIN_SRC sh :results silent
+  redranges='+030+050 +010+030 -010+010'
+  blueranges='-030-010 -050-030 -070-050'
+  farblueranges='-090-070 -110-090 -130-110'
+  for vrange in $redranges $blueranges $farblueranges; do
+      python spectral-map.py ha $vrange
+      python spectral-map.py nii $vrange
+  done
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 rgb red
+xpaset -p ds9 fits $PWD/new-slits-ha+030+050.fits[3]
+xpaset -p ds9 rgb green
+xpaset -p ds9 fits $PWD/new-slits-ha+010+030.fits[3]
+xpaset -p ds9 rgb blue
+xpaset -p ds9 fits $PWD/new-slits-ha-010+010.fits[3]
+#+END_SRC
+
+Try three wide bands that cover the whole line
+#+BEGIN_SRC sh :results silent
+  widebands='+000+060 -060+000 -120-060'
+  for vrange in $widebands; do
+      python spectral-map.py ha $vrange
+      python spectral-map.py nii $vrange
+  done
+#+END_SRC
 
 
 ** Program to do multigridding of new spectral maps: multibin-map.py
@@ -7684,11 +8022,44 @@ python multibin-map.py new-slits-nii-allvels.fits
 xpaset -p ds9 fits $PWD/new-slits-ha-allvels-bin064.fits
 #+END_SRC
 
+#+BEGIN_SRC sh :results silent
+  redranges='+030+050 +010+030 -010+010'
+  blueranges='-030-010 -050-030 -070-050'
+  farblueranges='-090-070 -110-090 -130-110'
+  for vrange in $redranges $blueranges $farblueranges; do
+      python multibin-map.py new-slits-ha$vrange.fits
+      python multibin-map.py new-slits-nii$vrange.fits
+  done
+#+END_SRC
 
-** TODO Program to combine different grids: multibin-combine.py
+#+BEGIN_SRC sh :results silent
+  suff=bin032
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-ha+030+050-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-ha+010+030-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-ha-010+010-$suff.fits
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  widebands='+000+060 -060+000 -120-060'
+  for vrange in $widebands; do
+      python multibin-map.py new-slits-ha$vrange.fits
+      python multibin-map.py new-slits-nii$vrange.fits
+  done
+#+END_SRC
+
+** DONE Program to combine different grids: multibin-combine.py
+CLOSED: [2015-09-24 Thu 09:06]
 :PROPERTIES:
 :header-args: :tangle multibin-combine.py :comments link
 :END:
+
++ [2015-09-25 Fri] We set minweight = 0 for the coarsest grid so that the spatial coverage at that level does not depend on the line intensity, only on the arrangement of slits.  This is necessary so that all RGB channels have the same coverage when we combine them in a color image. 
 
 #+BEGIN_SRC python
 import sys
@@ -7696,13 +8067,13 @@ from astropy.io import fits
 import numpy as np
 
 try: 
-    prefix = sys.argv[1]
+    prefix, minw_scale = sys.argv[1], float(sys.argv[2])
 except:
-    print('Usage:', sys.argv[0], 'FITSFILE_PREFIX')
+    print('Usage:', sys.argv[0], 'FITSFILE_PREFIX MINIMUM_WEIGHT')
     sys.exit()
 
 nlist = [1, 2, 4, 8, 16, 32]
-minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 2.0]
+minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 0.0]
 outim = np.zeros((2048, 2048))
 for n, minw in reversed(list(zip(nlist, minweights))):
     fn = '{}-bin{:03d}.fits'.format(prefix, n)
@@ -7710,20 +8081,174 @@ for n, minw in reversed(list(zip(nlist, minweights))):
     im = hdulist['scaled'].data
     hdr = hdulist['scaled'].header
     w = hdulist['weight'].data
-    m = w*im >= minw*3e4
+    m = w*im >= minw*minw_scale
     outim[m] = im[m]
 fits.PrimaryHDU(header=hdr, data=outim).writeto(prefix + '-multibin.fits', clobber=True)
 #+END_SRC
 
 
-** TODO Perform the combining
+** DONE Perform the combining
+CLOSED: [2015-09-24 Thu 09:06]
 #+BEGIN_SRC sh :results silent
-python multibin-combine.py new-slits-ha-allvels
-python multibin-combine.py new-slits-nii-allvels
+python multibin-combine.py new-slits-ha-allvels 3e5
+python multibin-combine.py new-slits-nii-allvels 2e5
 #+END_SRC
 
 #+BEGIN_SRC sh :results silent
-xpaset -p ds9 fits $PWD/new-slits-ha-allvels-multibin.fits
+xpaset -p ds9 fits $PWD/new-slits-nii-allvels-multibin.fits
+#+END_SRC
+
+*** Wide bands
+#+BEGIN_SRC sh :results silent
+  vrange=+000+060               # wide red
+  python multibin-combine.py new-slits-ha$vrange 3e5
+  python multibin-combine.py new-slits-nii$vrange 3e4
+  vrange=-060+000              # wide green
+  python multibin-combine.py new-slits-ha$vrange 3e4
+  python multibin-combine.py new-slits-nii$vrange 2e4
+  vrange=-120-060               # wide blue
+  python multibin-combine.py new-slits-ha$vrange 3e3
+  python multibin-combine.py new-slits-nii$vrange 2e3
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-ha+000+060-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-ha-060+000-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-ha-120-060-$suff.fits
+  sleep 2
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-nii+000+060-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-nii-060+000-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-nii-120-060-$suff.fits
+  sleep 2
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+
+*** Line core V = -10 to +50 km/s
+#+BEGIN_SRC sh :results silent
+  redranges='+030+050 +010+030 -010+010'
+  for vrange in $redranges; do
+      python multibin-combine.py new-slits-ha$vrange 3e5
+      python multibin-combine.py new-slits-nii$vrange 3e4
+  done
+#+END_SRC
+
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-ha+030+050-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-ha+010+030-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-ha-010+010-$suff.fits
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-nii+030+050-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-nii+010+030-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-nii-010+010-$suff.fits
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+
+*** Blue flank: V = -70 to -10 km/s
+#+BEGIN_SRC sh :results silent
+  blueranges='-030-010 -050-030 -070-050'
+  for vrange in $blueranges; do
+      python multibin-combine.py new-slits-ha$vrange 3e3
+      python multibin-combine.py new-slits-nii$vrange 2e3
+  done
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-ha-030-010-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-ha-050-030-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-ha-070-050-$suff.fits
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-nii-030-010-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-nii-050-030-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-nii-070-050-$suff.fits
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+
+*** Far blue wing: V = -110 to -70 km/s  
+We actually calculate out to -130, but we don't use it in the image
+#+BEGIN_SRC sh :results silent
+  farblueranges='-090-070 -110-090 -130-110'
+  for vrange in $farblueranges; do
+      python multibin-combine.py new-slits-ha$vrange 1000
+      python multibin-combine.py new-slits-nii$vrange 300
+  done
+#+END_SRC
+
+Instead we overlap with the blue flank above.  The red channel here is the blue channel there
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-ha-070-050-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-ha-090-070-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-ha-110-090-$suff.fits
+  sleep 2
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-nii-070-050-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-nii-090-070-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-nii-110-090-$suff.fits
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
 #+END_SRC
 
 
@@ -7806,8 +8331,53 @@ xpaset -p ds9 fits $PWD/new-slits-nii-over-ha-allvels.fits
 #+END_SRC
 
 
+* T diagnostics from linewidths
++ We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum
++ For the jet knots, assuming they are kinematically homogeneous, we should be able to measure the T from
++ Compact knot in slit spec166
+  + FWHM in [N II] = 12.76 km/s
+  + FWHM in Ha = 23.77 km/s
+  + => thermal FWHM = sqrt((23.77**2 - 12.76**2) (14/13)) = 20.8 km/s
+  + So basically 1e4 K, which is not surprising
 
-* Dealing with the offset between image and spectrum
+
+* The big bowshock
++ There is a giant, possibly double, possibly triple bow
++ It's N wing crosses LL2, and is red-shifted
+  + And has measured proper motion
++ The nose looks red-shifted too
++ It would be good to get proper motions of the nose
+
+
+
+* Proper motions of the Orion West shocks 
++ [2015-08-26 Wed] Today I discovered that there is a new Massimo Robberto program that has re-observed the whole of Orion with the ACS F775W filter
++ And also various bits with the F130N and F139M WFC3 IR filters
++ This will allow us do to proper motion measurements of all the interesting shocks in our field
++ Relevant images are as follows:
+  + JCOL02010 for ACS field W of LL2
+  + JCOL09010 (ORIMOS-16) for ACS field just below that, containing the nose of the giant bowshock
+  + JCOL03010 ACS includes LL2 and region immediately to W
+  + ICOL22030 WFC3 IR image of region W of LL2
+  + JCOL05010 ACS field of the big gap between trapezium and LL2
+  + JCOL11010 ACS way S with filaments along extension of bright bar
++ Missing images
+
++ Older images that we might use
+  + An [S II] WFPC2 image that covers the circular bubble to the S of LL2 plus the upper partial "nose" of the big bowshock: U8OC2604M from Bally's ACS program 9825
+  + [X] We should actually get the entire set of these
+    + [2015-08-27 Thu] Downloaded to =/fs/nil/other0/will/orion-bally-wfpc2-2004/=
+  + There is a interesting bowshock seen in [S II] to the W of the end of HH269, but not quite as W as the flatter bow that we can see in Ha and NIR
+    + RA: 05 34 59.81
+    + Dec: -05 23 39.94
+    + Image: U8OC1804M
+  + This could be a candidate for the same flow as the big bowshock
+  + We also need to look into possible correspondences with the molecular outflows from Orion S
+
+
+
+* Old stuff on calibration
+** Dealing with the offset between image and spectrum
 + It seems that this is not as constant as I had hoped
   + In the [[id:8685D060-12A9-4E73-B069-11D5315ED8EB][vertical slits]] it varies from 52 to 60 pixels
   + And some slits do not have a reference star to use
@@ -7819,7 +8389,7 @@ xpaset -p ds9 fits $PWD/new-slits-nii-over-ha-allvels.fits
   + We could use this to refine the brightness correction factors
 
 
-** Application to the vertical slits
+*** Application to the vertical slits
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
 :ID:       0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B
@@ -7925,7 +8495,7 @@ fig.savefig(figfile)
 [[file:/Users/will/Dropbox/SPMJAN10/reducciones/image-spec-offsets.pdf]]
 
 
-** Repeat for the horizontal slits
+*** Repeat for the horizontal slits
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMFEB13/WesternShocks
 :ID:       6CE33437-BC17-49AA-B048-5BACCBB8C99B
@@ -8039,9 +8609,9 @@ fig.savefig(figfile)
 
 
 
-* Datasets that we will use
+** Datasets that we will use
 
-** Odd slits that we don't want to forget
+*** Odd slits that we don't want to forget
 + 2007 Jan
   + Some of the LL1 slits show blueshifted emission at their N end
     + spec060-oiii
@@ -8070,13 +8640,13 @@ fig.savefig(figfile)
   + 0013 and 0003
   + More horizontal slits in the middle part
   + These are similar to the slits from Dec 2013
-** Dec 2013
+*** Dec 2013
 + These are in [[file:~/Dropbox/papers/LL-Objects/SPMDIC13/][file:~/Dropbox/papers/LL-Objects/SPMDIC13/]]
 + They are horizontal slits in between LL2 and Orion S
-** Feb 2015
+*** Feb 2015
 + These are in [[file:~/Dropbox/SPMFEB15/][file:~/Dropbox/SPMFEB15/]]
 + They are horizontal slits in between LL2 and Orion S with a new chip
-** Jan 2007 and Feb 2006
+*** Jan 2007 and Feb 2006
 :PROPERTIES:
 :ID:       CB720DCF-0A33-4C51-9A0B-932030BC0E45
 :END:
@@ -8085,7 +8655,7 @@ fig.savefig(figfile)
   + Not sure why the folder is called 2005 rather than 2006
   + With reduced versions of these in [[file:~/Work/SPM2007/Reduced/HH505/slits/SPMha/]]
 + They are mainly vertical, but there are a few horizontal slits
-*** Original database for vertical slits
+**** Original database for vertical slits
 + Taken from [[file:~/Work/SPM2007/Reduced/HH505/slits/reducciones/jw0.csv][jw0.csv]]
 + I have removed the following columns from the table because they were constants:
   + lamrest = 6562.82
@@ -8128,7 +8698,7 @@ fig.savefig(figfile)
     + Now she has sent these - they are in [[file:~/Dropbox/papers/LL-Objects/feb2006/][file:~/Dropbox/papers/LL-Objects/feb2006/]]
 
 
-** Feb 2013
+*** Feb 2013
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMFEB13/WesternShocks
 :END:
@@ -8138,7 +8708,7 @@ CLOCK: [2015-08-22 Sat 17:29]--[2015-08-22 Sat 18:29] =>  1:00
 + These are in [[file:~/Dropbox/SPMFEB13/]]
   + Either in [[file:~/Dropbox/SPMFEB13/WesternShocks/]]
   + Or in one of the date-named folders
-*** WCS values 
+**** WCS values 
 :PROPERTIES:
 :ID:       F6ED03C3-EC32-4444-9746-4E3C2A15CD63
 :END:
@@ -8227,7 +8797,7 @@ for imid, specid, night, jslit, dj, ishift, fac, bright, bgrad in intable:
 |    29 |       30 |      -4 | 83.61937 | -5.41543 | 0.5148 | 89.729 |    1.26 |   0.92 |  0.25 |
 
 
-*** Inter-position brightness calibration
+**** Inter-position brightness calibration
 :PROPERTIES:
 :ID:       23506DE2-4D98-40C5-961F-4715BE7A1F55
 :END:
@@ -8289,13 +8859,13 @@ for imid, specid, night, jslit, dj, ishift, fac, bright, bgrad in intable:
 |   033 |    694 |  370 | 0.818 |  0.25 | 1.023 |    0.837 | 2929.5 |
 |   029 |    697 |  386 | 0.822 |  0.25 | 1.030 |    0.847 | 2964.5 |
 #+TBLFM: $4=$2/848;f3::$6=1 + $-1 ($3 - 312)/625 ;f3::$7=$-3 $-1; f3::$8=3500 $-1
-** Jan 2010
+*** Jan 2010
 :LOGBOOK:
 CLOCK: [2015-08-16 Sun 18:29]--[2015-08-16 Sun 19:04] =>  0:35
 :END:
 + Copied files to [[file:~/Dropbox/SPMJAN10/reducciones/][~/Dropbox/SPMJAN10/reducciones/]]
 + Looking at which ones to use to see if I agree with Tere
-*** WCS values and per-slit weighting
+**** WCS values and per-slit weighting
 :PROPERTIES:
 :ID:       6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D
 :END:
@@ -8389,7 +8959,7 @@ for imid, specid, islit, jshift, fac, bfac in intable:
 #+TBLFM: $8=5000 $-1
 
 
-**** Offset along slit                                             :noexport:
+***** Offset along slit                                            :noexport:
 :PROPERTIES:
 :ID:       8685D060-12A9-4E73-B069-11D5315ED8EB
 :END:
@@ -8412,8 +8982,8 @@ for imid, specid, islit, jshift, fac, bfac in intable:
 + Unfortunately, the offset varies from spectrum to spectrum, which is odd
 + [2015-08-18 Tue] This is now calculated more rigorously [[id:0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B][above]]
 
-*** Which to use
-**** Positions in Alba's set that are acceptable
+**** Which to use
+***** Positions in Alba's set that are acceptable
 :PROPERTIES:
 :ID:       D625BE5F-BE3F-477A-8059-4B0AFEFEED54
 :END:
@@ -8444,9 +9014,9 @@ for imid, specid, islit, jshift, fac, bfac in intable:
 + [2015-08-17 Mon] Dones it again to include more positions - new version is in columns 2 to 4
 + Note that values from this table are used [[id:0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B][above]] to calculate the slit normalizations
 
-**** Positions in Alba's set that are bad
+***** Positions in Alba's set that are bad
 128(+), 101, 145, 157, 173
-***** Rehabilitation of some of these positions
+****** Rehabilitation of some of these positions
 + From my experience with the image-spectrum calibration, there is often a big difference between the quality of the image and that of hte spectrum
 + So we shouldn't rule out a position, just based on a poor image
 + Worth saving:
@@ -8454,16 +9024,16 @@ for imid, specid, islit, jshift, fac, bfac in intable:
   + 145 :: goes just before 248
   + 157 :: goes before 236
 + Still terrible: 101 (no spectrum), 173 (just bad)
-**** Positions over to the NE
+***** Positions over to the NE
 spm078, spm085
-**** Other positions omitted ny Alba
+***** Other positions omitted ny Alba
 + spm142 - no spectrum
 + spm150 - ha spec exists, but looks weak and Tere says no
 + spm154 - no spectrum
 + spm161 - same as 150 but even worse
 + spm224 - has sii spec but no ha
 + spm231 - no spectrum
-*** Message from Teresa [2010-02-18 Thu]
+**** Message from Teresa [2010-02-18 Thu]
 : Acabo de terminar las reducciones de las observaciones de Enero. Al
 : final nos quedamos con 16 posiciones, eliminé 7 posiciones
 : porque las observé con muchas nubes por lo que no obtuve buenos
@@ -8513,7 +9083,7 @@ spm078, spm085
 : (no me quedarón también como a ti!)
 : que son los que anexo a este email.
 
-* Making spectral maps
+** Making spectral maps
 + The plan is to start with a fine orthogonal RA-dec grid
   + Place all the slits onto there by looping over slit pixels and painting all the grid pixels that fall in each
   + Leave grid pixels transparent where no slit falls
@@ -8523,7 +9093,7 @@ spm078, spm085
 + This should give a map with all the holes filled in at lower resolution
 + To start with we will work with the original spectra that I already have
   + Later, we should switch to the bg-subtracted and brightness-corrected ones that Alba has
-** Define the output grid
+*** Define the output grid
 + 1 arcsec is
   + 2.778e-4 deg declination
   + 2.765e-4 deg RA
@@ -8541,7 +9111,7 @@ spm078, spm085
   + PC2_1 = 0.0, PC2_2 = 1.0
 + Note that the WCS matrix should be given in arcdegrees - the translation to degrees of RA is done automatically (and it doesn't matter much anyway, since we are near the equator)
 
-** Test with the velocity-integrated emission
+*** Test with the velocity-integrated emission
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
 :ID:       23C29E96-4471-454E-A463-D365731119C0
@@ -9566,7 +10136,7 @@ xpaset -p ds9 fits $PWD/all-vert-sum.fits[3]
 #+END_SRC
 
 
-** Repeat the spectral map for the horizontal slits
+*** Repeat the spectral map for the horizontal slits
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMFEB13/WesternShocks
 :ID:       60833550-A462-4F18-86DE-895625FF3E7A
@@ -9686,14 +10256,14 @@ xpaset -p ds9 fits $PWD/all-horiz-sum.fits[3]
 #+END_SRC
 
 
-** TODO Correction for heliocentric velocity
+*** TODO Correction for heliocentric velocity
 + [2015-08-23 Sun] I haven't done this yet
 + I have it in a table for the 2013 observations, but need to calculate it for the others
 + Plan is to base on what I did before:
   + For Keck spectra [[id:1772B088-D07A-4228-95D4-14F9C3529EC1][here]]
   + And for HST [[id:5D00EFD4-5F66-4075-B89D-1AFCF3A73B70][here]]
 
-** Try to use different velocity ranges
+*** Try to use different velocity ranges
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
 :END:
@@ -9777,7 +10347,7 @@ xpaset -p ds9 scale limits 0 6000
 
 
 
-** Combine both the horizontal and vertical slits
+*** Combine both the horizontal and vertical slits
 :PROPERTIES:
 :dir:      ~/Dropbox/OrionWest
 :END:
@@ -9843,7 +10413,7 @@ We can use the =imscale= parameter to adjust the resolution of the map.  If =ims
 xpaset -p ds9 fits $PWD/all-slits-sum-multibin.fits
 #+END_SRC
 
-* The multigrid smoothing method
+** The multigrid smoothing method
 :PROPERTIES:
 :dir:      ~/Dropbox/SPMJAN10/reducciones
 :END:
@@ -10001,24 +10571,10 @@ Binning 1 - pixels used 1135
 #+end_example
 
 
-* T diagnostics from linewidths
-+ We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum
-+ For the jet knots, assuming they are kinematically homogeneous, we should be able to measure the T from
-+ Compact knot in slit spec166
-  + FWHM in [N II] = 12.76 km/s
-  + FWHM in Ha = 23.77 km/s
-  + => thermal FWHM = sqrt((23.77**2 - 12.76**2) (14/13)) = 20.8 km/s
-  + So basically 1e4 K, which is not surprising
-* The big bowshock
-+ There is a giant, possibly double, possibly triple bow
-+ It's N wing crosses LL2, and is red-shifted
-  + And has measured proper motion
-+ The nose looks red-shifted too
-+ It would be good to get proper motions of the nose
-* Coordinates of the slits
+** Coordinates of the slits
 + Data received from Alba [2015-08-11 Tue]
 
-** Description from Alba
+*** Description from Alba
 : Todos los datos están en:
 : /fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/0.Datos
 : Diferencio entre especros e imagenes y luego entre los del 2010 (verticales) y
@@ -10031,7 +10587,7 @@ Binning 1 - pixels used 1135
 
 
 
-** Brightness correction factors
+*** Brightness correction factors
 + The 2010 data in =3.CuboWS/0.Datos= are =.nc.cc.= have already had this applied
 + The prior stage (just =.nc.=) is in =2.Datos2010/1.PreparandoDatos/1.SustraccionContinuo=
 + The factors are in [[file:/ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/2.Datos2010/1.PreparandoDatos/2.IgualandoCalidad/intensidades.dat][intensidades.dat]]
@@ -10060,7 +10616,7 @@ Binning 1 - pixels used 1135
 |    248 |     1632.71 |      2180.37 | 1.33543 |
 |    252 |     1816.34 |      2180.37 | 1.20042 |
 
-** HORIZONTALES 2013
+*** HORIZONTALES 2013
 
 #+name: horizontal-slits
 | imagen | Espectro |                 AR |                DEC |
@@ -10081,7 +10637,7 @@ Binning 1 - pixels used 1135
 
 					
 					
-** VERTICALES 2010
+*** VERTICALES 2010
 + From the region file [[file:/ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/1.Posiciones/pos_todas.reg][pos_todas.reg]] it looks like the PA = 3.03 deg
 
 #+name: vertical-slits
@@ -10109,31 +10665,6 @@ Binning 1 - pixels used 1135
 |        |          | 83.6110 +/- 0.0014 | -5.4150 +/- 0.0006 |         |
 #+TBLFM: @20$3..@20$4=vmeane(@I..@II);f4
 
-
-
-* Proper motions of the Orion West shocks 
-+ [2015-08-26 Wed] Today I discovered that there is a new Massimo Robberto program that has re-observed the whole of Orion with the ACS F775W filter
-+ And also various bits with the F130N and F139M WFC3 IR filters
-+ This will allow us do to proper motion measurements of all the interesting shocks in our field
-+ Relevant images are as follows:
-  + JCOL02010 for ACS field W of LL2
-  + JCOL09010 (ORIMOS-16) for ACS field just below that, containing the nose of the giant bowshock
-  + JCOL03010 ACS includes LL2 and region immediately to W
-  + ICOL22030 WFC3 IR image of region W of LL2
-  + JCOL05010 ACS field of the big gap between trapezium and LL2
-  + JCOL11010 ACS way S with filaments along extension of bright bar
-+ Missing images
-
-+ Older images that we might use
-  + An [S II] WFPC2 image that covers the circular bubble to the S of LL2 plus the upper partial "nose" of the big bowshock: U8OC2604M from Bally's ACS program 9825
-  + [X] We should actually get the entire set of these
-    + [2015-08-27 Thu] Downloaded to =/fs/nil/other0/will/orion-bally-wfpc2-2004/=
-  + There is a interesting bowshock seen in [S II] to the W of the end of HH269, but not quite as W as the flatter bow that we can see in Ha and NIR
-    + RA: 05 34 59.81
-    + Dec: -05 23 39.94
-    + Image: U8OC1804M
-  + This could be a candidate for the same flow as the big bowshock
-  + We also need to look into possible correspondences with the molecular outflows from Orion S
 
 * Modifying org export to include header arguments                 :noexport:
 Based on http://kitchingroup.cheme.cmu.edu/blog/2014/09/22/Showing-what-data-went-into-a-code-block-on-export/
