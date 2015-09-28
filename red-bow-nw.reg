@@ -1,0 +1,17 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(5:34:28.257,-5:25:09.81) # point=circle color=red tag={Red Bow NW}
+point(5:34:27.902,-5:25:04.99) # point=circle color=red tag={Red Bow NW}
+point(5:34:27.530,-5:24:58.24) # point=circle color=red tag={Red Bow NW}
+point(5:34:27.240,-5:24:53.41) # point=circle color=red tag={Red Bow NW}
+point(5:34:26.917,-5:24:47.63) # point=circle color=red tag={Red Bow NW}
+point(5:34:26.852,-5:24:40.39) # point=circle color=red tag={Red Bow NW}
+point(5:34:26.820,-5:24:31.47) # point=circle color=red tag={Red Bow NW}
+point(5:34:26.820,-5:24:22.07) # point=circle color=red tag={Red Bow NW}
+point(5:34:27.111,-5:24:14.83) # point=circle color=red tag={Red Bow NW}
+point(5:34:27.482,-5:24:06.64) # point=circle color=red tag={Red Bow NW}
+point(5:34:27.724,-5:23:58.92) # point=circle color=red tag={Red Bow NW}
+point(5:34:27.886,-5:23:49.52) # point=circle color=red tag={Red Bow NW}
+point(5:34:28.128,-5:23:42.77) # point=circle color=red tag={Red Bow NW}
+point(5:34:28.435,-5:23:36.02) # point=circle color=red tag={Red Bow NW}

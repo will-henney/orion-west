@@ -1,0 +1,29 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(5:34:37.799,-5:26:23.61) # point=circle color=red tag={Red Bow SW}
+point(5:34:37.267,-5:26:22.89) # point=circle color=red tag={Red Bow SW}
+point(5:34:36.637,-5:26:22.89) # point=circle color=red tag={Red Bow SW}
+point(5:34:36.104,-5:26:20.48) # point=circle color=red tag={Red Bow SW}
+point(5:34:35.458,-5:26:19.27) # point=circle color=red tag={Red Bow SW}
+point(5:34:34.909,-5:26:18.06) # point=circle color=red tag={Red Bow SW}
+point(5:34:34.328,-5:26:15.17) # point=circle color=red tag={Red Bow SW}
+point(5:34:33.859,-5:26:12.52) # point=circle color=red tag={Red Bow SW}
+point(5:34:33.391,-5:26:07.93) # point=circle color=red tag={Red Bow SW}
+point(5:34:32.955,-5:26:03.59) # point=circle color=red tag={Red Bow SW}
+point(5:34:32.535,-5:26:00.94) # point=circle color=red tag={Red Bow SW}
+point(5:34:32.148,-5:25:58.29) # point=circle color=red tag={Red Bow SW}
+point(5:34:31.809,-5:25:55.15) # point=circle color=red tag={Red Bow SW}
+point(5:34:31.437,-5:25:51.77) # point=circle color=red tag={Red Bow SW}
+point(5:34:31.131,-5:25:46.71) # point=circle color=red tag={Red Bow SW}
+point(5:34:30.937,-5:25:40.20) # point=circle color=red tag={Red Bow SW}
+point(5:34:30.727,-5:25:36.34) # point=circle color=red tag={Red Bow SW}
+point(5:34:30.372,-5:25:30.55) # point=circle color=red tag={Red Bow SW}
+point(5:34:30.210,-5:25:27.90) # point=circle color=red tag={Red Bow SW}
+point(5:34:29.887,-5:25:24.77) # point=circle color=red tag={Red Bow SW}
+point(5:34:29.807,-5:25:21.39) # point=circle color=red tag={Red Bow SW}
+point(5:34:29.758,-5:25:15.60) # point=circle color=red tag={Red Bow SW}
+point(5:34:29.645,-5:25:11.74) # point=circle color=red tag={Red Bow SW}
+point(5:34:29.645,-5:25:05.72) # point=circle color=red text={Red Bow SW} tag={Red Bow SW}
+point(5:34:30.049,-5:24:56.80) # point=circle color=red tag={Red Bow SW}
+point(5:34:30.550,-5:24:49.32) # point=circle color=red tag={Red Bow SW}

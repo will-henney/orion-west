@@ -853,7 +853,7 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 
 *** TODO Remove background and sum over wavelength across line
 :LOGBOOK:
-CLOCK: [2015-09-22 Tue 21:52]
+CLOCK: [2015-09-22 Tue 21:52]--[2015-09-28 Mon 11:53] => 134:01
 :END:
 + Although in principal some of the "background" is real continuum, most of it is not
 + We can get better results by simply removing it, as I did [[id:74998E9B-988D-4378-9465-DAC5EE6E15A0][down here]]
@@ -7948,6 +7948,16 @@ Try three wide bands that cover the whole line
   done
 #+END_SRC
 
+Some ranges further to the red
+#+BEGIN_SRC sh :results silent
+  nearredranges='+050+070 +070+090 +090+110'
+  farredranges='+110+130 +130+150 +150+170'
+  for vrange in $nearredranges $farredranges ; do
+      python spectral-map.py ha $vrange
+      python spectral-map.py nii $vrange
+  done
+#+END_SRC
+
 
 ** Program to do multigridding of new spectral maps: multibin-map.py
 :PROPERTIES:
@@ -8048,6 +8058,14 @@ xpaset -p ds9 fits $PWD/new-slits-ha-allvels-bin064.fits
 #+BEGIN_SRC sh :results silent
   widebands='+000+060 -060+000 -120-060'
   for vrange in $widebands; do
+      python multibin-map.py new-slits-ha$vrange.fits
+      python multibin-map.py new-slits-nii$vrange.fits
+  done
+#+END_SRC
+#+BEGIN_SRC sh :results silent
+  nearredranges='+050+070 +070+090 +090+110'
+  farredranges='+110+130 +130+150 +150+170'
+  for vrange in $nearredranges $farredranges; do
       python multibin-map.py new-slits-ha$vrange.fits
       python multibin-map.py new-slits-nii$vrange.fits
   done
@@ -8252,6 +8270,54 @@ Instead we overlap with the blue flank above.  The red channel here is the blue 
 #+END_SRC
 
 
+
+*** Near red flank: V = +50 to +110 km/s
+#+BEGIN_SRC sh :results silent
+  nearredranges='+050+070 +070+090 +090+110'
+  for vrange in $nearredranges; do
+      python multibin-combine.py new-slits-ha$vrange 1e4
+      python multibin-combine.py new-slits-nii$vrange 3e3
+  done
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-ha+090+110-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-ha+070+090-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-ha+050+070-$suff.fits
+  sleep 2
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+*** Far red wing: V = +110 to +170 km/s
+#+BEGIN_SRC sh :results silent
+  farredranges='+110+130 +130+150 +150+170'
+  for vrange in $farredranges; do
+      python multibin-combine.py new-slits-ha$vrange 3000
+      python multibin-combine.py new-slits-nii$vrange 1000
+  done
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-ha+150+170-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-ha+130+150-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-ha+110+130-$suff.fits
+  sleep 2
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+
 ** DONE Calculate [N II]/Ha ratio and [N II] + Ha sum
 CLOSED: [2015-09-23 Wed 13:41]
 + [2015-09-16 Wed] I suspect that much of the remaining issues with the spectra calibration are down to variations in throughput between [N II] and Ha
@@ -8331,6 +8397,29 @@ xpaset -p ds9 fits $PWD/new-slits-nii-over-ha-allvels.fits
 #+END_SRC
 
 
+
+* Features seen in the isovelocity maps
+
+** Point objects
++ 4410-139
+  + Ha only
+  + N of LL2
+  + is it real?
+  + blue shifted only
++ IX Ori - LL 2 - 
++ 4285-458
++ 
+
+
+** The red bows
+:LOGBOOK:
+CLOCK: [2015-09-28 Mon 11:53]
+:END:
+I have marked 4 different bows in the region file [[file:red-bow-all.reg]]
++ Red Bow NW
++ Red Bow NE
++ Red Bow SE
++ Red Bow SW
 * T diagnostics from linewidths
 + We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum
 + For the jet knots, assuming they are kinematically homogeneous, we should be able to measure the T from
