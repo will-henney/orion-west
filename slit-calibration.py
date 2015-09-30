@@ -444,6 +444,10 @@ for row in tab:
         hdu.header['WEIGHT'] = row['norm']
 
         # And better not to change the original WCS at all
+        # Unless we have transposed the array, which we have to compensate for
+        if row['saxis'] == 1:
+            for k in ['CRPIX{}', 'CRVAL{}', 'CDELT{}', 'CD{0}_{0}']:
+                hdu.header[k.format('1')], hdu.header[k.format('2')] = hdu.header[k.format('2')], hdu.header[k.format('1')] 
         # # And write a bowdlerized version that DS9 can understand as the main WCS
         # hdu.header.update(fixup4ds9(wslit).to_header(key=' '))
         calibfile = 'Calibrated/{}-{}.fits'.format(full_id, lineid)

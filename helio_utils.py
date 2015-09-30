@@ -3,6 +3,7 @@ import numpy as np
 from astropy.io import fits
 from astropy import coordinates as coord
 from astropy import units as u
+from astropy import constants as const
 from astropy.wcs import WCS
 from pyslalib.slalib import sla_dcs2c, sla_evp, sla_rverot, sla_obs
 
@@ -69,4 +70,27 @@ def helio_geo_correction(ra, dec, mjd, st):
 def geo_topo_correction(ra, dec, st, obs_lat):
     """Motion of telescope in geocentric frame"""
     return sla_rverot(obs_lat.radian, ra.radian, dec.radian, st.radian)
+
+
+LIGHT_SPEED_KMS = const.c.to('km/s').value
+def vels2waves(vels, restwav, hdr):
+    """Heliocentric radial velocity (in km/s) to observed wavelength (in
+    m, or whatever units restwav is in)
+
+    """
+    # Heliocentric correction
+    vels = np.array(vels) + helio_topo_from_header(hdr)
+    waves = restwav*(1.0 + vels/LIGHT_SPEED_KMS)
+    return waves
+
+
+def waves2vels(waves, restwav, hdr):
+    """Observed wavelength to Heliocentric radial velocity (in m/s) 
+
+    """
+    vels = const.c*(waves - restwav)/restwav
+    # Heliocentric correction
+    vels -= helio_topo_from_header(hdr)*u.km/u.s
+
+    return vels
 # Module\ to\ find\ heliocentric\ correction:\ helio_utils\.py:1 ends here

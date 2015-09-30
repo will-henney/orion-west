@@ -991,6 +991,10 @@ def remove_background(data):
           hdu.header['WEIGHT'] = row['norm']
 
           # And better not to change the original WCS at all
+          # Unless we have transposed the array, which we have to compensate for
+          if row['saxis'] == 1:
+              for k in ['CRPIX{}', 'CRVAL{}', 'CDELT{}', 'CD{0}_{0}']:
+                  hdu.header[k.format('1')], hdu.header[k.format('2')] = hdu.header[k.format('2')], hdu.header[k.format('1')] 
           # # And write a bowdlerized version that DS9 can understand as the main WCS
           # hdu.header.update(fixup4ds9(wslit).to_header(key=' '))
           calibfile = 'Calibrated/{}-{}.fits'.format(full_id, lineid)
@@ -4404,7 +4408,7 @@ xpaset -p ds9 fits ~/Dropbox/SPMFEB15/archivos/spm0013o_bcrx.fits
 
 *** Looking at the calibrated spectra
 #+BEGIN_SRC sh :results silent
-xpaset -p ds9 fits $PWD/Calibrated/2015-02-0003-nii.fits
+xpaset -p ds9 fits $PWD/Calibrated/2006-02-303-ha.fits
 #+END_SRC
 
 So it seems like all the trouble was due to differences in the zero-level between the nii and the ha spectra! 
@@ -7338,6 +7342,417 @@ tha = ha.header['EXPTIME']
 nii.data *= tha/(tnii*ha.data)
 nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
 #+END_SRC
+
+* TODO [1/2] Final tweaks to the zero level - fit 2D Chebyshev
+:LOGBOOK:
+CLOCK: [2015-09-29 Tue 09:16]
+:END:
++ Some spectra still have strangenesses in the background levels, especially the 2013 runs
++ Plan is to fit a 2D Chebyshev surface to the regions away from the lines
++ [X] First a pilot program that works on the calibrated spectra
+  + 
++ [ ] If that works, then incoroprate it directly into the calibration process
+
+
+** Program to fit 2D Chebyshev to so-called continuum: chebfit2d.py 
+:PROPERTIES:
+:header-args: :tangle chebfit2d.py :comments link
+:END:
+
+Zeroth, the imports
+#+BEGIN_SRC python
+  import sys
+  import numpy as np
+  from astropy.io import fits
+  from astropy.modeling import models, fitting
+#+END_SRC
+
+First the function to fit the background to the data 
+#+BEGIN_SRC python
+
+  def fit_background(data, mask, npx=4, npy=4):
+      """Fit a polynomial surface to all elements of a 2D `data` array where
+  the corresponding `mask` is True.  Return the fit evaluated at each
+  point of the original data array.
+
+      """
+      assert data.shape == mask.shape
+      ny, nx = data.shape
+      # y = np.arange(ny).reshape((ny,1))
+      # x = np.arange(nx).reshape((1,nx))
+      y, x = np.mgrid[:ny, :nx]
+      p_init = models.Chebyshev2D(x_degree=npx, y_degree=npy)
+      fit_p = fitting.LevMarLSQFitter()
+      p = fit_p(p_init, x[mask], y[mask], data[mask])
+      return p(x, y)
+#+END_SRC
+
+Second, how to set the mask for the BG fitting:
++ Region strategy (harder)
+  1. We need to be outside a given wavelength range
+  2. At this level of precision, heliocentric correction is unnecessary
+     - WRONG, we do need helio correction
+     - We also need to avoid stars
++ Threshold strategy (easy)
+  1. Just set mask true when intensity is below a certain amount
+  2. That's it!
+     - Threshold intensity of 0.001 looks like it might work
+     - Possible problem is that it might give a downward bias if noise > threshold
+     - Or could give upward bias if signal < threshold
+     - Hopefully they will cancel out
++ Now I have decided we need to use both
+  + The threshold strategy to distinguish high velocity knots from the noise
+  + But then also the region strategy to ensure we do not go to close to the line core, even if it is noisy
+  + For this we use an excluded velocity window of -10 to +40 in Vhel
+#+BEGIN_SRC python
+  from astropy.wcs import WCS
+  from astropy import units as u
+  from helio_utils import vels2waves
+
+  def find_mask_for_hdu(hdu, threshold=0.001, v1=-100.0, v2=100.0):
+      mask = hdu.data < threshold
+
+      # Cut out a window around line center
+      w = WCS(hdu.header, key='A')
+      waves = vels2waves([v1, v2], w.wcs.restwav, hdu.header)
+      [i1, i2], _, _ = w.all_world2pix(waves, [0, 0], [0, 0], 0)
+      i1, i2 = int(i1), int(i2) + 1
+      mask[:, :, i1:i2] = False
+  
+      return mask
+#+END_SRC
+
+Third, a function to take a FITS file and fit the BG, saving both the BG and the BG-subtracted data
+
+#+BEGIN_SRC python
+  def estimate_pixel_noise(data, size=50):
+      # Slices for each corner of the image and one in the middle somewhere
+      lo, hi, mid = slice(None, 50), slice(-50, None), slice(300, 350)
+      corners = [data[lo, lo], data[lo, hi],
+                 data[hi, lo], data[hi, hi],
+                 data[mid, lo], data[mid, hi]]
+      sigmas = [np.nanstd(corner) for corner in corners]
+      means = [np.nanmean(corner) for corner in corners]
+      sigma = np.nanmedian(sigmas)
+      mean = np.nanmedian(means)
+      print('Corner sigmas:', sigmas, 'Median =', sigma)
+      print('Corner means:', means, 'Median =', mean)
+      return sigma
+ 
+  def remove_bg(filename, olddir='Calibrated/', newdir='Calibrated/BGsub/'):
+      assert olddir in filename
+      hdu = fits.open(filename)[0]      # always use first HDU in file
+
+      sigma = estimate_pixel_noise(hdu.data[0])
+      mask = find_mask_for_hdu(hdu, threshold=2*sigma)
+
+      if '2015-02-0003-nii' in filename:
+          # Low order of x-polynomial for this one
+          bg = fit_background(hdu.data[0], mask[0], npx=1, npy=4)
+      else:
+          # FITS data is 3d, so take 2d slice for fitting...
+          bg = fit_background(hdu.data[0], mask[0])
+
+      # ...and then add back 3rd dimension
+      bg = bg[None, :, :]
+
+      # Save BG-subtracted data
+      hdu.data -= bg
+      subfilename = filename.replace(olddir, newdir)
+      hdu.writeto(subfilename, clobber=True)
+
+      # And save fitted BG itself
+      hdu.data = bg
+      bgfilename = subfilename.replace('.fits', '-bg.fits')
+      hdu.writeto(bgfilename, clobber=True)
+
+      # And save the mask
+      hdu.data = mask.astype(float)
+      maskfilename = subfilename.replace('.fits', '-mask.fits')
+      hdu.writeto(maskfilename, clobber=True)
+  
+#+END_SRC
+
+Fourth, read a file from the command line if called interactively
+
+#+BEGIN_SRC python
+  if __name__ == '__main__':
+      try:
+          fn = sys.argv[1]
+      except:
+          print('Usage:', sys.argv[0], 'FITSFILE')
+          sys.exit()
+
+      remove_bg(fn)
+#+END_SRC
+
+** Test the chebyshev fitting
+#+BEGIN_SRC sh :results silent
+mkdir -p Calibrated/BGsub
+#+END_SRC
+
+#+BEGIN_SRC sh :results verbatim
+python chebfit2d.py Calibrated/2015-02-0003-ha.fits # 1>&2
+#+END_SRC
+
+#+RESULTS:
+: Corner sigmas: [0.0092039052, 0.009207556, 0.0060184905, 0.0061931033, 0.0081476336, 0.0079773115] Median = 0.00806247
+: Corner means: [0.00040226532, 0.0058213449, -0.00010916856, 0.0014264929, 0.00077906274, 0.0030811126] Median = 0.00110278
+
+
+
+
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 fits $PWD/Calibrated/BGsub/2010-01-236-nii.fits
+xpaset -p ds9 zoom to fit frame
+#+END_SRC
+
+Note that 2015-02-0003 is a pathological case because we have no BG to right of line, so we can't stop the polynomial from blowing up there.  One solution would be to reflect the line profile. 
+
+
+** Apply to all the slits
++ At the same time, we will change wavelength to Vhel in the FITS headers
++ And we could try and add pixel coordinates for the output image array too. 
+
+#+BEGIN_SRC python :results output
+  import glob
+  import chebfit2d
+
+  filenames = glob.glob('Calibrated/*.fits')
+
+  for fn in filenames:
+      chebfit2d.remove_bg(fn)
+
+#+END_SRC
+
+#+RESULTS:
+#+begin_example1
+Corner sigmas: [0.0014632043, 0.0014105592, 0.0013509666, 0.001325192, 0.0054909131, 0.007089389] Median = 0.00143688
+Corner means: [-0.00022139779, -0.00044154807, -0.00031040475, -0.0008519371, -0.0019082779, -0.0030134178] Median = -0.000646743
+Corner sigmas: [0.001477215, 0.0010485579, 0.0013697137, 0.0010426297, 0.0014074636, 0.0012496385] Median = 0.00130968
+Corner means: [7.5210693e-05, -0.00023023813, -7.1173003e-05, -1.4033735e-05, -5.5818164e-05, 9.2550945e-05] Median = -3.49259e-05
+Corner sigmas: [0.00072271761, 0.00078956556, 0.000650478, 0.00075349346, 0.001487357, 0.0016568818] Median = 0.00077153
+Corner means: [-0.00023395955, -0.00053457916, -0.00035804117, -0.0010272692, -0.00082681084, -0.0014288132] Median = -0.000680695
+Corner sigmas: [0.00083920668, 0.00078511244, 0.00072703441, 0.00065560237, 0.00087804772, 0.0011650173] Median = 0.00081216
+Corner means: [-2.76802e-05, -2.8529686e-05, -4.8832208e-06, -1.4298194e-05, -0.00024860929, 0.00020439758] Median = -2.09892e-05
+Corner sigmas: [0.0006635703, 0.00075121038, 0.00061689626, 0.00069903373, 0.00058791629, 0.00062494806] Median = 0.000644259
+Corner means: [-0.00019852414, -0.00057919609, -0.00034293777, -0.0009423481, -0.00019772716, -0.00076135364] Median = -0.000461067
+Corner sigmas: [0.00078200555, 0.00073513377, 0.00067009195, 0.00061699579, 0.00065414998, 0.00062729226] Median = 0.000662121
+Corner means: [-2.2748036e-05, -7.6759672e-05, 9.1613201e-06, -1.3556039e-05, -2.7325354e-05, 7.980549e-05] Median = -1.8152e-05
+Corner sigmas: [0.0011682139, 0.0012034801, 0.00099312956, 0.0010720264, 0.00093744247, 0.00097204029] Median = 0.00103258
+Corner means: [-0.00025582375, -0.00069190777, -0.00036907248, -0.0010608289, -0.00022261136, -0.00083643629] Median = -0.00053049
+Corner sigmas: [0.0011638883, 0.0011593443, 0.0010889119, 0.0009894867, 0.00099008996, 0.00093192898] Median = 0.0010395
+Corner means: [-9.336507e-06, -0.00013354659, 3.2520453e-05, -6.3618019e-05, -4.277916e-05, 3.0424133e-05] Median = -2.60578e-05
+Corner sigmas: [0.0011595117, 0.0012386816, 0.0010741194, 0.0011856057, 0.0010313789, 0.0010744163] Median = 0.00111696
+Corner means: [-0.00022985968, -0.0007155051, -0.00032630438, -0.0011197362, -0.00019674523, -0.00091327459] Median = -0.000520905
+Corner sigmas: [0.0012797932, 0.001238024, 0.0012510912, 0.0011137044, 0.0011515305, 0.0010474956] Median = 0.00119478
+Corner means: [-1.1999592e-05, -0.0001932092, 2.8919837e-06, -3.3244996e-06, 1.090752e-05, 4.9467428e-05] Median = -2.16258e-07
+Corner sigmas: [0.00088304386, 0.00097924541, 0.00081425463, 0.00090450334, 0.00072619057, 0.00081700983] Median = 0.000850027
+Corner means: [-0.00015872429, -0.00053924479, -0.00030596403, -0.0010041599, -0.00013632135, -0.00075196056] Median = -0.000422604
+Corner sigmas: [0.001016896, 0.00092923763, 0.00091537088, 0.00083540403, 0.00085828803, 0.00077318115] Median = 0.000886829
+Corner means: [3.7233128e-06, -7.3361778e-05, -9.9717799e-06, -4.0335606e-05, -1.6350534e-05, 1.3966051e-05] Median = -1.31612e-05
+Corner sigmas: [0.0015200629, 0.0015965189, 0.0014699502, 0.0015655953, 0.0013151465, 0.0013928429] Median = 0.00149501
+Corner means: [-0.00036867292, -0.00081092282, -0.00060055265, -0.0010993329, -0.00043962308, -0.00073171908] Median = -0.000666136
+Corner sigmas: [0.0017489973, 0.0015863283, 0.0016368513, 0.0014544198, 0.0015160213, 0.001370392] Median = 0.00155117
+Corner means: [2.2922646e-05, 1.7644123e-05, -6.7741662e-06, -1.3886724e-05, -3.8076763e-05, 0.00013304994] Median = 5.43498e-06
+Corner sigmas: [0.0013834093, 0.001452985, 0.0013676074, 0.001441716, 0.0012012061, 0.001320699] Median = 0.00137551
+Corner means: [-0.00017844823, -0.00072771305, -0.00038970343, -0.00094421423, -0.00021771884, -0.00062920799] Median = -0.000509456
+Corner sigmas: [0.00159153, 0.0013980719, 0.001502256, 0.0013701505, 0.0013793012, 0.0012508844] Median = 0.00138869
+Corner means: [-6.1142375e-05, -0.00010717578, 6.5474545e-05, -0.00013272645, 3.0503556e-05, 1.7631086e-05] Median = -2.17556e-05
+Corner sigmas: [0.0016242558, 0.001737855, 0.0015695565, 0.0016559031, 0.0013968691, 0.0014584544] Median = 0.00159691
+Corner means: [-0.00012511411, -0.00065409573, -0.00030645312, -0.0010393198, -0.00012346031, -0.00081927719] Median = -0.000480274
+Corner sigmas: [0.0018572584, 0.0016607478, 0.0018039469, 0.0015721746, 0.0016105383, 0.0014679766] Median = 0.00163564
+Corner means: [2.2210002e-06, -0.0001239196, -9.5691088e-05, -9.079856e-05, -2.1481206e-05, 9.4267867e-05] Median = -5.61399e-05
+Corner sigmas: [0.0013246336, 0.001392733, 0.0012930587, 0.0014074196, 0.0012486369, 0.0012522758] Median = 0.00130885
+Corner means: [-0.0002111124, -0.00056961586, -0.0003947365, -0.0010225606, -0.00027800389, -0.00078600313] Median = -0.000482176
+Corner sigmas: [0.0014808178, 0.0014185515, 0.0014397042, 0.0012891508, 0.0013087397, 0.0011637113] Median = 0.00136365
+Corner means: [4.7245621e-06, 6.3654961e-06, -2.5301797e-05, -5.6661986e-05, 5.6150497e-05, 7.7060315e-05] Median = 5.54503e-06
+Corner sigmas: [0.004129454, 0.0043157865, 0.0044114557, 0.0046192664, 0.0037959008, 0.003928713] Median = 0.00422262
+Corner means: [-0.00014612763, -0.00065525738, -0.00073436095, -0.0014701067, -0.00016968744, -0.0010622484] Median = -0.000694809
+Corner sigmas: [0.0049439352, 0.0042481935, 0.0050284956, 0.0045039188, 0.0041755936, 0.0036310325] Median = 0.00437606
+Corner means: [0.00011957669, -7.8610945e-05, -5.5650871e-05, -0.00061950483, 0.00021766048, 3.5578847e-05] Median = -1.0036e-05
+Corner sigmas: [0.0010327154, 0.0011671452, 0.001811725, 0.0023419, 0.0013304272, 0.0015990793] Median = 0.00146475
+Corner means: [-9.5025287e-05, -0.00047717581, -0.0018048437, -0.0033827224, -0.00079670287, -0.0021091339] Median = -0.00130077
+Corner sigmas: [0.0011287276, 0.0012392439, 0.0012817082, 0.0012675013, 0.0011744292, 0.0012163526] Median = 0.0012278
+Corner means: [0.00011638243, -0.00038977657, 0.00058033125, -0.0018881225, 0.00046012754, -0.0014388263] Median = -0.000136697
+Corner sigmas: [0.0010173647, 0.0011044998, 0.0017385072, 0.0022021479, 0.0013583227, 0.0015458603] Median = 0.00145209
+Corner means: [-0.00013277237, -0.00046296162, -0.0015786301, -0.0028251866, -0.00069425022, -0.0020745639] Median = -0.00113644
+Corner sigmas: [0.0011396817, 0.0011554033, 0.0012661768, 0.0012739009, 0.0011914551, 0.0011779225] Median = 0.00118469
+Corner means: [7.5176809e-05, -0.00014700349, 0.00061758637, -0.0017225933, 0.00044644976, -0.0015451227] Median = -3.59133e-05
+Corner sigmas: [0.0010959147, 0.0012205699, 0.0017974571, 0.002280768, 0.0013703355, 0.0016211389] Median = 0.00149574
+Corner means: [-0.0001750361, -0.00042779659, -0.0020072162, -0.0029797403, -0.00097526674, -0.0019980147] Median = -0.00148664
+Corner sigmas: [0.0011515605, 0.0013166739, 0.0011804608, 0.0011514768, 0.001129727, 0.001069466] Median = 0.00115152
+Corner means: [7.3121955e-05, -0.00037098702, 0.00053600274, -0.0016879833, 0.00042407532, -0.0014757987] Median = -0.000148933
+Corner sigmas: [0.00066328666, 0.00065836048, 0.011868647, 0.0024225332, 0.00055661675, 0.00058611465] Median = 0.000660824
+Corner means: [-0.00014124914, -0.00036231457, -0.00046634287, -0.0002324372, -0.00018464884, -0.00051269395] Median = -0.000297376
+Corner sigmas: [0.00066569302, 0.00065347296, 0.00055259879, 0.00052675465, 0.00057547318, 0.00053468649] Median = 0.000564036
+Corner means: [6.676538e-05, 2.0214527e-06, 8.1052312e-05, -0.00022498693, 1.6659169e-05, -0.00021987638] Median = 9.34031e-06
+Corner sigmas: [0.00066614384, 0.00067159807, 0.0005923445, 0.00065081229, 0.00055623031, 0.00058915874] Median = 0.000621578
+Corner means: [-7.7686396e-05, -0.00031713463, -0.00029847599, -0.00066117308, -0.00020778766, -0.00047816924] Median = -0.000307805
+Corner sigmas: [0.00064836652, 0.00070810487, 0.00057409937, 0.00055057724, 0.00055406499, 0.00055657054] Median = 0.000565335
+Corner means: [1.8816803e-05, 4.4476245e-05, 0.00011022736, -0.00023445778, 7.6075128e-05, -0.00024297624] Median = 3.16465e-05
+Corner sigmas: [0.00078389817, 0.00071056263, 0.00066345005, 0.00066934898, 0.00065695337, 0.00067069579] Median = 0.000670022
+Corner means: [-0.00015260564, -0.00038408494, -0.00037072515, -0.00061755866, -0.00027250461, -0.00053376216] Median = -0.000377405
+Corner sigmas: [0.00069997471, 0.00071769784, 0.00061456702, 0.00059750944, 0.00063714402, 0.00056536007] Median = 0.000625856
+Corner means: [2.8867229e-05, 0.00019872005, 9.6854914e-05, -0.00022099767, 1.2417205e-05, -0.0002630052] Median = 2.06422e-05
+Corner sigmas: [0.00067101989, 0.00065885036, 0.00057539536, 0.00062469346, 0.00057039253, 0.00058897503] Median = 0.000606834
+Corner means: [-0.00010340227, -0.0003120676, -0.00029166994, -0.00060125318, -0.0002156409, -0.00052879209] Median = -0.000301869
+Corner sigmas: [0.00066117867, 0.00069785921, 0.00056631101, 0.00053035759, 0.00057033857, 0.00053860975] Median = 0.000568325
+Corner means: [-1.1290185e-06, 0.00010500813, 9.0039066e-05, -0.00024126086, 5.919981e-05, -0.0002650042] Median = 2.90354e-05
+Corner sigmas: [0.00062760373, 0.00065205345, 0.00060712488, 0.00066129613, 0.00058021728, 0.00058611046] Median = 0.000617364
+Corner means: [-9.3577408e-05, -0.00032560309, -0.00029802541, -0.00067015382, -0.00019098283, -0.0004832905] Median = -0.000311814
+Corner sigmas: [0.00064203009, 0.00073199003, 0.00055046717, 0.00057592243, 0.00057484972, 0.00053997495] Median = 0.000575386
+Corner means: [3.193906e-05, 0.00011596334, 8.639523e-05, -0.00025596033, 2.4088835e-05, -0.00021734639] Median = 2.80139e-05
+Corner sigmas: [0.00066422939, 0.00069107168, 0.00057371595, 0.0006155445, 0.00056956819, 0.0006004977] Median = 0.000608021
+Corner means: [-7.3566487e-05, -0.00032703247, -0.00029325148, -0.0005803582, -0.00015863606, -0.00041452018] Median = -0.000310142
+Corner sigmas: [0.00062992063, 0.00076161936, 0.00056420499, 0.00054483197, 0.00059964141, 0.00054765277] Median = 0.000581923
+Corner means: [2.1580492e-05, 4.366439e-05, 0.00010518797, -0.00019669332, 4.0274994e-05, -0.00030888067] Median = 3.09277e-05
+Corner sigmas: [0.00075754634, 0.00073964399, 0.00064389087, 0.00068888254, 0.00065647106, 0.00066779641] Median = 0.00067834
+Corner means: [-0.00011409037, -0.00036590235, -0.00030422449, -0.00058157166, -0.00019776204, -0.00040570306] Median = -0.000335063
+Corner sigmas: [0.00074551551, 0.00079343974, 0.00061451358, 0.00062755792, 0.00065314135, 0.00060712907] Median = 0.00064035
+Corner means: [6.277144e-05, 0.00012994627, 0.00012557342, -0.00022822563, 5.3461386e-05, -0.00030958772] Median = 5.81164e-05
+Corner sigmas: [0.0010457417, 0.0010061655, 0.00095146924, 0.0009730279, 0.00088660239, 0.00095435156] Median = 0.00096369
+Corner means: [-5.7668476e-05, -0.00016784866, -0.00039885449, -0.00092796917, -0.00018158223, -0.00078935095] Median = -0.000290218
+Corner sigmas: [0.0010579269, 0.0010432497, 0.00093684276, 0.00089188525, 0.00094233698, 0.00088524533] Median = 0.00093959
+Corner means: [6.4463638e-05, -4.8044105e-05, 0.00013267937, -0.00038139409, 0.00020117554, -0.00042691021] Median = 8.20977e-06
+Corner sigmas: [0.0013960929, 0.0013638498, 0.0016642972, 0.0017184722, 0.0014991637, 0.0015272525] Median = 0.00151321
+Corner means: [-7.2869341e-05, -0.0001254193, -0.00056378992, -0.0010789403, -0.00030189939, -0.00096083363] Median = -0.000432845
+Corner sigmas: [0.0014708571, 0.0013820303, 0.0016326439, 0.0015505562, 0.0015219137, 0.0014279246] Median = 0.00149639
+Corner means: [3.9169179e-05, 0.00011820068, 0.00014074196, -0.00050397549, 0.00015590337, -0.00039220127] Median = 7.86849e-05
+Corner sigmas: [0.0015615419, 0.0015183418, 0.0016783425, 0.0016447714, 0.0015598637, 0.0014468842] Median = 0.0015607
+Corner means: [-5.0335264e-05, 1.3481858e-05, -0.00048072671, -0.0010559749, -0.00025614852, -0.0006940015] Median = -0.000368438
+Corner sigmas: [0.0016327503, 0.001611946, 0.0016800556, 0.0016243506, 0.0016382851, 0.0014441879] Median = 0.00162855
+Corner means: [9.8969933e-05, -0.00014721093, 0.00013154959, -0.00051117805, 0.00013587087, -0.00047916098] Median = -2.41205e-05
+Corner sigmas: [0.00094031257, 0.00088066689, 0.00098206953, 0.0010247189, 0.00092857354, 0.00092635484] Median = 0.000934443
+Corner means: [-0.00012668328, -0.00021121799, -0.00051460002, -0.0010194668, -0.00026243902, -0.00078381016] Median = -0.00038852
+Corner sigmas: [0.0009986501, 0.0009792971, 0.00095310807, 0.00090320973, 0.00093285763, 0.00083050522] Median = 0.000942983
+Corner means: [6.5728367e-05, -0.00016465299, 3.5030742e-05, -0.0005378559, 8.8739704e-05, -0.00046915398] Median = -6.48111e-05
+Corner sigmas: [0.0014542526, 0.001363298, 0.0012792657, 0.0013388679, 0.0013234779, 0.0013608211] Median = 0.00134984
+Corner means: [-0.00013949261, -0.00014828007, -0.00038671866, -0.00089074404, -0.00017082418, -0.0006087693] Median = -0.000278771
+Corner sigmas: [0.0014498059, 0.0014721053, 0.0013346514, 0.0012576705, 0.0013656971, 0.0012976395] Median = 0.00135017
+Corner means: [-8.328353e-06, -0.00031891803, 7.849597e-05, -0.00049212569, 0.00014653189, -0.00046172351] Median = -0.000163623
+Corner sigmas: [0.0045012766, 0.0041926759, 0.0050141918, 0.0049378807, 0.0045350417, 0.0044186744] Median = 0.00451816
+Corner means: [0.00011395147, -1.7880006e-05, -0.00060619781, -0.0012419955, -0.00016931375, -0.00088184112] Median = -0.000387756
+Corner sigmas: [0.0047562402, 0.0044593099, 0.00530473, 0.0053617619, 0.0049201804, 0.0045728767] Median = 0.00483821
+Corner means: [-2.9902101e-06, -0.00054412708, 0.00014499719, -0.0010466006, 0.00026719572, -0.00030514202] Median = -0.000154066
+Corner sigmas: [0.0030148197, 0.0030096711, 0.0031862217, 0.0031337563, 0.0028638453, 0.0028372225] Median = 0.00301225
+Corner means: [-9.9653073e-05, -0.00038797213, -0.00062641699, -0.00091738137, -0.00028572799, -0.00074279611] Median = -0.000507195
+Corner sigmas: [0.0032574327, 0.0030093102, 0.0032697825, 0.0032733453, 0.0029851282, 0.0028022903] Median = 0.00313337
+Corner means: [3.1648728e-05, -0.00039374598, -1.3923228e-05, -0.00057757902, 0.00014127622, -0.00038414277] Median = -0.000199033
+Corner sigmas: [0.00089243217, 0.00088755781, 0.00083530706, 0.00088114338, 0.00076178805, 0.00083513843] Median = 0.000858225
+Corner means: [-7.670965e-05, -7.1730035e-05, -0.00048931473, -0.00082076556, -0.0001777142, -0.00056009745] Median = -0.000333514
+Corner sigmas: [0.00094242289, 0.0010703806, 0.00081524858, 0.00076698902, 0.0008165302, 0.00078199734] Median = 0.000815889
+Corner means: [2.9082355e-05, -0.00033403229, 4.1332481e-05, -0.0004349183, 4.231319e-05, -0.00038197645] Median = -0.000152475
+Corner sigmas: [0.00081437407, 0.00077617384, 0.000782597, 0.00082832103, 0.00072706229, 0.00078981306] Median = 0.000786205
+Corner means: [-5.0729901e-05, -8.9232519e-05, -0.00054078776, -0.00093781779, -0.00026920313, -0.00070282898] Median = -0.000404995
+Corner sigmas: [0.00084152649, 0.00085601833, 0.00074721681, 0.00068737718, 0.00070684112, 0.00066337193] Median = 0.000727029
+Corner means: [5.3956799e-05, -0.00016388868, 1.6556045e-05, -0.00047992705, 6.407265e-05, -0.00040341844] Median = -7.36663e-05
+Corner sigmas: [0.0010287594, 0.0009934624, 0.00067037938, 0.000733122, 0.00070183753, 0.00071570685] Median = 0.000724414
+Corner means: [-5.5359949e-05, -0.00017056301, -0.00047016336, -0.00078477635, -0.00029489998, -0.00059511454] Median = -0.000382532
+Corner sigmas: [0.00087284861, 0.00077065092, 0.00063531904, 0.0006196762, 0.00069609383, 0.0006181713] Median = 0.000665706
+Corner means: [4.0301013e-05, -0.00025773293, 4.8651986e-05, -0.00042069206, 7.5064185e-05, -0.00039505991] Median = -0.000108716
+Corner sigmas: [0.00075330038, 0.00074352598, 0.00074780267, 0.00079028722, 0.00068217504, 0.00070443866] Median = 0.000745664
+Corner means: [-9.3859446e-05, -8.9558678e-05, -0.00044680166, -0.00079312793, -0.00024419272, -0.00058300572] Median = -0.000345497
+Corner sigmas: [0.00078053406, 0.00081415876, 0.00071501243, 0.00070233759, 0.00068675127, 0.0006455977] Median = 0.000708675
+Corner means: [5.2689189e-05, -0.00019825516, 2.7381593e-05, -0.00049753464, 7.7082339e-05, -0.00037763407] Median = -8.54368e-05
+Corner sigmas: [0.00083584304, 0.00082280097, 0.00071524212, 0.00075399695, 0.00067248417, 0.00073438388] Median = 0.00074419
+Corner means: [-9.1008391e-05, -0.00027068885, -0.00045534401, -0.00078317145, -0.00023901381, -0.00057320431] Median = -0.000363016
+Corner sigmas: [0.00088335603, 0.00081210257, 0.0007004097, 0.00066573429, 0.00069375319, 0.00064953382] Median = 0.000697081
+Corner means: [1.8192814e-05, -0.00038113471, 6.7869863e-05, -0.00049095851, 9.0033849e-05, -0.0004537066] Median = -0.000181471
+Corner sigmas: [0.00086503616, 0.00082840462, 0.00073538389, 0.00078683277, 0.00071963074, 0.0007289052] Median = 0.000761108
+Corner means: [-0.00013692111, -0.00021085277, -0.0004235607, -0.0008249018, -0.00023325527, -0.00059029419] Median = -0.000328408
+Corner sigmas: [0.00089284545, 0.00085062115, 0.00072714122, 0.00067769166, 0.00072394358, 0.00068965327] Median = 0.000725542
+Corner means: [2.0707819e-05, -0.00037997006, 6.766431e-05, -0.00046326226, 9.0941416e-05, -0.00041102982] Median = -0.000179631
+Corner sigmas: [0.0010959129, 0.0010650513, 0.00096137659, 0.001022986, 0.00093360781, 0.00093407999] Median = 0.000992181
+Corner means: [-0.00011522261, -0.00021806527, -0.0004322817, -0.00070845394, -0.0002539095, -0.00063227484] Median = -0.000343096
+Corner sigmas: [0.0011705005, 0.0010440218, 0.0010344966, 0.00096547935, 0.00097297016, 0.00091149949] Median = 0.00100373
+Corner means: [3.5742862e-05, -0.00022112607, 6.5073655e-05, -0.00052863301, 8.37603e-05, -0.00038878547] Median = -9.26916e-05
+Corner sigmas: [0.0013383111, 0.0012839476, 0.0011957082, 0.0012189015, 0.0011609, 0.0011577947] Median = 0.0012073
+Corner means: [-0.00022056761, -0.00032175204, -0.00051421224, -0.00068594713, -0.00022659457, -0.0006104717] Median = -0.000417982
+Corner sigmas: [0.0013324401, 0.0013456919, 0.0011758643, 0.0011335051, 0.0012047305, 0.001117893] Median = 0.0011903
+Corner means: [-1.2880589e-05, -0.00019781048, 0.00010543914, -0.00051073811, 7.81665e-05, -0.00049608812] Median = -0.000105346
+Corner sigmas: [0.0015453452, 0.0015510061, 0.0017123102, 0.0017713284, 0.0015579951, 0.0015440922] Median = 0.0015545
+Corner means: [-0.00011421633, -0.00030598746, -0.0006275723, -0.0010536907, -0.00029693751, -0.00071669975] Median = -0.00046678
+Corner sigmas: [0.00164473, 0.0016747798, 0.0017955222, 0.0017526787, 0.0015924186, 0.0014658913] Median = 0.00165975
+Corner means: [6.7989233e-05, -0.00040441981, 8.3155719e-05, -0.00059453316, 0.00016079805, -0.0004193265] Median = -0.000168215
+Corner sigmas: [0.0010221195, 0.0010112462, 0.00087494048, 0.00091060728, 0.00083403068, 0.0008849969] Median = 0.000897802
+Corner means: [-0.00013775616, -0.00029292412, -0.00037572425, -0.000597868, -0.00022195243, -0.0005390321] Median = -0.000334324
+Corner sigmas: [0.0010917905, 0.0010064885, 0.00088062114, 0.00084406091, 0.00091190432, 0.00080062391] Median = 0.000896263
+Corner means: [-1.1891968e-05, -0.00021250274, 0.00010299115, -0.00039394002, 0.00010791192, -0.00041249351] Median = -0.000112197
+Corner sigmas: [0.0011301525, 0.0011368834, 0.0019931684, 0.0021822136, 0.0014244401, 0.0014683274] Median = 0.00144638
+Corner means: [-0.00036348088, -0.00026257054, -0.00066400459, 5.6379176e-05, -0.00025404969, -0.00024439269] Median = -0.00025831
+Corner sigmas: [0.0011527579, 0.0011227496, 0.0020534133, 0.0020929538, 0.0014186911, 0.0014103464] Median = 0.00141452
+Corner means: [-0.00010472547, 7.7249912e-05, -0.00022952275, 0.00056045601, -6.9319824e-05, 9.8486817e-05] Median = 3.96504e-06
+Corner sigmas: [0.00029635607, 0.00034921372, 0.0005349883, 0.00057719322, 0.00038297405, 0.00043000016] Median = 0.000406487
+Corner means: [-0.00042992059, 0.00028281883, -0.00058044022, 0.00011411362, -0.00049867819, 7.3057832e-05] Median = -0.000178431
+Corner sigmas: [0.00030561787, 0.00030757196, 0.00048349818, 0.00050506968, 0.00041540788, 0.00037469179] Median = 0.00039505
+Corner means: [-0.00013860222, 3.2298733e-05, -0.00019205126, 1.5504691e-05, 2.0311814e-05, -8.1065758e-05] Median = -3.27805e-05
+Corner sigmas: [0.0003512651, 0.00042255619, 0.0005741457, 0.00060422334, 0.00039676661, 0.00045451062] Median = 0.000438533
+Corner means: [-0.00047240983, 0.00033506565, -0.0006119358, 0.00013850673, -0.00051029871, 0.00017553853] Median = -0.000166952
+Corner sigmas: [0.00034745751, 0.00037090207, 0.00054849347, 0.00056056533, 0.00046634843, 0.00038708778] Median = 0.000426718
+Corner means: [-0.00014553362, 4.5057059e-05, -0.00013709647, 3.717974e-05, 1.7810971e-05, -9.1279988e-05] Median = -3.67345e-05
+Corner sigmas: [0.00049719121, 0.00059157214, 0.00040885908, 0.00046564493, 0.00037026303, 0.00044207386] Median = 0.000453859
+Corner means: [-0.00051167852, 0.00058524398, -0.00046787396, 0.00017470772, -0.00051281758, 0.00034985831] Median = -0.000146583
+Corner sigmas: [0.00051205599, 0.00050458475, 0.00038529784, 0.00039130397, 0.00039080204, 0.00036645762] Median = 0.000391053
+Corner means: [-6.519493e-05, 0.00023364912, -8.3765495e-05, 0.00010283639, -4.8223537e-05, 0.00010212413] Median = 2.69503e-05
+Corner sigmas: [0.00054094318, 0.00063710858, 0.00041806459, 0.00047725378, 0.00037954299, 0.00046092013] Median = 0.000469087
+Corner means: [-0.00052718044, 0.00060214155, -0.00049251382, 0.00023339047, -0.00050861202, 0.00039638157] Median = -0.000129562
+Corner sigmas: [0.00055641943, 0.00055278814, 0.00039137597, 0.00039210546, 0.00039201175, 0.00036979353] Median = 0.000392059
+Corner means: [-6.4393418e-05, 0.00014800101, -8.1628874e-05, 5.6219516e-05, -2.6115989e-05, 3.1193835e-05] Median = 2.53892e-06
+Corner sigmas: [0.00053017243, 0.00063370931, 0.00041136268, 0.00048378471, 0.00037478204, 0.00046219534] Median = 0.00047299
+Corner means: [-0.00051704369, 0.00057480746, -0.00046451873, 0.00021511641, -0.00051215634, 0.00035127014] Median = -0.000124701
+Corner sigmas: [0.0005551934, 0.00055437523, 0.00038987814, 0.00040004952, 0.0004125821, 0.00039215505] Median = 0.000406316
+Corner means: [-8.9536552e-05, 0.00011627167, -0.00010336177, 4.7697526e-05, -5.3637265e-05, -5.4445786e-06] Median = -2.95409e-05
+Corner sigmas: [0.00058293663, 0.00067342946, 0.00038156085, 0.00045671072, 0.00039886433, 0.0004985382] Median = 0.000477624
+Corner means: [-0.00045746498, 0.00053943205, -0.000385858, 0.0002244451, -0.00042006694, 0.00032677097] Median = -8.07064e-05
+Corner sigmas: [0.0005864604, 0.00058784895, 0.00038318115, 0.0003874322, 0.00045471056, 0.00043447132] Median = 0.000444591
+Corner means: [-0.00017690394, 0.00024281058, -0.00011750382, 6.7654502e-05, -3.1260606e-05, 1.3610565e-05] Median = -8.82502e-06
+Corner sigmas: [0.00057294214, 0.00069546909, 0.00040007327, 0.00049290701, 0.00041826465, 0.00051434018] Median = 0.000503624
+Corner means: [-0.00039704365, 0.00056648749, -0.0003703355, 0.00026691536, -0.00034729004, 0.00034304996] Median = -4.01873e-05
+Corner sigmas: [0.0005886876, 0.00061862252, 0.00039386784, 0.00039862847, 0.00048321305, 0.00042674161] Median = 0.000454977
+Corner means: [-0.00021241557, 0.00033818427, -0.00015385916, 0.00012375649, -3.9501687e-05, 0.00011532065] Median = 3.79095e-05
+Corner sigmas: [0.00037152256, 0.00043839615, 0.00041329901, 0.00045220653, 0.00035532194, 0.00043683124] Median = 0.000425065
+Corner means: [-0.0004726222, 0.00036671862, -0.0003874473, 0.00016958029, -0.00046054693, 0.00021374805] Median = -0.000108934
+Corner sigmas: [0.00039037567, 0.0003950267, 0.00039295183, 0.00041187057, 0.00041807181, 0.00035857843] Median = 0.000393989
+Corner means: [-0.00013716324, 0.00012600848, -0.00010185715, 7.9259582e-05, -6.3934726e-06, -2.5637597e-05] Median = -1.60155e-05
+Corner sigmas: [0.00034853793, 0.00043362027, 0.0004088874, 0.00045917503, 0.00035269166, 0.00041899565] Median = 0.000413942
+Corner means: [-0.0005226247, 0.00037820116, -0.00044480653, 0.00016993632, -0.00042987551, 0.00023330495] Median = -0.00012997
+Corner sigmas: [0.00035668962, 0.0003883508, 0.0003823631, 0.0003854465, 0.00042838804, 0.00035742682] Median = 0.000383905
+Corner means: [-0.00018660021, 0.00012669037, -0.0001256339, 1.0196043e-05, 1.2891374e-05, -1.0116019e-05] Median = 4.00119e-08
+Corner sigmas: [0.00035534875, 0.00044419963, 0.00038970431, 0.00044441732, 0.00035962346, 0.00042271335] Median = 0.000406209
+Corner means: [-0.00047785859, 0.00038422708, -0.0004137331, 0.00014292153, -0.00037744563, 0.0001877428] Median = -0.000117262
+Corner sigmas: [0.00034653378, 0.00037329225, 0.00036761144, 0.00038658624, 0.00045015928, 0.00037068763] Median = 0.00037199
+Corner means: [-0.00018849611, 0.00013546291, -0.00012199521, 3.1526219e-05, 4.9444661e-05, -1.1587739e-07] Median = 1.57052e-05
+Corner sigmas: [0.0060774712, 0.0060814465, 0.0065606833, 0.0068209195, 0.0060005477, 0.0063301693] Median = 0.00620581
+Corner means: [-0.0016869542, 0.00093154213, -0.0046579782, 0.0028471716, -0.0031347657, 0.0017303257] Median = -0.000377706
+Corner sigmas: [0.0063291756, 0.0061481842, 0.0065332814, 0.0064649251, 0.0062506315, 0.0062334831] Median = 0.0062899
+Corner means: [0.001136796, 0.00018264214, -0.00067309808, 0.0016095387, -0.0003658811, 0.00081607659] Median = 0.000499359
+Corner sigmas: [0.0044194269, 0.0045888843, 0.0050076889, 0.0054832073, 0.0045800651, 0.0047404263] Median = 0.00466466
+Corner means: [-0.0018818676, 0.0014581964, -0.0054262429, 0.0030349698, -0.0033239578, 0.0021768434] Median = -0.000211836
+Corner sigmas: [0.0049757035, 0.0046086712, 0.0048538116, 0.0050597815, 0.0046229567, 0.0046703443] Median = 0.00476208
+Corner means: [0.00037112672, 2.4699521e-05, -0.00083896075, 0.0011512307, -0.00035002464, 0.00061351748] Median = 0.000197913
+Corner sigmas: [0.0034165112, 0.0034361777, 0.0059658196, 0.0061849747, 0.0043477896, 0.0042072507] Median = 0.00427752
+Corner means: [-0.0012610072, 0.0011567065, -0.0032699083, 0.0020381343, -0.0018649403, 0.0012607264] Median = -5.21503e-05
+Corner sigmas: [0.0036122731, 0.0035067478, 0.0061228885, 0.0063227047, 0.0042966865, 0.0043844078] Median = 0.00434055
+Corner means: [-0.00033124234, 0.00078338949, -0.001383053, 0.0016836716, -0.00050047063, 0.0011191271] Median = 0.000226074
+Corner sigmas: [0.0027137785, 0.0028652013, 0.0047198087, 0.0087301228, 0.0034423894, 0.003854333] Median = 0.00364836
+Corner means: [-0.0022946266, 0.0016849167, -0.019340402, 0.0080862446, -0.0045582922, 0.0029711174] Median = -0.000304855
+Corner sigmas: [0.0035732936, 0.0028051778, 0.0059643509, 0.0041694967, 0.0035951524, 0.003519088] Median = 0.00358422
+Corner means: [0.0016664, -0.0017687338, 0.00082664605, -0.00066754967, 4.6705667e-05, -0.00032093801] Median = -0.000137116
+Corner sigmas: [0.0026228088, 0.0028023201, 0.0047576353, 0.0047660535, 0.0034305698, 0.0035306215] Median = 0.0034806
+Corner means: [-0.0012776591, 0.0009597991, -0.0017905546, 0.0013969712, -0.0010496872, 0.00094267842] Median = -5.35044e-05
+Corner sigmas: [0.0027222673, 0.0026854665, 0.0049737627, 0.0050453329, 0.0035741983, 0.0035533039] Median = 0.00356375
+Corner means: [-0.00054970273, 0.00088218518, -0.001414789, 0.0017570927, -0.00062442548, 0.0007997182] Median = 0.000125008
+Corner sigmas: [0.0092039052, 0.009207556, 0.0060184905, 0.0061931033, 0.0081476336, 0.0079773115] Median = 0.00806247
+Corner means: [0.00040226532, 0.0058213449, -0.00010916856, 0.0014264929, 0.00077906274, 0.0030811126] Median = 0.00110278
+Corner sigmas: [0.0095919324, 0.065035142, 0.0069335909, 0.0137373, 0.0084114615, 0.046582654] Median = 0.0116646
+Corner means: [0.001345986, 0.045171965, 0.0006687186, 0.0071223769, 0.00086974876, 0.029719623] Median = 0.00423418
+Corner sigmas: [0.0091026267, 0.0099795656, 0.0063255993, 0.0063358946, 0.007803794, 0.008754787] Median = 0.00827929
+Corner means: [0.0030263963, 0.0015026566, -0.00019463028, 0.00036156073, 0.0011780935, 0.00049524114] Median = 0.000836667
+Corner sigmas: [0.0097760605, 0.010024212, 0.0064586438, 0.0071481988, 0.008534261, 0.0087968186] Median = 0.00866554
+Corner means: [-0.00078236189, -0.0012759629, -0.00054873351, -0.00066943339, -0.00057729223, -0.00089622138] Median = -0.000725898
+#+end_example
+
 * TODO New version of spectral map
 ** Convert wavelengths to velocities
 :PROPERTIES:
@@ -7357,6 +7772,7 @@ nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
   from astropy.io import fits
   from astropy import coordinates as coord
   from astropy import units as u
+  from astropy import constants as const
   from astropy.wcs import WCS
   from pyslalib.slalib import sla_dcs2c, sla_evp, sla_rverot, sla_obs
 
@@ -7423,6 +7839,30 @@ nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
   def geo_topo_correction(ra, dec, st, obs_lat):
       """Motion of telescope in geocentric frame"""
       return sla_rverot(obs_lat.radian, ra.radian, dec.radian, st.radian)
+
+
+  LIGHT_SPEED_KMS = const.c.to('km/s').value
+  def vels2waves(vels, restwav, hdr):
+      """Heliocentric radial velocity (in km/s) to observed wavelength (in
+      m, or whatever units restwav is in)
+
+      """
+      # Heliocentric correction
+      vels = np.array(vels) + helio_topo_from_header(hdr)
+      waves = restwav*(1.0 + vels/LIGHT_SPEED_KMS)
+      return waves
+
+
+  def waves2vels(waves, restwav, hdr):
+      """Observed wavelength to Heliocentric radial velocity (in m/s) 
+
+      """
+      vels = const.c*(waves - restwav)/restwav
+      # Heliocentric correction
+      vels -= helio_topo_from_header(hdr)*u.km/u.s
+
+      return vels
+
 #+END_SRC
 *** Script to test obtaining heliocentric correction from spectrum headers
 :PROPERTIES:
@@ -7525,13 +7965,12 @@ nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
   from astropy.wcs import WCS
   from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
   import astropy.units as u
-  from astropy import constants as const
-  from helio_utils import helio_topo_from_header
+  from helio_utils import helio_topo_from_header, vels2waves
 
   if len(sys.argv) == 3:
       line_id = sys.argv[1]
       vrange = sys.argv[2]
-  elif len(sys.argv) == 2:
+  elif len(sys.argv) == 2:t
       line_id = sys.argv[1]
       vrange = None
   else:
@@ -7541,17 +7980,6 @@ nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
       n = len(waves)
       pixels, _, _ = w.all_world2pix(waves, [0]*n, [0]*n, 0)
       return pixels
-
-  LIGHT_SPEED_KMS = const.c.to('km/s').value
-  def vels2waves(vels, restwav, hdr):
-      """Heliocentric radial velocity (in km/s) to observed wavelength (in
-      m, or whatever units restwav is in)
-
-      """
-      # Heliocentric correction
-      vels = np.array(vels) + helio_topo_from_header(hdr)
-      waves = restwav*(1.0 + vels/LIGHT_SPEED_KMS)
-      return waves
 
   # First set up WCS for the output image
   #
@@ -7573,7 +8001,7 @@ nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
   slit_width = 2.0                # width in arcsec of 150 micron slit
   slit_pix_width = slit_width/pixel_scale
 
-  speclist = glob.glob('Calibrated/*-{}.fits'.format(line_id))
+  speclist = glob.glob('Calibrated/BGsub/*-{}.fits'.format(line_id))
 
   # Window widths for line and BG
   dwline = 7.0*u.Angstrom
@@ -7676,6 +8104,8 @@ nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
       ]).writeto('new-slits-{}.fits'.format(label), clobber=True)
 
 #+END_SRC
+
+#+RESULTS:
 
 
 ** Run spectral-map.py for the nii or ha spectra
@@ -8413,13 +8843,14 @@ xpaset -p ds9 fits $PWD/new-slits-nii-over-ha-allvels.fits
 
 ** The red bows
 :LOGBOOK:
-CLOCK: [2015-09-28 Mon 11:53]
+CLOCK: [2015-09-28 Mon 11:53]--[2015-09-29 Tue 09:16] => 21:23
 :END:
 I have marked 4 different bows in the region file [[file:red-bow-all.reg]]
 + Red Bow NW
 + Red Bow NE
 + Red Bow SE
 + Red Bow SW
+
 * T diagnostics from linewidths
 + We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum
 + For the jet knots, assuming they are kinematically homogeneous, we should be able to measure the T from

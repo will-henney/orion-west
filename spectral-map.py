@@ -6,13 +6,12 @@ from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
 import astropy.units as u
-from astropy import constants as const
-from helio_utils import helio_topo_from_header
+from helio_utils import helio_topo_from_header, vels2waves
 
 if len(sys.argv) == 3:
     line_id = sys.argv[1]
     vrange = sys.argv[2]
-elif len(sys.argv) == 2:
+elif len(sys.argv) == 2:t
     line_id = sys.argv[1]
     vrange = None
 else:
@@ -22,17 +21,6 @@ def waves2pixels(waves, w):
     n = len(waves)
     pixels, _, _ = w.all_world2pix(waves, [0]*n, [0]*n, 0)
     return pixels
-
-LIGHT_SPEED_KMS = const.c.to('km/s').value
-def vels2waves(vels, restwav, hdr):
-    """Heliocentric radial velocity (in km/s) to observed wavelength (in
-    m, or whatever units restwav is in)
-
-    """
-    # Heliocentric correction
-    vels = np.array(vels) + helio_topo_from_header(hdr)
-    waves = restwav*(1.0 + vels/LIGHT_SPEED_KMS)
-    return waves
 
 # First set up WCS for the output image
 #
@@ -54,7 +42,7 @@ outweights = np.zeros((NY, NX))
 slit_width = 2.0                # width in arcsec of 150 micron slit
 slit_pix_width = slit_width/pixel_scale
 
-speclist = glob.glob('Calibrated/*-{}.fits'.format(line_id))
+speclist = glob.glob('Calibrated/BGsub/*-{}.fits'.format(line_id))
 
 # Window widths for line and BG
 dwline = 7.0*u.Angstrom
