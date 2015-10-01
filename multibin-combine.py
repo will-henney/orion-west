@@ -10,7 +10,7 @@ except:
     sys.exit()
 
 nlist = [1, 2, 4, 8, 16, 32]
-minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 0.0]
+minweights = [0.5, 1.0, 2.0, 4.0, 8.0, 8.0]
 outim = np.zeros((2048, 2048))
 for n, minw in reversed(list(zip(nlist, minweights))):
     fn = '{}-bin{:03d}.fits'.format(prefix, n)

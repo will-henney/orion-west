@@ -11,7 +11,7 @@ from helio_utils import helio_topo_from_header, vels2waves
 if len(sys.argv) == 3:
     line_id = sys.argv[1]
     vrange = sys.argv[2]
-elif len(sys.argv) == 2:t
+elif len(sys.argv) == 2:
     line_id = sys.argv[1]
     vrange = None
 else:
@@ -68,7 +68,7 @@ for fn in speclist:
     for k, v in good_pixels.items():
         if k in fn:
             goodslice = slice(*v)
-        
+      
     # Find per-slit weight
     slit_weight = spechdu.header['WEIGHT']
 
@@ -136,7 +136,7 @@ if vrange is None:
     label = line_id + '-allvels'
 else:
     label = line_id + vrange
-  
+
 fits.HDUList([
     fits.PrimaryHDU(),
     fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),

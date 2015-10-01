@@ -7342,8 +7342,8 @@ tha = ha.header['EXPTIME']
 nii.data *= tha/(tnii*ha.data)
 nii.writeto('wfpc2-mosaic-f658-over-f656.fits', clobber=True)
 #+END_SRC
-
-* TODO [1/2] Final tweaks to the zero level - fit 2D Chebyshev
+* DONE [2/2] Final tweaks to the zero level - fit 2D Chebyshev
+CLOSED: [2015-09-30 Wed 19:26]
 :LOGBOOK:
 CLOCK: [2015-09-29 Tue 09:16]
 :END:
@@ -7351,7 +7351,10 @@ CLOCK: [2015-09-29 Tue 09:16]
 + Plan is to fit a 2D Chebyshev surface to the regions away from the lines
 + [X] First a pilot program that works on the calibrated spectra
   + 
-+ [ ] If that works, then incoroprate it directly into the calibration process
++ [X] If that works, then incorporate it directly into the calibration process
+  + Finally decided not to do this - we keep it as a separate step
+  + Application to all the slits is [[id:41519B0D-E285-4BD1-929E-763BE12298F8][down here]]
+  + Corrected spectra are saved to [[file:Calibrated/BGsub/]]
 
 
 ** Program to fit 2D Chebyshev to so-called continuum: chebfit2d.py 
@@ -7511,6 +7514,9 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 
 
 ** Apply to all the slits
+:PROPERTIES:
+:ID:       41519B0D-E285-4BD1-929E-763BE12298F8
+:END:
 + At the same time, we will change wavelength to Vhel in the FITS headers
 + And we could try and add pixel coordinates for the output image array too. 
 
@@ -7526,7 +7532,7 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 #+END_SRC
 
 #+RESULTS:
-#+begin_example1
+#+begin_example
 Corner sigmas: [0.0014632043, 0.0014105592, 0.0013509666, 0.001325192, 0.0054909131, 0.007089389] Median = 0.00143688
 Corner means: [-0.00022139779, -0.00044154807, -0.00031040475, -0.0008519371, -0.0019082779, -0.0030134178] Median = -0.000646743
 Corner sigmas: [0.001477215, 0.0010485579, 0.0013697137, 0.0010426297, 0.0014074636, 0.0012496385] Median = 0.00130968
@@ -7753,6 +7759,79 @@ Corner sigmas: [0.0097760605, 0.010024212, 0.0064586438, 0.0071481988, 0.0085342
 Corner means: [-0.00078236189, -0.0012759629, -0.00054873351, -0.00066943339, -0.00057729223, -0.00089622138] Median = -0.000725898
 #+end_example
 
+
+* TODO Back-propagate the heliocentric velocities to the spectra
++ This will allow better cross-referencing between the isovelocity images and the spectra
++ We will also try and add a better spatial coordinate WCS
+  + One possibility would be to use the pixels of the output grid from the spectral maps
+
+** Program to add a better wcs to the spectra: spec_augment_wcs.py
+:PROPERTIES:
+:header-args: :tangle spec_augment_wcs.py :comments link
+:END:
+
+The imports
+#+BEGIN_SRC python
+  from astropy.io import fits
+  from astropy import units as u
+  from astropy.wcs import WCS
+  from helio_utils import waves2vels
+#+END_SRC
+
+
+This is the WCS for the spectral maps, which is copied from down [[id:20ADFA6F-DE49-454E-B433-D684CF3FB826][here]]. The idea is that we can use this to define the spatial WCS for our slit spectrum that gives the corresponding pixel of the map. 
+#+BEGIN_SRC python
+  def get_specmap_wcs():
+      pixel_scale = 0.5               # arcsec
+      NX, NY = 2048, 2048
+      dRA, dDec = -pixel_scale/3600., pixel_scale/3600.
+      RA0, Dec0 = 83.69, -5.429
+      w = WCS(naxis=2)
+      w.wcs.crpix = [0.5*(1 + NX), 0.5*(1 + NY)]
+      w.wcs.cdelt = [dRA, dDec]
+      w.wcs.crval = [RA0, Dec0]
+      w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
+      w.wcs.cunit = ['deg', 'deg']
+      return w
+#+END_SRC
+
+Function to fix up a single fits file
+#+BEGIN_SRC python
+  def fix_up_some_new_wcs(filename):
+      hdu = fits.open(filename)[0]  # Always use first HDU in file
+      # Start with the Wav, RA, Dec WCS
+      wold = WCS(hdu.header, key='A')
+
+      # This is where we will put the new stuff
+      wnew = wold.deepcopy()
+
+      # First do the velocity part
+      wav0, dwav = wold.wcs.crval[0], wold.wcs.cdelt[0]
+      vel0, vel1 = waves2vels([wav0, wav0 + dwav]*u.m,
+                              wold.wcs.restwav*u.m, hdu.header)
+      dvel = vel1 - vel0
+      wnew.wcs.crval[0] = vel0.to('km/s').value
+      wnew.wcs.cdelt[0] = dvel.to('km/s').value
+      wnew.wcs.cunit[0] = u.km/u.s
+      wnew.wcs.ctype[0] = 'VELO'
+      wnew.wcs.cname[0] = 'Heliocentric velocity'
+      wnew.wcs.specsys = 'HELIOCENT'
+  
+      # Now do the spatial part
+      wim = get_specmap_wcs()
+      RAs, Decs = wold.celestial.all_pix2world([0, 1, 0], [0, 0, 1], 0)
+      [X0, X1, X2], [Y0, Y1, Y2] = wim.all_world2pix(RAs, Decs, 0)
+      wnew.wcs.crval[1:] = [X0, Y0]
+      wnew.wcs.cdelt[1:] = [1., 1.]
+      wnew.wcs.pc[1:, 1:] = [[X1 - X0, Y1 - Y0], [X2 - X0, Y2 - Y0]]
+      wnew.wcs.ctype[1], wnew.wcs.ctype[2] = ['LINEAR']*2
+      wnew.wcs.cname[1], wnew.wcs.cname[2] = ['X pixel', 'Y pixel']
+      wnew.wcs.cunit[1], wnew.wcs.cunit[2] = [u.dimensionless_unscaled]*2
+  
+      hdu.header.update(wnew.to_header(key='V'))
+
+#+END_SRC
+
 * TODO New version of spectral map
 ** Convert wavelengths to velocities
 :PROPERTIES:
@@ -7970,7 +8049,7 @@ Corner means: [-0.00078236189, -0.0012759629, -0.00054873351, -0.00066943339, -0
   if len(sys.argv) == 3:
       line_id = sys.argv[1]
       vrange = sys.argv[2]
-  elif len(sys.argv) == 2:t
+  elif len(sys.argv) == 2:
       line_id = sys.argv[1]
       vrange = None
   else:
@@ -8027,7 +8106,7 @@ Corner means: [-0.00078236189, -0.0012759629, -0.00054873351, -0.00066943339, -0
       for k, v in good_pixels.items():
           if k in fn:
               goodslice = slice(*v)
-          
+        
       # Find per-slit weight
       slit_weight = spechdu.header['WEIGHT']
 
@@ -8067,7 +8146,7 @@ Corner means: [-0.00078236189, -0.0012759629, -0.00054873351, -0.00066943339, -0
       # Trim off bad parts of slit
       profile = profile[goodslice]
       slit_coords = slit_coords[goodslice]
-  
+
       # Convert to pixel coordinates in output image
       xp, yp = skycoord_to_pixel(slit_coords, w, 0)
 
@@ -8095,7 +8174,7 @@ Corner means: [-0.00078236189, -0.0012759629, -0.00054873351, -0.00066943339, -0
       label = line_id + '-allvels'
   else:
       label = line_id + vrange
-    
+  
   fits.HDUList([
       fits.PrimaryHDU(),
       fits.ImageHDU(header=w.to_header(), data=outimage, name='slits'),
@@ -8473,7 +8552,7 @@ xpaset -p ds9 fits $PWD/new-slits-ha-allvels-bin064.fits
 #+END_SRC
 
 #+BEGIN_SRC sh :results silent
-  suff=bin032
+  suff=bin004
   xpaset -p ds9 rgb red
   xpaset -p ds9 fits $PWD/new-slits-ha+030+050-$suff.fits
   xpaset -p ds9 rgb green
@@ -8507,7 +8586,8 @@ CLOSED: [2015-09-24 Thu 09:06]
 :header-args: :tangle multibin-combine.py :comments link
 :END:
 
-+ [2015-09-25 Fri] We set minweight = 0 for the coarsest grid so that the spatial coverage at that level does not depend on the line intensity, only on the arrangement of slits.  This is necessary so that all RGB channels have the same coverage when we combine them in a color image. 
++ [2015-09-25 Fri] We set minweight = 0 for the coarsest grid so that the spatial coverage at that level does not depend on the line intensity, only on the arrangement of slits.  This is necessary so that all RGB channels have the same coverage when we combine them in a color image.
++ [2015-09-30 Wed] But this has the disadvantage that the hig velocity channels where the intensity is very low often do not have enough signal, even in the coarsest bins - so we get noisy rubbish there
 
 #+BEGIN_SRC python
 import sys
@@ -8521,7 +8601,7 @@ except:
     sys.exit()
 
 nlist = [1, 2, 4, 8, 16, 32]
-minweights = [0.5, 1.0, 2.0, 2.0, 2.0, 0.0]
+minweights = [0.5, 1.0, 2.0, 4.0, 8.0, 8.0]
 outim = np.zeros((2048, 2048))
 for n, minw in reversed(list(zip(nlist, minweights))):
     fn = '{}-bin{:03d}.fits'.format(prefix, n)
@@ -8667,7 +8747,7 @@ We actually calculate out to -130, but we don't use it in the image
   farblueranges='-090-070 -110-090 -130-110'
   for vrange in $farblueranges; do
       python multibin-combine.py new-slits-ha$vrange 1000
-      python multibin-combine.py new-slits-nii$vrange 300
+      python multibin-combine.py new-slits-nii$vrange 1000
   done
 #+END_SRC
 
@@ -8705,8 +8785,8 @@ Instead we overlap with the blue flank above.  The red channel here is the blue 
 #+BEGIN_SRC sh :results silent
   nearredranges='+050+070 +070+090 +090+110'
   for vrange in $nearredranges; do
-      python multibin-combine.py new-slits-ha$vrange 1e4
-      python multibin-combine.py new-slits-nii$vrange 3e3
+      python multibin-combine.py new-slits-ha$vrange 3e3
+      python multibin-combine.py new-slits-nii$vrange 1e3
   done
 #+END_SRC
 
@@ -8724,12 +8804,26 @@ Instead we overlap with the blue flank above.  The red channel here is the blue 
   xpaset -p ds9 frame next
 #+END_SRC
 
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-nii+090+110-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-nii+070+090-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-nii+050+070-$suff.fits
+  sleep 2
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
 *** Far red wing: V = +110 to +170 km/s
 #+BEGIN_SRC sh :results silent
   farredranges='+110+130 +130+150 +150+170'
   for vrange in $farredranges; do
-      python multibin-combine.py new-slits-ha$vrange 3000
-      python multibin-combine.py new-slits-nii$vrange 1000
+      python multibin-combine.py new-slits-ha$vrange 900
+      python multibin-combine.py new-slits-nii$vrange 900
   done
 #+END_SRC
 
@@ -8741,6 +8835,20 @@ Instead we overlap with the blue flank above.  The red channel here is the blue 
   xpaset -p ds9 fits $PWD/new-slits-ha+130+150-$suff.fits
   xpaset -p ds9 rgb blue
   xpaset -p ds9 fits $PWD/new-slits-ha+110+130-$suff.fits
+  sleep 2
+  xpaset -p ds9 frame prev
+  xpaset -p ds9 match frame wcs
+  xpaset -p ds9 frame next
+#+END_SRC
+
+#+BEGIN_SRC sh :results silent
+  suff=multibin
+  xpaset -p ds9 rgb red
+  xpaset -p ds9 fits $PWD/new-slits-nii+150+170-$suff.fits
+  xpaset -p ds9 rgb green
+  xpaset -p ds9 fits $PWD/new-slits-nii+130+150-$suff.fits
+  xpaset -p ds9 rgb blue
+  xpaset -p ds9 fits $PWD/new-slits-nii+110+130-$suff.fits
   sleep 2
   xpaset -p ds9 frame prev
   xpaset -p ds9 match frame wcs
