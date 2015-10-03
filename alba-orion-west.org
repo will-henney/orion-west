@@ -7772,6 +7772,7 @@ Corner means: [-0.00078236189, -0.0012759629, -0.00054873351, -0.00066943339, -0
 
 The imports
 #+BEGIN_SRC python
+  import sys
   from astropy.io import fits
   from astropy import units as u
   from astropy.wcs import WCS
@@ -7797,7 +7798,7 @@ This is the WCS for the spectral maps, which is copied from down [[id:20ADFA6F-D
 
 Function to fix up a single fits file
 #+BEGIN_SRC python
-  def fix_up_some_new_wcs(filename):
+  def fix_up_some_new_wcs(filename, old_new=('.fits', '-vhel.fits')):
       hdu = fits.open(filename)[0]  # Always use first HDU in file
       # Start with the Wav, RA, Dec WCS
       wold = WCS(hdu.header, key='A')
@@ -7813,24 +7814,420 @@ Function to fix up a single fits file
       wnew.wcs.crval[0] = vel0.to('km/s').value
       wnew.wcs.cdelt[0] = dvel.to('km/s').value
       wnew.wcs.cunit[0] = u.km/u.s
-      wnew.wcs.ctype[0] = 'VELO'
+      wnew.wcs.ctype[0] = 'VOPT'
       wnew.wcs.cname[0] = 'Heliocentric velocity'
-      wnew.wcs.specsys = 'HELIOCENT'
-  
+      wnew.wcs.specsys = 'HELIOCEN'
+      wnew.wcs.name = "VHELIO"
+
       # Now do the spatial part
       wim = get_specmap_wcs()
       RAs, Decs = wold.celestial.all_pix2world([0, 1, 0], [0, 0, 1], 0)
+      # print('First two pixels RA and Dec:', RAs, Decs)
       [X0, X1, X2], [Y0, Y1, Y2] = wim.all_world2pix(RAs, Decs, 0)
+      # print('First two pixels X and Y:', [X0, X1, X2], [Y0, Y1, Y2])
       wnew.wcs.crval[1:] = [X0, Y0]
       wnew.wcs.cdelt[1:] = [1., 1.]
       wnew.wcs.pc[1:, 1:] = [[X1 - X0, Y1 - Y0], [X2 - X0, Y2 - Y0]]
       wnew.wcs.ctype[1], wnew.wcs.ctype[2] = ['LINEAR']*2
-      wnew.wcs.cname[1], wnew.wcs.cname[2] = ['X pixel', 'Y pixel']
+      wnew.wcs.cname[1], wnew.wcs.cname[2] = ['X', 'Y']
       wnew.wcs.cunit[1], wnew.wcs.cunit[2] = [u.dimensionless_unscaled]*2
-  
+
+      # Update header with a new WCS called V
       hdu.header.update(wnew.to_header(key='V'))
 
+      # TODO: change the default header too
+
+      # New blank wcs with only 2 dimensions
+      wdef = WCS(naxis=2)
+      # Copy over the velocity part 
+      for k in 'crval', 'crpix', 'cdelt', 'cunit', 'ctype', 'cname':
+          getattr(wdef.wcs, k)[0] = getattr(wnew.wcs, k)[0]
+      wdef.wcs.pc[0, 0] = wnew.wcs.pc[0, 0]
+
+      # Check for orientation
+      slit_center = hdu.header['NAXIS2']/2
+      if abs(wnew.wcs.pc[1, 1]) > abs(wnew.wcs.pc[1, 2]):
+          # largely horizontal slit - use X-axis
+          jslit = 1
+          _, _, [Ycent] = wnew.all_pix2world([0], [slit_center], [0], 0) 
+          wdef.wcs.name = 'YY{:04d}'.format(int(Ycent))
+      else:
+          # largely vertical slit - use Y-axis
+          jslit = 2
+          _, [Xcent], _ = wnew.all_pix2world([0], [slit_center], [0], 0) 
+          wdef.wcs.name = 'XX{:04d}'.format(int(Xcent))
+
+      # Copy over spatial part (X or Y, depending on orientation)
+      for k in 'crval', 'crpix', 'cunit', 'ctype', 'cname':
+          getattr(wdef.wcs, k)[1] = getattr(wnew.wcs, k)[jslit]
+      # More intuitive to use CDELT instead of PC
+      wdef.wcs.cdelt[1] = wnew.wcs.pc[1, jslit]
+
+      # Update header with new default WCS
+      hdu.header.update(wdef.to_header(key=' '))
+      # Convert from m/s to km/s
+      hdu.header['CUNIT1'] = 'km/s'
+      hdu.header['CRVAL1'] /= 1000.
+      hdu.header['CDELT1'] /= 1000.
+      # Remove the pesky CD keywords
+      for ij in '1_1', '1_2', '2_2', '1_1':
+          if 'CD'+ij in hdu.header:
+              hdu.header.remove('CD'+ij)
+
+      # And flatten data array to 2-dimensions
+      hdu.data, = hdu.data
+
+      # Write a new file 
+      newfilename = filename.replace(*old_new).replace('BGsub/',
+                                                       'BGsub/' + wdef.wcs.name + '-')
+      print('Writing', newfilename)
+      hdu.writeto(newfilename, clobber=True)
 #+END_SRC
+
+
+Read file from command line if called interactively
+
+#+BEGIN_SRC python
+  if __name__ == '__main__':
+      try:
+          fn = sys.argv[1]
+      except:
+          print('Usage:', sys.argv[0], 'FITSFILE')
+          sys.exit()
+
+      fix_up_some_new_wcs(fn)
+#+END_SRC
+
+** Test the addition of the =V= WCS
+#+BEGIN_SRC sh :results output verbatim
+python spec_augment_wcs.py Calibrated/BGsub/2013-02-165-ha.fits
+#+END_SRC
+
+#+RESULTS:
+: Writing Calibrated/BGsub/YY0936-2013-02-165-ha-vhel.fits
+
+#+BEGIN_SRC sh
+xpaset -p ds9 fits $PWD/Calibrated/BGsub/2013-02-165-ha-vhel.fits
+xpaset -p ds9 zoom to fit
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC sh :results silent
+open -n -a SAOImage\ DS9 --args -title maps
+#+END_SRC
+
+
+
+** Add the VHEL and pixel WCS to all the spectra
+
+
+#+BEGIN_SRC sh :results verbatim
+  for f in Calibrated/BGsub/*-{ha,nii}.fits; do
+      python spec_augment_wcs.py $f
+  done
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Writing Calibrated/BGsub/XX1162-2006-02-260-ha-vhel.fits
+Writing Calibrated/BGsub/XX1166-2006-02-270-ha-vhel.fits
+Writing Calibrated/BGsub/XX1170-2006-02-276-ha-vhel.fits
+Writing Calibrated/BGsub/XX1176-2006-02-281-ha-vhel.fits
+Writing Calibrated/BGsub/XX1180-2006-02-286-ha-vhel.fits
+Writing Calibrated/BGsub/XX1182-2006-02-291-ha-vhel.fits
+Writing Calibrated/BGsub/XX1189-2006-02-296-ha-vhel.fits
+Writing Calibrated/BGsub/XX1197-2006-02-303-ha-vhel.fits
+Writing Calibrated/BGsub/XX1259-2006-02-313-ha-vhel.fits
+Writing Calibrated/BGsub/XX1156-2006-02-318-ha-vhel.fits
+Writing Calibrated/BGsub/XX1150-2006-02-326-ha-vhel.fits
+Writing Calibrated/BGsub/XX0430-2007-01-054-ha-vhel.fits
+Writing Calibrated/BGsub/XX0443-2007-01-067-ha-vhel.fits
+Writing Calibrated/BGsub/XX0447-2007-01-072-ha-vhel.fits
+Writing Calibrated/BGsub/XX1154-2007-01b-2037-ha-vhel.fits
+Writing Calibrated/BGsub/XX1189-2007-01b-2041-ha-vhel.fits
+Writing Calibrated/BGsub/XX1204-2007-01b-2045-ha-vhel.fits
+Writing Calibrated/BGsub/XX1218-2007-01b-2049-ha-vhel.fits
+Writing Calibrated/BGsub/XX1232-2007-01b-2053-ha-vhel.fits
+Writing Calibrated/BGsub/XX1251-2007-01b-2057-ha-vhel.fits
+Writing Calibrated/BGsub/XX1141-2007-01b-2061-ha-vhel.fits
+Writing Calibrated/BGsub/XX1389-2010-01-078-ha-vhel.fits
+Writing Calibrated/BGsub/XX1540-2010-01-124-ha-vhel.fits
+Writing Calibrated/BGsub/XX1558-2010-01-128-ha-vhel.fits
+Writing Calibrated/BGsub/XX1557-2010-01-133-ha-vhel.fits
+Writing Calibrated/BGsub/XX1575-2010-01-137-ha-vhel.fits
+Writing Calibrated/BGsub/XX1595-2010-01-145-ha-vhel.fits
+Writing Calibrated/BGsub/XX1616-2010-01-157-ha-vhel.fits
+Writing Calibrated/BGsub/XX1523-2010-01-202-ha-vhel.fits
+Writing Calibrated/BGsub/XX1549-2010-01-206-ha-vhel.fits
+Writing Calibrated/BGsub/XX1568-2010-01-210-ha-vhel.fits
+Writing Calibrated/BGsub/XX1585-2010-01-214-ha-vhel.fits
+Writing Calibrated/BGsub/XX1609-2010-01-219-ha-vhel.fits
+Writing Calibrated/BGsub/XX1620-2010-01-236-ha-vhel.fits
+Writing Calibrated/BGsub/XX1633-2010-01-240-ha-vhel.fits
+Writing Calibrated/BGsub/XX1646-2010-01-244-ha-vhel.fits
+Writing Calibrated/BGsub/XX1601-2010-01-248-ha-vhel.fits
+Writing Calibrated/BGsub/XX1656-2010-01-252-ha-vhel.fits
+Writing Calibrated/BGsub/YY1401-2013-02-024-ha-vhel.fits
+Writing Calibrated/BGsub/YY1120-2013-02-029-ha-vhel.fits
+Writing Calibrated/BGsub/YY1112-2013-02-033-ha-vhel.fits
+Writing Calibrated/BGsub/YY1058-2013-02-149-ha-vhel.fits
+Writing Calibrated/BGsub/YY1068-2013-02-154-ha-vhel.fits
+Writing Calibrated/BGsub/YY1085-2013-02-159-ha-vhel.fits
+Writing Calibrated/BGsub/YY0936-2013-02-165-ha-vhel.fits
+Writing Calibrated/BGsub/YY0955-2013-02-169-ha-vhel.fits
+Writing Calibrated/BGsub/YY1019-2013-02-226-ha-vhel.fits
+Writing Calibrated/BGsub/YY1000-2013-02-232-ha-vhel.fits
+Writing Calibrated/BGsub/YY0971-2013-02-237-ha-vhel.fits
+Writing Calibrated/BGsub/YY1314-2013-12-086-ha-vhel.fits
+Writing Calibrated/BGsub/YY1289-2013-12-090-ha-vhel.fits
+Writing Calibrated/BGsub/YY1312-2013-12-102-ha-vhel.fits
+Writing Calibrated/BGsub/YY1295-2013-12-111-ha-vhel.fits
+Writing Calibrated/BGsub/YY1287-2013-12-116-ha-vhel.fits
+Writing Calibrated/BGsub/YY1308-2015-02-0003-ha-vhel.fits
+Writing Calibrated/BGsub/YY1280-2015-02-0012-ha-vhel.fits
+Writing Calibrated/BGsub/XX1162-2006-02-260-nii-vhel.fits
+Writing Calibrated/BGsub/XX1166-2006-02-270-nii-vhel.fits
+Writing Calibrated/BGsub/XX1170-2006-02-276-nii-vhel.fits
+Writing Calibrated/BGsub/XX1176-2006-02-281-nii-vhel.fits
+Writing Calibrated/BGsub/XX1180-2006-02-286-nii-vhel.fits
+Writing Calibrated/BGsub/XX1182-2006-02-291-nii-vhel.fits
+Writing Calibrated/BGsub/XX1189-2006-02-296-nii-vhel.fits
+Writing Calibrated/BGsub/XX1197-2006-02-303-nii-vhel.fits
+Writing Calibrated/BGsub/XX1259-2006-02-313-nii-vhel.fits
+Writing Calibrated/BGsub/XX1156-2006-02-318-nii-vhel.fits
+Writing Calibrated/BGsub/XX1150-2006-02-326-nii-vhel.fits
+Writing Calibrated/BGsub/XX0430-2007-01-054-nii-vhel.fits
+Writing Calibrated/BGsub/XX0443-2007-01-067-nii-vhel.fits
+Writing Calibrated/BGsub/XX0447-2007-01-072-nii-vhel.fits
+Writing Calibrated/BGsub/XX1154-2007-01b-2037-nii-vhel.fits
+Writing Calibrated/BGsub/XX1189-2007-01b-2041-nii-vhel.fits
+Writing Calibrated/BGsub/XX1204-2007-01b-2045-nii-vhel.fits
+Writing Calibrated/BGsub/XX1218-2007-01b-2049-nii-vhel.fits
+Writing Calibrated/BGsub/XX1232-2007-01b-2053-nii-vhel.fits
+Writing Calibrated/BGsub/XX1251-2007-01b-2057-nii-vhel.fits
+Writing Calibrated/BGsub/XX1141-2007-01b-2061-nii-vhel.fits
+Writing Calibrated/BGsub/XX1389-2010-01-078-nii-vhel.fits
+Writing Calibrated/BGsub/XX1540-2010-01-124-nii-vhel.fits
+Writing Calibrated/BGsub/XX1558-2010-01-128-nii-vhel.fits
+Writing Calibrated/BGsub/XX1557-2010-01-133-nii-vhel.fits
+Writing Calibrated/BGsub/XX1575-2010-01-137-nii-vhel.fits
+Writing Calibrated/BGsub/XX1595-2010-01-145-nii-vhel.fits
+Writing Calibrated/BGsub/XX1616-2010-01-157-nii-vhel.fits
+Writing Calibrated/BGsub/XX1523-2010-01-202-nii-vhel.fits
+Writing Calibrated/BGsub/XX1549-2010-01-206-nii-vhel.fits
+Writing Calibrated/BGsub/XX1568-2010-01-210-nii-vhel.fits
+Writing Calibrated/BGsub/XX1585-2010-01-214-nii-vhel.fits
+Writing Calibrated/BGsub/XX1609-2010-01-219-nii-vhel.fits
+Writing Calibrated/BGsub/XX1620-2010-01-236-nii-vhel.fits
+Writing Calibrated/BGsub/XX1633-2010-01-240-nii-vhel.fits
+Writing Calibrated/BGsub/XX1646-2010-01-244-nii-vhel.fits
+Writing Calibrated/BGsub/XX1601-2010-01-248-nii-vhel.fits
+Writing Calibrated/BGsub/XX1656-2010-01-252-nii-vhel.fits
+Writing Calibrated/BGsub/YY1401-2013-02-024-nii-vhel.fits
+Writing Calibrated/BGsub/YY1120-2013-02-029-nii-vhel.fits
+Writing Calibrated/BGsub/YY1112-2013-02-033-nii-vhel.fits
+Writing Calibrated/BGsub/YY1058-2013-02-149-nii-vhel.fits
+Writing Calibrated/BGsub/YY1068-2013-02-154-nii-vhel.fits
+Writing Calibrated/BGsub/YY1085-2013-02-159-nii-vhel.fits
+Writing Calibrated/BGsub/YY0936-2013-02-165-nii-vhel.fits
+Writing Calibrated/BGsub/YY0955-2013-02-169-nii-vhel.fits
+Writing Calibrated/BGsub/YY1019-2013-02-226-nii-vhel.fits
+Writing Calibrated/BGsub/YY1000-2013-02-232-nii-vhel.fits
+Writing Calibrated/BGsub/YY0971-2013-02-237-nii-vhel.fits
+Writing Calibrated/BGsub/YY1314-2013-12-086-nii-vhel.fits
+Writing Calibrated/BGsub/YY1289-2013-12-090-nii-vhel.fits
+Writing Calibrated/BGsub/YY1312-2013-12-102-nii-vhel.fits
+Writing Calibrated/BGsub/YY1295-2013-12-111-nii-vhel.fits
+Writing Calibrated/BGsub/YY1287-2013-12-116-nii-vhel.fits
+Writing Calibrated/BGsub/YY1308-2015-02-0003-nii-vhel.fits
+Writing Calibrated/BGsub/YY1280-2015-02-0012-nii-vhel.fits
+#+end_example
+
+** Displaying the new calibrated spectra in DS9
+
+*** Delete all exisiting frames
+#+BEGIN_SRC sh :results silent
+xpaset -p ds9 frame delete all
+#+END_SRC
+
+#+name: new-blank-ds9
+#+BEGIN_SRC sh :results silent :var DS9="ds9"
+open -n -a SAOImage\ DS9 --args -title $DS9
+sleep 1
+xpaset -p $DS9 frame delete all
+#+END_SRC
+
+
+*** General function for displaying a bunch of spectra
+
++ Passing glob patterns to shell scripts is really fraught.
++ I am reduced to using =find= instead
+
+#+BEGIN_SRC sh :tangle display-vel-spectra.sh
+files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+ds9=${2:-ds9}
+xpaset -p $ds9 view buttons no
+for f in $files; do
+    xpaset -p $ds9 frame new
+    xpaset -p $ds9 fits $f
+    xpaset -p $ds9 zoom to 3 1
+    xpaset -p $ds9 grid load $PWD/horizontal-axes.grd
+    xpaset -p $ds9 cmap bb
+    xpaset -p $ds9 scale sqrt
+    xpaset -p $ds9 scale limits -0.0003 0.05
+    xpaset -p $ds9 contour no
+    xpaset -p $ds9 contour method smooth
+    xpaset -p $ds9 contour smooth 2
+    xpaset -p $ds9 contour color blue
+    xpaset -p $ds9 contour loadlevels $PWD/ha-contours.lev
+    xpaset -p $ds9 contour yes
+done
+xpaset -p $ds9 contour close
+xpaset -p $ds9 frame 1
+xpaset -p $ds9 match frame wcs
+xpaset -p $ds9 lock frame wcs
+#+END_SRC
+
+#+name: test-sh-args
+#+BEGIN_SRC sh :tangle test-sh-args.sh
+  files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+  for f in $files; do
+      ls -l $f
+  done
+#+END_SRC
+
++ Testing contour setting
++ Important thing is to turn it off while fiddling, then turn it back on at the end
+#+BEGIN_SRC sh
+ds9=spectra
+xpaset -p $ds9 contour no
+xpaset -p $ds9 contour method smooth
+xpaset -p $ds9 contour smooth 4
+xpaset -p $ds9 contour color blue
+xpaset -p $ds9 contour loadlevels $PWD/ha-contours.lev
+xpaset -p $ds9 contour yes
+#+END_SRC
+
+
+*** Trying out the spectra display
+
+**** Horizontal western slits
+#+call: new-blank-ds9("ha-horiz") :results silent
+
+#+BEGIN_SRC sh :results silent
+bash display-vel-spectra.sh YY[01][019]*-ha ha-horiz
+#+END_SRC
+
+**** Vertical western slits
+#+call: new-blank-ds9("ha-vert") :results silent
+
+#+BEGIN_SRC sh :results silent
+bash display-vel-spectra.sh XX1[56]??-2010-01-*-ha ha-vert
+#+END_SRC
+
+**** LL2 vertical slits
+Ha line
+
+#+call: new-blank-ds9("ha-ll2") :results silent
+
+#+BEGIN_SRC sh :results silent
+bash display-vel-spectra.sh XX1[12]*-ha ha-ll2
+#+END_SRC
+
+#+call: new-blank-ds9("nii-ll2") :results silent
+
+#+BEGIN_SRC sh :results silent
+bash display-vel-spectra.sh XX1[12]*-nii nii-ll2
+#+END_SRC
+
+*** Testing passing glob patterns to a shell script
+For debugging use =-x= option to bash and redirect stderr to stout
+#+BEGIN_SRC sh :results verbatim
+bash -x test-sh-args.sh YY[01][019]*-ha 2>&1
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+++ find /Users/will/Dropbox/OrionWest/Calibrated/BGsub -name 'YY[01][019]*-ha-vhel.fits'
++ files='/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0936-2013-02-165-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0955-2013-02-169-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0971-2013-02-237-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1000-2013-02-232-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1019-2013-02-226-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1058-2013-02-149-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1068-2013-02-154-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1085-2013-02-159-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1112-2013-02-033-ha-vhel.fits
+/Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1120-2013-02-029-ha-vhel.fits'
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0936-2013-02-165-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0936-2013-02-165-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0955-2013-02-169-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0955-2013-02-169-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0971-2013-02-237-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY0971-2013-02-237-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1000-2013-02-232-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1000-2013-02-232-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1019-2013-02-226-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1019-2013-02-226-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1058-2013-02-149-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1058-2013-02-149-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1068-2013-02-154-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1068-2013-02-154-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1085-2013-02-159-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1085-2013-02-159-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1112-2013-02-033-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1112-2013-02-033-ha-vhel.fits
++ for f in '$files'
++ ls -l /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1120-2013-02-029-ha-vhel.fits
+-rw-r--r--@ 1 will  staff  763200 Oct  1 13:27 /Users/will/Dropbox/OrionWest/Calibrated/BGsub/YY1120-2013-02-029-ha-vhel.fits
+#+end_example
+
+
+
+
+*** Earlier stuff
+Western vertical slits
+#+BEGIN_SRC sh :results silent
+for f in $PWD/Calibrated/BGsub/XX1[56]??-2010-01-*-ha-vhel.fits; do
+    xpaset -p ds9 frame new
+    xpaset -p ds9 fits $f
+done
+xpaset -p ds9 zoom to fit
+xpaset -p ds9 match frame wcs
+#+END_SRC
+
+Western horizontal slits
+#+BEGIN_SRC sh :results silent
+for f in $PWD/Calibrated/BGsub/YY{09,10,11}*-nii-vhel.fits; do
+    xpaset -p ds9 frame new
+    xpaset -p ds9 fits $f
+    xpaset -p ds9 zoom to 3 1
+    xpaset -p ds9 grid load $PWD/horizontal-axes.grd
+    xpaset -p ds9 cmap bb
+    xpaset -p ds9 scale limits -0.0003 0.05
+    xpaset -p ds9 contour loadlevels $PWD/ha-contours.lev
+    xpaset -p ds9 contour yes
+    xpaset -p ds9 contour color blue
+done
+xpaset -p ds9 match frame wcs
+#+END_SRC
+
+#+BEGIN_SRC sh
+xpaget ds9 cmap
+#+END_SRC
+
+#+RESULTS:
+: bb
 
 * TODO New version of spectral map
 ** Convert wavelengths to velocities

@@ -1,0 +1,67 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(83.601479,-5.4340041) # point=circle color=cyan tag={Blue Arc A}
+point(83.601143,-5.4335017) # point=circle color=cyan tag={Blue Arc A}
+point(83.600918,-5.4327203) # point=circle color=cyan tag={Blue Arc A}
+point(83.600694,-5.4322738) # point=circle color=cyan tag={Blue Arc A}
+point(83.600133,-5.4317714) # point=circle color=cyan tag={Blue Arc A}
+point(83.600021,-5.4311574) # point=circle color=cyan tag={Blue Arc A}
+point(83.600302,-5.4299853) # point=circle color=cyan tag={Blue Arc A}
+point(83.600694,-5.4285899) # point=circle color=cyan tag={Blue Arc A}
+point(83.601143,-5.4274736) # point=circle color=cyan tag={Blue Arc A}
+point(83.601423,-5.4260782) # point=circle color=cyan tag={Blue Arc A}
+point(83.601703,-5.4247386) # point=circle color=cyan tag={Blue Arc A}
+point(83.605391,-5.4403775) # point=circle color=cyan tag={Blue Arc B}
+point(83.605042,-5.4400766) # point=circle color=cyan tag={Blue Arc B}
+point(83.604717,-5.4397293) # point=circle color=cyan tag={Blue Arc B}
+point(83.604391,-5.4394515) # point=circle color=cyan tag={Blue Arc B}
+point(83.604066,-5.4390811) # point=circle color=cyan tag={Blue Arc B}
+point(83.60388,-5.4384329) # point=circle color=cyan tag={Blue Arc B}
+point(83.60381,-5.437808) # point=circle color=cyan tag={Blue Arc B}
+point(83.60388,-5.4370441) # point=circle color=cyan tag={Blue Arc B}
+point(83.604182,-5.436234) # point=circle color=cyan tag={Blue Arc B}
+point(83.604182,-5.4356553) # point=circle color=cyan tag={Blue Arc B}
+point(83.607225,-5.4420874) # point=circle color=cyan tag={Blue Arc C}
+point(83.606783,-5.4417865) # point=circle color=cyan tag={Blue Arc C}
+point(83.606411,-5.4412772) # point=circle color=cyan tag={Blue Arc C}
+point(83.606155,-5.440606) # point=circle color=cyan tag={Blue Arc C}
+point(83.605923,-5.4399579) # point=circle color=cyan tag={Blue Arc C}
+point(83.605713,-5.4393792) # point=circle color=cyan tag={Blue Arc C}
+point(83.605458,-5.4386385) # point=circle color=cyan tag={Blue Arc C}
+point(83.605202,-5.4379672) # point=circle color=cyan tag={Blue Arc C}
+point(83.604946,-5.4370876) # point=circle color=cyan tag={Blue Arc C}
+point(83.609717,-5.443416) # point=circle tag={Blue Arc D}
+point(83.609271,-5.4437493) # point=circle tag={Blue Arc D}
+point(83.608964,-5.4438327) # point=circle tag={Blue Arc D}
+point(83.608573,-5.4438327) # point=circle tag={Blue Arc D}
+point(83.608434,-5.4433605) # point=circle tag={Blue Arc D}
+point(83.608183,-5.4426105) # point=circle tag={Blue Arc D}
+point(83.607848,-5.441805) # point=circle tag={Blue Arc D}
+point(83.607625,-5.4408328) # point=circle tag={Blue Arc D}
+point(83.607597,-5.4396384) # point=circle tag={Blue Arc D}
+point(83.609996,-5.4390829) # point=circle tag={Blue Arc E}
+point(83.60969,-5.4384718) # point=circle tag={Blue Arc E}
+point(83.60955,-5.4378329) # point=circle tag={Blue Arc E}
+point(83.609438,-5.4371107) # point=circle tag={Blue Arc E}
+point(83.609522,-5.4359719) # point=circle tag={Blue Arc E}
+point(83.609773,-5.435333) # point=circle tag={Blue Arc E}
+point(83.610024,-5.4344442) # point=circle tag={Blue Arc E}
+point(83.610359,-5.4339164) # point=circle tag={Blue Arc E}
+point(83.610276,-5.4535822) # point=circle tag={Blue Arc F}
+point(83.60969,-5.4533322) # point=circle tag={Blue Arc F}
+point(83.609132,-5.4530823) # point=circle tag={Blue Arc F}
+point(83.608546,-5.4523601) # point=circle tag={Blue Arc F}
+point(83.608099,-5.4514434) # point=circle tag={Blue Arc F}
+point(83.607736,-5.4501935) # point=circle tag={Blue Arc F}
+point(83.607597,-5.4492213) # point=circle tag={Blue Arc F}
+point(83.607904,-5.4482769) # point=circle tag={Blue Arc F}
+point(83.607988,-5.4472214) # point=circle tag={Blue Arc F}
+point(83.608211,-5.4459715) # point=circle tag={Blue Arc F}
+point(83.608573,-5.4451104) # point=circle tag={Blue Arc F}
+point(83.607206,-5.4486936) # point=circle tag={Blue Arc F}
+point(83.606899,-5.4472492) # point=circle tag={Blue Arc F}
+point(83.606537,-5.446027) # point=circle tag={Blue Arc F}
+point(83.606313,-5.4447215) # point=circle tag={Blue Arc F}
+point(83.60623,-5.443166) # point=circle tag={Blue Arc F}
+point(83.59811,-5.4268334) # point=circle
