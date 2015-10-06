@@ -1,0 +1,2 @@
+new-slits-*.fits filter=lfs diff=lfs merge=lfs -text
+*.fits filter=lfs diff=lfs merge=lfs -text

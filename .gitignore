@@ -2,7 +2,7 @@
 /.DS_Store
 /Calibrated/.DS_Store
 /new-slits-*.fits
-/wfpc2-mosaic-f658-over-f656.fits
+# /wfpc2-mosaic-f658-over-f656.fits
 /__pycache__/helio_utils.cpython-34.pyc
 /__pycache__/chebfit2d.cpython-34.pyc
 /Calibrated/BGsub/.DS_Store
