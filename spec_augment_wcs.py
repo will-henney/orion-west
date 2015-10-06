@@ -56,10 +56,23 @@ def fix_up_some_new_wcs(filename, old_new=('.fits', '-vhel.fits')):
     wnew.wcs.cname[1], wnew.wcs.cname[2] = ['X', 'Y']
     wnew.wcs.cunit[1], wnew.wcs.cunit[2] = [u.dimensionless_unscaled]*2
 
+    # Cut off the velocity range in the data array to [-150..200] km/s
+    wnew.fix()                  # Make sure we know it is in SI units
+    vwindow = [-150, 200]*u.km/u.s
+    [j1, j2], _, _ = wnew.all_world2pix(vwindow.to(u.m/u.s).value,
+                                        [0, 0], [0, 0], 0)
+    view = slice(None), slice(None), slice(int(j1), int(j2) + 2)
+    # Apply slice to data and to the WCS
+    hdu.data = hdu.data[:, :, j1:j2]
+    wnew = wnew.slice(view)
+    wold = wold.slice(view)
+                                         
     # Update header with a new WCS called V
     hdu.header.update(wnew.to_header(key='V'))
-
-    # TODO: change the default header too
+    # And re-write 'A' too since we have changed it
+    hdu.header.update(wold.to_header(key='A'))
+  
+    # Now, sort out the default header
 
     # New blank wcs with only 2 dimensions
     wdef = WCS(naxis=2)

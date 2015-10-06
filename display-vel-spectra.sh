@@ -1,11 +1,17 @@
 files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
 ds9=${2:-ds9}
 xpaset -p $ds9 view buttons no
-for f in $files; do
+for path in $files; do
+    f=${path##/*/} # just the filename
+    if [ ${f:0:1} == "Y" ]; then
+        orient=horizontal
+    else
+        orient=vertical
+    fi
     xpaset -p $ds9 frame new
-    xpaset -p $ds9 fits $f
+    xpaset -p $ds9 fits $path
     xpaset -p $ds9 zoom to 3 1
-    xpaset -p $ds9 grid load $PWD/horizontal-axes.grd
+    xpaset -p $ds9 grid load $PWD/$orient-axes.grd
     xpaset -p $ds9 cmap bb
     xpaset -p $ds9 scale sqrt
     xpaset -p $ds9 scale limits -0.0003 0.05
