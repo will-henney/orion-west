@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2015-10-06 Tue 23:28 -->
+<!-- 2015-10-06 Tue 23:35 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title>Notes on creating spectral maps from Orion West slit spectra</title>
@@ -201,202 +201,208 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgheadline30">1. <span class="done nilDONE">DONE</span> New general version of the slit flux calibration and astrometry</a>
+<li><a href="#orgheadline3">1. Final products of calibration</a>
 <ul>
-<li><a href="#orgheadline7">1.1. Outline of steps</a></li>
-<li><a href="#orgheadline14">1.2. Table of all slits</a>
+<li><a href="#orgheadline1">1.1. Spectral images</a></li>
+<li><a href="#orgheadline2">1.2. Calibrated slit spectra</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline33">2. <span class="done nilDONE">DONE</span> New general version of the slit flux calibration and astrometry</a>
 <ul>
-<li><a href="#orgheadline9">1.2.1. Different binning between image and spectrum</a></li>
-<li><a href="#orgheadline10">1.2.2. <span class="done nilDONE">DONE</span> Allow for offsets perpendicular to slit</a></li>
-<li><a href="#orgheadline13">1.2.3. <span class="done nilDONE">DONE</span> Problems with the flux zero-point of the spectra</a>
+<li><a href="#orgheadline10">2.1. Outline of steps</a></li>
+<li><a href="#orgheadline17">2.2. Table of all slits</a>
 <ul>
-<li><a href="#orgheadline11">1.2.3.1. Script to fix the 2007 bias subtractions</a></li>
-<li><a href="#orgheadline12">1.2.3.2. <span class="done nilDONE">DONE</span> Script to cut out the ha and nii spectra from the 2015 slits</a></li>
+<li><a href="#orgheadline12">2.2.1. Different binning between image and spectrum</a></li>
+<li><a href="#orgheadline13">2.2.2. <span class="done nilDONE">DONE</span> Allow for offsets perpendicular to slit</a></li>
+<li><a href="#orgheadline16">2.2.3. <span class="done nilDONE">DONE</span> Problems with the flux zero-point of the spectra</a>
+<ul>
+<li><a href="#orgheadline14">2.2.3.1. Script to fix the 2007 bias subtractions</a></li>
+<li><a href="#orgheadline15">2.2.3.2. <span class="done nilDONE">DONE</span> Script to cut out the ha and nii spectra from the 2015 slits</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgheadline28">1.3. Program to perform flux calibration: slit-calibration.py</a>
+<li><a href="#orgheadline31">2.3. Program to perform flux calibration: slit-calibration.py</a>
 <ul>
-<li><a href="#orgheadline15">1.3.1. Imports</a></li>
-<li><a href="#orgheadline16">1.3.2. Read in the table of all slits</a></li>
-<li><a href="#orgheadline17">1.3.3. Fits files for the spectra and image+slit</a></li>
-<li><a href="#orgheadline18">1.3.4. Construct the synthetic slit from the reference image</a></li>
-<li><a href="#orgheadline8">1.3.5. Find the world coordinates of each pixel along the slit</a></li>
-<li><a href="#orgheadline20">1.3.6. Package up the slit coordinates for use in a FITS header</a></li>
-<li><a href="#orgheadline21">1.3.7. Fit Chebyshev polynomials to along-slit variation</a></li>
-<li><a href="#orgheadline22">1.3.8. Make some useful and pretty plots</a></li>
-<li><a href="#orgheadline23">1.3.9. Use command line argument to restrict which datasets are processed</a></li>
-<li><a href="#orgheadline26">1.3.10. <span class="done nilDONE">DONE</span> Remove background and sum over wavelength across line</a>
+<li><a href="#orgheadline18">2.3.1. Imports</a></li>
+<li><a href="#orgheadline19">2.3.2. Read in the table of all slits</a></li>
+<li><a href="#orgheadline20">2.3.3. Fits files for the spectra and image+slit</a></li>
+<li><a href="#orgheadline21">2.3.4. Construct the synthetic slit from the reference image</a></li>
+<li><a href="#orgheadline11">2.3.5. Find the world coordinates of each pixel along the slit</a></li>
+<li><a href="#orgheadline23">2.3.6. Package up the slit coordinates for use in a FITS header</a></li>
+<li><a href="#orgheadline24">2.3.7. Fit Chebyshev polynomials to along-slit variation</a></li>
+<li><a href="#orgheadline25">2.3.8. Make some useful and pretty plots</a></li>
+<li><a href="#orgheadline26">2.3.9. Use command line argument to restrict which datasets are processed</a></li>
+<li><a href="#orgheadline29">2.3.10. <span class="done nilDONE">DONE</span> Remove background and sum over wavelength across line</a>
 <ul>
-<li><a href="#orgheadline25">1.3.10.1. Original version</a></li>
+<li><a href="#orgheadline28">2.3.10.1. Original version</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline19">1.3.11. Loop over the slit positions and do the stuff</a></li>
-<li><a href="#orgheadline27">1.3.12. Test what is going on</a></li>
+<li><a href="#orgheadline22">2.3.11. Loop over the slit positions and do the stuff</a></li>
+<li><a href="#orgheadline30">2.3.12. Test what is going on</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline29">1.4. Run slit-calibration.py</a></li>
+<li><a href="#orgheadline32">2.4. Run slit-calibration.py</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline52">2. Fix the issue with the [N II]/Ha ratio</a>
+<li><a href="#orgheadline55">3. Fix the issue with the [N II]/Ha ratio</a>
 <ul>
-<li><a href="#orgheadline36">2.1. <span class="done nilDONE">DONE</span> <code>[1/1]</code> Program to check the [N II]/Ha ratios: slit-ratio-check.py</a>
+<li><a href="#orgheadline39">3.1. <span class="done nilDONE">DONE</span> <code>[1/1]</code> Program to check the [N II]/Ha ratios: slit-ratio-check.py</a>
 <ul>
-<li><a href="#orgheadline31">2.1.1. Re-use stuff from slit-calibration.py</a></li>
-<li><a href="#orgheadline32">2.1.2. Convert wavelength to pixel</a></li>
-<li><a href="#orgheadline33">2.1.3. Make a sensible WCS (even if wavelength info missing)</a></li>
-<li><a href="#orgheadline24">2.1.4. <span class="done nilDONE">DONE</span> Extract profile along slit for an isolated line</a></li>
-<li><a href="#orgheadline34">2.1.5. Find the celestial coordinates along the slit by using the WCS of the calibrated spectrum</a></li>
-<li><a href="#orgheadline35">2.1.6. Loop over all the slits and check the ratios</a></li>
+<li><a href="#orgheadline34">3.1.1. Re-use stuff from slit-calibration.py</a></li>
+<li><a href="#orgheadline35">3.1.2. Convert wavelength to pixel</a></li>
+<li><a href="#orgheadline36">3.1.3. Make a sensible WCS (even if wavelength info missing)</a></li>
+<li><a href="#orgheadline27">3.1.4. <span class="done nilDONE">DONE</span> Extract profile along slit for an isolated line</a></li>
+<li><a href="#orgheadline37">3.1.5. Find the celestial coordinates along the slit by using the WCS of the calibrated spectrum</a></li>
+<li><a href="#orgheadline38">3.1.6. Loop over all the slits and check the ratios</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline46">2.2. Check the pixel bounds for bg and line</a>
+<li><a href="#orgheadline49">3.2. Check the pixel bounds for bg and line</a>
 <ul>
-<li><a href="#orgheadline37">2.2.1. Script to check the grating angles and other observational parameters</a></li>
-<li><a href="#orgheadline38">2.2.2. 2006-02 dataset</a></li>
-<li><a href="#orgheadline39">2.2.3. 2007-01b dataset</a></li>
-<li><a href="#orgheadline40">2.2.4. 2007-01 dataset</a></li>
-<li><a href="#orgheadline41">2.2.5. 2010-01 dataset</a></li>
-<li><a href="#orgheadline42">2.2.6. 2013-02</a></li>
-<li><a href="#orgheadline43">2.2.7. 2013-12</a></li>
-<li><a href="#orgheadline44">2.2.8. 2015-02</a></li>
-<li><a href="#orgheadline45">2.2.9. Looking at the calibrated spectra</a></li>
+<li><a href="#orgheadline40">3.2.1. Script to check the grating angles and other observational parameters</a></li>
+<li><a href="#orgheadline41">3.2.2. 2006-02 dataset</a></li>
+<li><a href="#orgheadline42">3.2.3. 2007-01b dataset</a></li>
+<li><a href="#orgheadline43">3.2.4. 2007-01 dataset</a></li>
+<li><a href="#orgheadline44">3.2.5. 2010-01 dataset</a></li>
+<li><a href="#orgheadline45">3.2.6. 2013-02</a></li>
+<li><a href="#orgheadline46">3.2.7. 2013-12</a></li>
+<li><a href="#orgheadline47">3.2.8. 2015-02</a></li>
+<li><a href="#orgheadline48">3.2.9. Looking at the calibrated spectra</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline47">2.3. Run slit-ratio-check.py</a></li>
-<li><a href="#orgheadline51">2.4. Looking for more external constraints on the [N II]/Ha ratios</a>
+<li><a href="#orgheadline50">3.3. Run slit-ratio-check.py</a></li>
+<li><a href="#orgheadline54">3.4. Looking for more external constraints on the [N II]/Ha ratios</a>
 <ul>
-<li><a href="#orgheadline50">2.4.1. WFPC2 mosaic</a>
+<li><a href="#orgheadline53">3.4.1. WFPC2 mosaic</a>
 <ul>
-<li><a href="#orgheadline48">2.4.1.1. Inferences from the mosaic</a></li>
-<li><a href="#orgheadline49">2.4.1.2. Make a ratio map from f658n and f656n</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#orgheadline56">3. <span class="done nilDONE">DONE</span> <code>[2/2]</code> Final tweaks to the zero level - fit 2D Chebyshev</a>
-<ul>
-<li><a href="#orgheadline54">3.1. Program to fit 2D Chebyshev to so-called continuum: chebfit2d.py</a></li>
-<li><a href="#orgheadline55">3.2. Test the chebyshev fitting</a></li>
-<li><a href="#orgheadline53">3.3. Apply to all the slits</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline71">4. <span class="done nilDONE">DONE</span> Back-propagate the heliocentric velocities to the spectra</a>
-<ul>
-<li><a href="#orgheadline58">4.1. Program to add a better wcs to the spectra: spec_augment_wcs.py</a></li>
-<li><a href="#orgheadline59">4.2. Test the addition of the <code>V</code> WCS</a></li>
-<li><a href="#orgheadline60">4.3. Add the VHEL and pixel WCS to all the spectra</a></li>
-<li><a href="#orgheadline70">4.4. Displaying the new calibrated spectra in DS9</a>
-<ul>
-<li><a href="#orgheadline61">4.4.1. Delete all exisiting frames</a></li>
-<li><a href="#orgheadline62">4.4.2. General function for displaying a bunch of spectra</a></li>
-<li><a href="#orgheadline67">4.4.3. Trying out the spectra display</a>
-<ul>
-<li><a href="#orgheadline63">4.4.3.1. Horizontal western slits</a></li>
-<li><a href="#orgheadline64">4.4.3.2. Vertical western slits</a></li>
-<li><a href="#orgheadline65">4.4.3.3. LL2 vertical slits</a></li>
-<li><a href="#orgheadline66">4.4.3.4. More eastern horizontal slits</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline68">4.4.4. Testing passing glob patterns to a shell script</a></li>
-<li><a href="#orgheadline69">4.4.5. Earlier stuff</a></li>
+<li><a href="#orgheadline51">3.4.1.1. Inferences from the mosaic</a></li>
+<li><a href="#orgheadline52">3.4.1.2. Make a ratio map from f658n and f656n</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgheadline88">5. <span class="todo nilTODO">TODO</span> New version of spectral map</a>
-<ul>
-<li><a href="#orgheadline74">5.1. Convert wavelengths to velocities</a>
-<ul>
-<li><a href="#orgheadline72">5.1.1. Module to find heliocentric correction: helio_utils.py</a></li>
-<li><a href="#orgheadline73">5.1.2. Script to test obtaining heliocentric correction from spectrum headers</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline57">5.2. Program to generate spectral map: spectral-map.py</a></li>
-<li><a href="#orgheadline75">5.3. Run spectral-map.py for the nii or ha spectra</a></li>
-<li><a href="#orgheadline76">5.4. Program to do multigridding of new spectral maps: multibin-map.py</a></li>
-<li><a href="#orgheadline77">5.5. Perform the multigridding</a></li>
-<li><a href="#orgheadline78">5.6. <span class="done nilDONE">DONE</span> Program to combine different grids: multibin-combine.py</a></li>
-<li><a href="#orgheadline85">5.7. <span class="done nilDONE">DONE</span> Perform the combining</a>
+<li><a href="#orgheadline59">4. <span class="done nilDONE">DONE</span> <code>[2/2]</code> Final tweaks to the zero level - fit 2D Chebyshev</a>
 <ul>
-<li><a href="#orgheadline79">5.7.1. Wide bands</a></li>
-<li><a href="#orgheadline80">5.7.2. Line core V = -10 to +50 km/s</a></li>
-<li><a href="#orgheadline81">5.7.3. Blue flank: V = -70 to -10 km/s</a></li>
-<li><a href="#orgheadline82">5.7.4. Far blue wing: V = -110 to -70 km/s</a></li>
-<li><a href="#orgheadline83">5.7.5. Near red flank: V = +50 to +110 km/s</a></li>
-<li><a href="#orgheadline84">5.7.6. Far red wing: V = +110 to +170 km/s</a></li>
+<li><a href="#orgheadline57">4.1. Program to fit 2D Chebyshev to so-called continuum: chebfit2d.py</a></li>
+<li><a href="#orgheadline58">4.2. Test the chebyshev fitting</a></li>
+<li><a href="#orgheadline56">4.3. Apply to all the slits</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline86">5.8. <span class="done nilDONE">DONE</span> Calculate [N II]/Ha ratio and [N II] + Ha sum</a></li>
-<li><a href="#orgheadline87">5.9. Load the spectral map into ds9</a></li>
+<li><a href="#orgheadline74">5. <span class="done nilDONE">DONE</span> Back-propagate the heliocentric velocities to the spectra</a>
+<ul>
+<li><a href="#orgheadline61">5.1. Program to add a better wcs to the spectra: spec_augment_wcs.py</a></li>
+<li><a href="#orgheadline62">5.2. Test the addition of the <code>V</code> WCS</a></li>
+<li><a href="#orgheadline63">5.3. Add the VHEL and pixel WCS to all the spectra</a></li>
+<li><a href="#orgheadline73">5.4. Displaying the new calibrated spectra in DS9</a>
+<ul>
+<li><a href="#orgheadline64">5.4.1. Delete all exisiting frames</a></li>
+<li><a href="#orgheadline65">5.4.2. General function for displaying a bunch of spectra</a></li>
+<li><a href="#orgheadline70">5.4.3. Trying out the spectra display</a>
+<ul>
+<li><a href="#orgheadline66">5.4.3.1. Horizontal western slits</a></li>
+<li><a href="#orgheadline67">5.4.3.2. Vertical western slits</a></li>
+<li><a href="#orgheadline68">5.4.3.3. LL2 vertical slits</a></li>
+<li><a href="#orgheadline69">5.4.3.4. More eastern horizontal slits</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline92">6. Features seen in the isovelocity maps</a>
-<ul>
-<li><a href="#orgheadline89">6.1. Point objects</a></li>
-<li><a href="#orgheadline91">6.2. The red bows</a>
-<ul>
-<li><a href="#orgheadline90">6.2.1. Identification from imaging</a></li>
+<li><a href="#orgheadline71">5.4.4. Testing passing glob patterns to a shell script</a></li>
+<li><a href="#orgheadline72">5.4.5. Earlier stuff</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgheadline93">7. T diagnostics from linewidths</a></li>
-<li><a href="#orgheadline94">8. The big bowshock</a></li>
-<li><a href="#orgheadline95">9. Proper motions of the Orion West shocks</a></li>
-<li><a href="#orgheadline124">10. Old stuff on calibration</a>
+<li><a href="#orgheadline91">6. <span class="todo nilTODO">TODO</span> New version of spectral map</a>
 <ul>
-<li><a href="#orgheadline98">10.1. Dealing with the offset between image and spectrum</a>
+<li><a href="#orgheadline77">6.1. Convert wavelengths to velocities</a>
 <ul>
-<li><a href="#orgheadline1">10.1.1. Application to the vertical slits</a></li>
-<li><a href="#orgheadline2">10.1.2. Repeat for the horizontal slits</a></li>
+<li><a href="#orgheadline75">6.1.1. Module to find heliocentric correction: helio_utils.py</a></li>
+<li><a href="#orgheadline76">6.1.2. Script to test obtaining heliocentric correction from spectrum headers</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline112">10.2. Datasets that we will use</a>
+<li><a href="#orgheadline60">6.2. Program to generate spectral map: spectral-map.py</a></li>
+<li><a href="#orgheadline78">6.3. Run spectral-map.py for the nii or ha spectra</a></li>
+<li><a href="#orgheadline79">6.4. Program to do multigridding of new spectral maps: multibin-map.py</a></li>
+<li><a href="#orgheadline80">6.5. Perform the multigridding</a></li>
+<li><a href="#orgheadline81">6.6. <span class="done nilDONE">DONE</span> Program to combine different grids: multibin-combine.py</a></li>
+<li><a href="#orgheadline88">6.7. <span class="done nilDONE">DONE</span> Perform the combining</a>
 <ul>
-<li><a href="#orgheadline99">10.2.1. Odd slits that we don't want to forget</a></li>
-<li><a href="#orgheadline100">10.2.2. Dec 2013</a></li>
-<li><a href="#orgheadline101">10.2.3. Feb 2015</a></li>
-<li><a href="#orgheadline103">10.2.4. Jan 2007 and Feb 2006</a>
-<ul>
-<li><a href="#orgheadline102">10.2.4.1. Original database for vertical slits</a></li>
+<li><a href="#orgheadline82">6.7.1. Wide bands</a></li>
+<li><a href="#orgheadline83">6.7.2. Line core V = -10 to +50 km/s</a></li>
+<li><a href="#orgheadline84">6.7.3. Blue flank: V = -70 to -10 km/s</a></li>
+<li><a href="#orgheadline85">6.7.4. Far blue wing: V = -110 to -70 km/s</a></li>
+<li><a href="#orgheadline86">6.7.5. Near red flank: V = +50 to +110 km/s</a></li>
+<li><a href="#orgheadline87">6.7.6. Far red wing: V = +110 to +170 km/s</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline104">10.2.5. Feb 2013</a>
-<ul>
-<li><a href="#orgheadline4">10.2.5.1. WCS values</a></li>
-<li><a href="#orgheadline97">10.2.5.2. Inter-position brightness calibration</a></li>
+<li><a href="#orgheadline89">6.8. <span class="done nilDONE">DONE</span> Calculate [N II]/Ha ratio and [N II] + Ha sum</a></li>
+<li><a href="#orgheadline90">6.9. Load the spectral map into ds9</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline111">10.2.6. Jan 2010</a>
+<li><a href="#orgheadline95">7. Features seen in the isovelocity maps</a>
 <ul>
-<li><a href="#orgheadline3">10.2.6.1. WCS values and per-slit weighting</a></li>
-<li><a href="#orgheadline109">10.2.6.2. Which to use</a></li>
-<li><a href="#orgheadline110">10.2.6.3. Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></a></li>
+<li><a href="#orgheadline92">7.1. Point objects</a></li>
+<li><a href="#orgheadline94">7.2. The red bows</a>
+<ul>
+<li><a href="#orgheadline93">7.2.1. Identification from imaging</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgheadline117">10.3. Making spectral maps</a>
+<li><a href="#orgheadline96">8. T diagnostics from linewidths</a></li>
+<li><a href="#orgheadline97">9. The big bowshock</a></li>
+<li><a href="#orgheadline98">10. Proper motions of the Orion West shocks</a></li>
+<li><a href="#orgheadline127">11. Old stuff on calibration</a>
 <ul>
-<li><a href="#orgheadline113">10.3.1. Define the output grid</a></li>
-<li><a href="#orgheadline5">10.3.2. Test with the velocity-integrated emission</a></li>
-<li><a href="#orgheadline6">10.3.3. Repeat the spectral map for the horizontal slits</a></li>
-<li><a href="#orgheadline114">10.3.4. <span class="todo nilTODO">TODO</span> Correction for heliocentric velocity</a></li>
-<li><a href="#orgheadline115">10.3.5. Try to use different velocity ranges</a></li>
-<li><a href="#orgheadline116">10.3.6. Combine both the horizontal and vertical slits</a></li>
+<li><a href="#orgheadline101">11.1. Dealing with the offset between image and spectrum</a>
+<ul>
+<li><a href="#orgheadline4">11.1.1. Application to the vertical slits</a></li>
+<li><a href="#orgheadline5">11.1.2. Repeat for the horizontal slits</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline118">10.4. The multigrid smoothing method</a></li>
-<li><a href="#orgheadline123">10.5. Coordinates of the slits</a>
+<li><a href="#orgheadline115">11.2. Datasets that we will use</a>
 <ul>
-<li><a href="#orgheadline119">10.5.1. Description from Alba</a></li>
-<li><a href="#orgheadline120">10.5.2. Brightness correction factors</a></li>
-<li><a href="#orgheadline121">10.5.3. HORIZONTALES 2013</a></li>
-<li><a href="#orgheadline122">10.5.4. VERTICALES 2010</a></li>
+<li><a href="#orgheadline102">11.2.1. Odd slits that we don't want to forget</a></li>
+<li><a href="#orgheadline103">11.2.2. Dec 2013</a></li>
+<li><a href="#orgheadline104">11.2.3. Feb 2015</a></li>
+<li><a href="#orgheadline106">11.2.4. Jan 2007 and Feb 2006</a>
+<ul>
+<li><a href="#orgheadline105">11.2.4.1. Original database for vertical slits</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline107">11.2.5. Feb 2013</a>
+<ul>
+<li><a href="#orgheadline7">11.2.5.1. WCS values</a></li>
+<li><a href="#orgheadline100">11.2.5.2. Inter-position brightness calibration</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline114">11.2.6. Jan 2010</a>
+<ul>
+<li><a href="#orgheadline6">11.2.6.1. WCS values and per-slit weighting</a></li>
+<li><a href="#orgheadline112">11.2.6.2. Which to use</a></li>
+<li><a href="#orgheadline113">11.2.6.3. Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgheadline120">11.3. Making spectral maps</a>
+<ul>
+<li><a href="#orgheadline116">11.3.1. Define the output grid</a></li>
+<li><a href="#orgheadline8">11.3.2. Test with the velocity-integrated emission</a></li>
+<li><a href="#orgheadline9">11.3.3. Repeat the spectral map for the horizontal slits</a></li>
+<li><a href="#orgheadline117">11.3.4. <span class="todo nilTODO">TODO</span> Correction for heliocentric velocity</a></li>
+<li><a href="#orgheadline118">11.3.5. Try to use different velocity ranges</a></li>
+<li><a href="#orgheadline119">11.3.6. Combine both the horizontal and vertical slits</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline121">11.4. The multigrid smoothing method</a></li>
+<li><a href="#orgheadline126">11.5. Coordinates of the slits</a>
+<ul>
+<li><a href="#orgheadline122">11.5.1. Description from Alba</a></li>
+<li><a href="#orgheadline123">11.5.2. Brightness correction factors</a></li>
+<li><a href="#orgheadline124">11.5.3. HORIZONTALES 2013</a></li>
+<li><a href="#orgheadline125">11.5.4. VERTICALES 2010</a></li>
 </ul>
 </li>
 </ul>
@@ -405,10 +411,31 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-
-<div id="outline-container-orgheadline30" class="outline-2">
-<h2 id="orgheadline30"><span class="section-number-2">1</span> <span class="done DONE">DONE</span> New general version of the slit flux calibration and astrometry</h2>
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">1</span> Final products of calibration</h2>
 <div class="outline-text-2" id="text-1">
+</div><div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><span class="section-number-3">1.1</span> Spectral images</h3>
+<div class="outline-text-3" id="text-1-1">
+<ul class="org-ul">
+<li><code>new-slits-*.fits</code></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">1.2</span> Calibrated slit spectra</h3>
+<div class="outline-text-3" id="text-1-2">
+<ul class="org-ul">
+<li><code>Calibrated/BGsub/{XX,YY}*-vhel.fits</code></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgheadline33" class="outline-2">
+<h2 id="orgheadline33"><span class="section-number-2">2</span> <span class="done DONE">DONE</span> New general version of the slit flux calibration and astrometry</h2>
+<div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li>It would be better to use the <a href="file:///Users/will/Work/OrionTreasury/wfi/">WFI images</a> to flux calibrate the spectra
 <ul class="org-ul">
@@ -423,9 +450,9 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-orgheadline7" class="outline-3">
-<h3 id="orgheadline7"><span class="section-number-3">1.1</span> Outline of steps</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-orgheadline10" class="outline-3">
+<h3 id="orgheadline10"><span class="section-number-3">2.1</span> Outline of steps</h3>
+<div class="outline-text-3" id="text-2-1">
 <ol class="org-ol">
 <li>We use the image+slit in order to find the slit reference position
 <ul class="org-ul">
@@ -433,7 +460,7 @@ for the JavaScript code in this tag.
 </ul></li>
 <li>Compare the spectrum profile (<code>spec</code>) with a synthetic slit (<code>image</code>) on the WFI image
 <ul class="org-ul">
-<li>Similar to <a href="#orgheadline1">Application to the vertical slits</a> and <a href="#orgheadline2">Repeat for the horizontal slits</a></li>
+<li>Similar to <a href="#orgheadline4">Application to the vertical slits</a> and <a href="#orgheadline5">Repeat for the horizontal slits</a></li>
 <li>Find the <code>jshift</code> value that best matches up the profiles</li>
 <li>Find brightness normalization
 <ul class="org-ul">
@@ -450,7 +477,7 @@ for the JavaScript code in this tag.
 <li>Some slits have a compact region with strong brightness gradients near the middle of the slit, which allows one to clearly see if a zero-point offset is present</li>
 </ul></li>
 </ul></li>
-<li>Write out the slit astrometry and flux calibration to a table, similar to how we did <a href="#orgheadline3">here</a> for the vertical slits and <a href="#orgheadline4">here</a> for the horizontal slits</li>
+<li>Write out the slit astrometry and flux calibration to a table, similar to how we did <a href="#orgheadline6">here</a> for the vertical slits and <a href="#orgheadline7">here</a> for the horizontal slits</li>
 </ul></li>
 <li>Project the calibrated spectra onto a common spatial grid
 <ul class="org-ul">
@@ -458,7 +485,7 @@ for the JavaScript code in this tag.
 <ul class="org-ul">
 <li>This requires finding the heliocentric correction</li>
 </ul></li>
-<li>This is what we already did for the <a href="#orgheadline5">vertical</a> and <a href="#orgheadline6">horizontal</a> slits
+<li>This is what we already did for the <a href="#orgheadline8">vertical</a> and <a href="#orgheadline9">horizontal</a> slits
 <ul class="org-ul">
 <li>We need to generalise this slightly so we can treat any PA (maybe that will work out of the box) and both cases for the dimension order of the spectra files (Y-V, or V-Y)</li>
 </ul></li>
@@ -467,9 +494,9 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgheadline14" class="outline-3">
-<h3 id="orgheadline14"><a id="ID-38EBF0CA-1CA6-4420-A9D8-F784FEB57BCC"></a><span class="section-number-3">1.2</span> Table of all slits</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-orgheadline17" class="outline-3">
+<h3 id="orgheadline17"><a id="ID-38EBF0CA-1CA6-4420-A9D8-F784FEB57BCC"></a><span class="section-number-3">2.2</span> Table of all slits</h3>
+<div class="outline-text-3" id="text-2-2">
 <ul class="org-ul">
 <li>This does not have all the slits yet, but it will eventually (I hope)
 <ul class="org-ul">
@@ -1398,9 +1425,9 @@ Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8
 
 
 
-<div id="outline-container-orgheadline9" class="outline-4">
-<h4 id="orgheadline9"><span class="section-number-4">1.2.1</span> Different binning between image and spectrum</h4>
-<div class="outline-text-4" id="text-1-2-1">
+<div id="outline-container-orgheadline12" class="outline-4">
+<h4 id="orgheadline12"><span class="section-number-4">2.2.1</span> Different binning between image and spectrum</h4>
+<div class="outline-text-4" id="text-2-2-1">
 <ul class="org-ul">
 <li>Note that binning along the slit axis differs between image+slit and spectrum for these 2013-12 datasets:
 <ul class="org-ul">
@@ -1410,15 +1437,15 @@ Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8
 <li>111</li>
 </ul></li>
 <li>It is x2 for the image+slit, but x3 for the spectrum</li>
-<li>This is now dealt with in the <a href="#orgheadline8">find_slit_coords</a> function</li>
+<li>This is now dealt with in the <a href="#orgheadline11">find_slit_coords</a> function</li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-orgheadline10" class="outline-4">
-<h4 id="orgheadline10"><span class="section-number-4">1.2.2</span> <span class="done DONE">DONE</span> Allow for offsets perpendicular to slit</h4>
-<div class="outline-text-4" id="text-1-2-2">
+<div id="outline-container-orgheadline13" class="outline-4">
+<h4 id="orgheadline13"><span class="section-number-4">2.2.2</span> <span class="done DONE">DONE</span> Allow for offsets perpendicular to slit</h4>
+<div class="outline-text-4" id="text-2-2-2">
 <ul class="org-ul">
 <li>In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure</li>
 <li>I suspect this is happening with the 2013-12 spectra at least</li>
@@ -1426,9 +1453,9 @@ Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline13" class="outline-4">
-<h4 id="orgheadline13"><span class="section-number-4">1.2.3</span> <span class="done DONE">DONE</span> Problems with the flux zero-point of the spectra</h4>
-<div class="outline-text-4" id="text-1-2-3">
+<div id="outline-container-orgheadline16" class="outline-4">
+<h4 id="orgheadline16"><span class="section-number-4">2.2.3</span> <span class="done DONE">DONE</span> Problems with the flux zero-point of the spectra</h4>
+<div class="outline-text-4" id="text-2-2-3">
 <ul class="org-ul">
 <li>The original way I was dealing with this was to use the <code>zero</code> column in the table to finesse things by hand so that the "calib image" versus "integrated spectrum" plot goes through the origin
 <ul class="org-ul">
@@ -1461,7 +1488,7 @@ Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8
 <ul class="org-ul">
 <li>I thing the real value should be about 1160 to 1170</li>
 <li>So if we map the y-axis onto [0, 1], then we need to add 80*y - 10</li>
-<li>This is done <a href="#orgheadline11">below</a></li>
+<li>This is done <a href="#orgheadline14">below</a></li>
 </ul></li>
 </ul></li>
 <li>Now that we have fixed up the LL1 slits, we still get reasonable calibrations, even when we determine <code>zero</code> directly from the spectral images
@@ -1474,9 +1501,9 @@ Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8
 </ul>
 </div>
 
-<div id="outline-container-orgheadline11" class="outline-5">
-<h5 id="orgheadline11"><a id="ID-4335A38B-52C8-4F0E-8F92-308DC4DBC4F6"></a><span class="section-number-5">1.2.3.1</span> Script to fix the 2007 bias subtractions</h5>
-<div class="outline-text-5" id="text-1-2-3-1">
+<div id="outline-container-orgheadline14" class="outline-5">
+<h5 id="orgheadline14"><a id="ID-4335A38B-52C8-4F0E-8F92-308DC4DBC4F6"></a><span class="section-number-5">2.2.3.1</span> Script to fix the 2007 bias subtractions</h5>
+<div class="outline-text-5" id="text-2-2-3-1">
 <pre class="example">Language = python
 Parameters = :exports code
 Header = (:var table=horizontal-image-and-fullspec)</pre><div class="org-src-container">
@@ -1526,9 +1553,9 @@ spec078-nii.fits
 
 
 
-<div id="outline-container-orgheadline12" class="outline-5">
-<h5 id="orgheadline12"><span class="section-number-5">1.2.3.2</span> <span class="done DONE">DONE</span> Script to cut out the ha and nii spectra from the 2015 slits</h5>
-<div class="outline-text-5" id="text-1-2-3-2">
+<div id="outline-container-orgheadline15" class="outline-5">
+<h5 id="orgheadline15"><span class="section-number-5">2.2.3.2</span> <span class="done DONE">DONE</span> Script to cut out the ha and nii spectra from the 2015 slits</h5>
+<div class="outline-text-5" id="text-2-2-3-2">
 <ul class="org-ul">
 <li>We only have a lamp spectrum for the 0013 setting
 <ul class="org-ul">
@@ -1573,14 +1600,14 @@ Header = (:var intable=horizontal-image-and-fullspec)</pre><div class="org-src-c
 </div>
 </div>
 
-<div id="outline-container-orgheadline28" class="outline-3">
-<h3 id="orgheadline28"><span class="section-number-3">1.3</span> Program to perform flux calibration: slit-calibration.py</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-orgheadline31" class="outline-3">
+<h3 id="orgheadline31"><span class="section-number-3">2.3</span> Program to perform flux calibration: slit-calibration.py</h3>
+<div class="outline-text-3" id="text-2-3">
 </div>
 
-<div id="outline-container-orgheadline15" class="outline-4">
-<h4 id="orgheadline15"><span class="section-number-4">1.3.1</span> Imports</h4>
-<div class="outline-text-4" id="text-1-3-1">
+<div id="outline-container-orgheadline18" class="outline-4">
+<h4 id="orgheadline18"><span class="section-number-4">2.3.1</span> Imports</h4>
+<div class="outline-text-4" id="text-2-3-1">
 <pre class="example">Language = python
 Parameters = :exports code
 Header = (:var intable=vertical-image-and-fullspec)</pre><div class="org-src-container">
@@ -1603,9 +1630,9 @@ Header = (:var intable=vertical-image-and-fullspec)</pre><div class="org-src-con
 </div>
 </div>
 
-<div id="outline-container-orgheadline16" class="outline-4">
-<h4 id="orgheadline16"><span class="section-number-4">1.3.2</span> Read in the table of all slits</h4>
-<div class="outline-text-4" id="text-1-3-2">
+<div id="outline-container-orgheadline19" class="outline-4">
+<h4 id="orgheadline19"><span class="section-number-4">2.3.2</span> Read in the table of all slits</h4>
+<div class="outline-text-4" id="text-2-3-2">
 <ul class="org-ul">
 <li>We want the ID columns to be read as strings since they contain leading zeros in some cases, which need to be preserved</li>
 <li>This was not happening automatically for the <code>imid</code> column so I use a custom converter</li>
@@ -1622,9 +1649,9 @@ Header = (:var vmin=-1000 vmax=1000 label="sum" :var vtab=vertical-all-parameter
 </div>
 </div>
 
-<div id="outline-container-orgheadline17" class="outline-4">
-<h4 id="orgheadline17"><span class="section-number-4">1.3.3</span> Fits files for the spectra and image+slit</h4>
-<div class="outline-text-4" id="text-1-3-3">
+<div id="outline-container-orgheadline20" class="outline-4">
+<h4 id="orgheadline20"><span class="section-number-4">2.3.3</span> Fits files for the spectra and image+slit</h4>
+<div class="outline-text-4" id="text-2-3-3">
 <ul class="org-ul">
 <li>These are kept in nested dicts of dicts of template formats, which are keyed
 <ol class="org-ol">
@@ -1724,9 +1751,9 @@ Header = (:var vmin=-1000 vmax=1000 label="sum" :var htab=horizontal-all-paramet
 </div>
 
 
-<div id="outline-container-orgheadline18" class="outline-4">
-<h4 id="orgheadline18"><span class="section-number-4">1.3.4</span> Construct the synthetic slit from the reference image</h4>
-<div class="outline-text-4" id="text-1-3-4">
+<div id="outline-container-orgheadline21" class="outline-4">
+<h4 id="orgheadline21"><span class="section-number-4">2.3.4</span> Construct the synthetic slit from the reference image</h4>
+<div class="outline-text-4" id="text-2-3-4">
 <p>
 A function to trace the profile of a slit
 </p>
@@ -1777,15 +1804,15 @@ photom, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(os.p
 </div>
 
 
-<div id="outline-container-orgheadline8" class="outline-4">
-<h4 id="orgheadline8"><a id="ID-1D9200A9-45BA-4128-894B-4D4DF84FC2F2"></a><span class="section-number-4">1.3.5</span> Find the world coordinates of each pixel along the slit</h4>
-<div class="outline-text-4" id="text-1-3-5">
+<div id="outline-container-orgheadline11" class="outline-4">
+<h4 id="orgheadline11"><a id="ID-1D9200A9-45BA-4128-894B-4D4DF84FC2F2"></a><span class="section-number-4">2.3.5</span> Find the world coordinates of each pixel along the slit</h4>
+<div class="outline-text-4" id="text-2-3-5">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-06 Sun] </span></span> To make this more useful, I will return the entire array of RA and Dec for each pixel along the slit (instead of just RA0, Dec0 for the slit center)
 <ul class="org-ul">
 <li>This means that the <code>ds</code> and <code>PA</code> parameters will no longer be needed, but I will leave them in anyway.</li>
 </ul></li>
-<li>Similar to what I did <a href="#orgheadline3">here</a> and <a href="#orgheadline4">here</a>
+<li>Similar to what I did <a href="#orgheadline6">here</a> and <a href="#orgheadline7">here</a>
 <ul class="org-ul">
 <li>But simpler really</li>
 </ul></li>
@@ -1793,7 +1820,7 @@ photom, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(os.p
 <ul class="org-ul">
 <li>(<code>RA0</code>, <code>Dec0</code>) of the slit center
 <ul class="org-ul">
-<li>This comes from the WCS header of the image+slit, together with the <code>islit</code> and <code>shift</code> values from the <a href="#orgheadline14">table above</a></li>
+<li>This comes from the WCS header of the image+slit, together with the <code>islit</code> and <code>shift</code> values from the <a href="#orgheadline17">table above</a></li>
 </ul></li>
 <li>Pixel scale along the slit <code>ds</code></li>
 <li><code>PA</code> of the slit</li>
@@ -1881,9 +1908,9 @@ Header = nil</pre><div class="org-src-container">
 </div>
 
 
-<div id="outline-container-orgheadline20" class="outline-4">
-<h4 id="orgheadline20"><span class="section-number-4">1.3.6</span> Package up the slit coordinates for use in a FITS header</h4>
-<div class="outline-text-4" id="text-1-3-6">
+<div id="outline-container-orgheadline23" class="outline-4">
+<h4 id="orgheadline23"><span class="section-number-4">2.3.6</span> Package up the slit coordinates for use in a FITS header</h4>
+<div class="outline-text-4" id="text-2-3-6">
 <p>
 We also need to create the WCS keywords so that the slit coordinates can be reconstructed from a FITS header.  The general approach is as follows: 
 </p>
@@ -1903,7 +1930,7 @@ We also need to create the WCS keywords so that the slit coordinates can be reco
 </ul></li>
 <li>The calibrated FITS spectra will be regularized so that the image x-axis (j=1 in FITS parlance) is wavelength, and the image y-axis (j=2) is displacement along slit.
 <ul class="org-ul">
-<li>Any necessary transpose of the data array is done <a href="#orgheadline19">in the main loop</a></li>
+<li>Any necessary transpose of the data array is done <a href="#orgheadline22">in the main loop</a></li>
 <li class="off"><code>[&#xa0;]</code> We could also have a degenerate third image axis that is perpendicular to the slit (dimension of 1 along this axis).  Is this necessary? Is it wise?</li>
 </ul></li>
 <li>We use 3 world coordinate axes, even though there are only two true image axes, so we can specify the variation of both RA and Dec along the slit
@@ -2050,9 +2077,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 </div>
 </div>
 
-<div id="outline-container-orgheadline21" class="outline-4">
-<h4 id="orgheadline21"><span class="section-number-4">1.3.7</span> Fit Chebyshev polynomials to along-slit variation</h4>
-<div class="outline-text-4" id="text-1-3-7">
+<div id="outline-container-orgheadline24" class="outline-4">
+<h4 id="orgheadline24"><span class="section-number-4">2.3.7</span> Fit Chebyshev polynomials to along-slit variation</h4>
+<div class="outline-text-4" id="text-2-3-7">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">fit_cheb</span>(x, y, npoly=3, mask=<span style="color: #cFfBcF;">None</span>):
@@ -2068,9 +2095,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline22" class="outline-4">
-<h4 id="orgheadline22"><span class="section-number-4">1.3.8</span> Make some useful and pretty plots</h4>
-<div class="outline-text-4" id="text-1-3-8">
+<div id="outline-container-orgheadline25" class="outline-4">
+<h4 id="orgheadline25"><span class="section-number-4">2.3.8</span> Make some useful and pretty plots</h4>
+<div class="outline-text-4" id="text-2-3-8">
 <ul class="org-ul">
 <li>Three-pane plot that we use for manually adjusting the calibration parameters</li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-22 Tue] </span></span> Add the nii/ha ratio to third pane</li>
@@ -2135,9 +2162,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 </div>
 </div>
 
-<div id="outline-container-orgheadline23" class="outline-4">
-<h4 id="orgheadline23"><span class="section-number-4">1.3.9</span> Use command line argument to restrict which datasets are processed</h4>
-<div class="outline-text-4" id="text-1-3-9">
+<div id="outline-container-orgheadline26" class="outline-4">
+<h4 id="orgheadline26"><span class="section-number-4">2.3.9</span> Use command line argument to restrict which datasets are processed</h4>
+<div class="outline-text-4" id="text-2-3-9">
 <ul class="org-ul">
 <li>Read a single command line argument to choose which datasets to process
 <ul class="org-ul">
@@ -2168,12 +2195,12 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 </div>
 </div>
 
-<div id="outline-container-orgheadline26" class="outline-4">
-<h4 id="orgheadline26"><span class="section-number-4">1.3.10</span> <span class="done DONE">DONE</span> Remove background and sum over wavelength across line</h4>
-<div class="outline-text-4" id="text-1-3-10">
+<div id="outline-container-orgheadline29" class="outline-4">
+<h4 id="orgheadline29"><span class="section-number-4">2.3.10</span> <span class="done DONE">DONE</span> Remove background and sum over wavelength across line</h4>
+<div class="outline-text-4" id="text-2-3-10">
 <ul class="org-ul">
 <li>Although in principal some of the "background" is real continuum, most of it is not</li>
-<li>We can get better results by simply removing it, as I did <a href="#orgheadline24">down here</a></li>
+<li>We can get better results by simply removing it, as I did <a href="#orgheadline27">down here</a></li>
 <li>But for the time being we will stick to the original simple version</li>
 </ul>
 <div class="org-src-container">
@@ -2233,9 +2260,9 @@ New version, adapted from what I did in the ratio section
 </div>
 
 
-<div id="outline-container-orgheadline25" class="outline-5">
-<h5 id="orgheadline25"><span class="section-number-5">1.3.10.1</span> Original version</h5>
-<div class="outline-text-5" id="text-1-3-10-1">
+<div id="outline-container-orgheadline28" class="outline-5">
+<h5 id="orgheadline28"><span class="section-number-5">2.3.10.1</span> Original version</h5>
+<div class="outline-text-5" id="text-2-3-10-1">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">extract_profile</span>(data):
@@ -2251,9 +2278,9 @@ New version, adapted from what I did in the ratio section
 </div>
 
 
-<div id="outline-container-orgheadline19" class="outline-4">
-<h4 id="orgheadline19"><a id="ID-C7D141C2-85FF-427D-AF2D-DCC34B14E1A4"></a><span class="section-number-4">1.3.11</span> Loop over the slit positions and do the stuff</h4>
-<div class="outline-text-4" id="text-1-3-11">
+<div id="outline-container-orgheadline22" class="outline-4">
+<h4 id="orgheadline22"><a id="ID-C7D141C2-85FF-427D-AF2D-DCC34B14E1A4"></a><span class="section-number-4">2.3.11</span> Loop over the slit positions and do the stuff</h4>
+<div class="outline-text-4" id="text-2-3-11">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">for</span> row <span style="color: #b9d3ee;">in</span> tab:
@@ -2332,9 +2359,9 @@ New version, adapted from what I did in the ratio section
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline27" class="outline-4">
-<h4 id="orgheadline27"><span class="section-number-4">1.3.12</span> Test what is going on</h4>
-<div class="outline-text-4" id="text-1-3-12">
+<div id="outline-container-orgheadline30" class="outline-4">
+<h4 id="orgheadline30"><span class="section-number-4">2.3.12</span> Test what is going on</h4>
+<div class="outline-text-4" id="text-2-3-12">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">print(wphot.wcs)</span>
@@ -2346,9 +2373,9 @@ New version, adapted from what I did in the ratio section
 </div>
 </div>
 
-<div id="outline-container-orgheadline29" class="outline-3">
-<h3 id="orgheadline29"><span class="section-number-3">1.4</span> Run slit-calibration.py</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-orgheadline32" class="outline-3">
+<h3 id="orgheadline32"><span class="section-number-3">2.4</span> Run slit-calibration.py</h3>
+<div class="outline-text-3" id="text-2-4">
 <ul class="org-ul">
 <li>For debugging we can redirect stdout to stderr with <code>1&gt;&amp;2</code>
 <ul class="org-ul">
@@ -2367,22 +2394,22 @@ New version, adapted from what I did in the ratio section
 
 
 
-<div id="outline-container-orgheadline52" class="outline-2">
-<h2 id="orgheadline52"><span class="section-number-2">2</span> Fix the issue with the [N II]/Ha ratio</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-orgheadline55" class="outline-2">
+<h2 id="orgheadline55"><span class="section-number-2">3</span> Fix the issue with the [N II]/Ha ratio</h2>
+<div class="outline-text-2" id="text-3">
 </div>
 
-<div id="outline-container-orgheadline36" class="outline-3">
-<h3 id="orgheadline36"><span class="section-number-3">2.1</span> <span class="done DONE">DONE</span> <code>[1/1]</code> Program to check the [N II]/Ha ratios: slit-ratio-check.py</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-orgheadline39" class="outline-3">
+<h3 id="orgheadline39"><span class="section-number-3">3.1</span> <span class="done DONE">DONE</span> <code>[1/1]</code> Program to check the [N II]/Ha ratios: slit-ratio-check.py</h3>
+<div class="outline-text-3" id="text-3-1">
 <ul class="org-ul">
 <li>We want to check the individual ha and nii images we are using</li>
 <li>And also double check against the full spectrum image wherever possible</li>
 </ul>
 </div>
-<div id="outline-container-orgheadline31" class="outline-4">
-<h4 id="orgheadline31"><span class="section-number-4">2.1.1</span> Re-use stuff from slit-calibration.py</h4>
-<div class="outline-text-4" id="text-2-1-1">
+<div id="outline-container-orgheadline34" class="outline-4">
+<h4 id="orgheadline34"><span class="section-number-4">3.1.1</span> Re-use stuff from slit-calibration.py</h4>
+<div class="outline-text-4" id="text-3-1-1">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> os
@@ -2457,9 +2484,9 @@ New version, adapted from what I did in the ratio section
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline32" class="outline-4">
-<h4 id="orgheadline32"><span class="section-number-4">2.1.2</span> Convert wavelength to pixel</h4>
-<div class="outline-text-4" id="text-2-1-2">
+<div id="outline-container-orgheadline35" class="outline-4">
+<h4 id="orgheadline35"><span class="section-number-4">3.1.2</span> Convert wavelength to pixel</h4>
+<div class="outline-text-4" id="text-3-1-2">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">wav2pix</span>(wav, wcs, nwav, isT):
@@ -2475,9 +2502,9 @@ New version, adapted from what I did in the ratio section
 </div>
 </div>
 
-<div id="outline-container-orgheadline33" class="outline-4">
-<h4 id="orgheadline33"><span class="section-number-4">2.1.3</span> Make a sensible WCS (even if wavelength info missing)</h4>
-<div class="outline-text-4" id="text-2-1-3">
+<div id="outline-container-orgheadline36" class="outline-4">
+<h4 id="orgheadline36"><span class="section-number-4">3.1.3</span> Make a sensible WCS (even if wavelength info missing)</h4>
+<div class="outline-text-4" id="text-3-1-3">
 <p>
 0.0994382022472
 </p>
@@ -2515,9 +2542,9 @@ New version, adapted from what I did in the ratio section
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline24" class="outline-4">
-<h4 id="orgheadline24"><a id="ID-74998E9B-988D-4378-9465-DAC5EE6E15A0"></a><span class="section-number-4">2.1.4</span> <span class="done DONE">DONE</span> Extract profile along slit for an isolated line</h4>
-<div class="outline-text-4" id="text-2-1-4">
+<div id="outline-container-orgheadline27" class="outline-4">
+<h4 id="orgheadline27"><a id="ID-74998E9B-988D-4378-9465-DAC5EE6E15A0"></a><span class="section-number-4">3.1.4</span> <span class="done DONE">DONE</span> Extract profile along slit for an isolated line</h4>
+<div class="outline-text-4" id="text-3-1-4">
 <div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock4"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">extract_profile</span>(hdu, wavrest, dset, imid,
@@ -2559,9 +2586,9 @@ New version, adapted from what I did in the ratio section
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline34" class="outline-4">
-<h4 id="orgheadline34"><span class="section-number-4">2.1.5</span> Find the celestial coordinates along the slit by using the WCS of the calibrated spectrum</h4>
-<div class="outline-text-4" id="text-2-1-5">
+<div id="outline-container-orgheadline37" class="outline-4">
+<h4 id="orgheadline37"><span class="section-number-4">3.1.5</span> Find the celestial coordinates along the slit by using the WCS of the calibrated spectrum</h4>
+<div class="outline-text-4" id="text-3-1-5">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">slit_coords_from_wcs</span>(w, isT, nslit):
@@ -2591,9 +2618,9 @@ New version, adapted from what I did in the ratio section
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline35" class="outline-4">
-<h4 id="orgheadline35"><span class="section-number-4">2.1.6</span> Loop over all the slits and check the ratios</h4>
-<div class="outline-text-4" id="text-2-1-6">
+<div id="outline-container-orgheadline38" class="outline-4">
+<h4 id="orgheadline38"><span class="section-number-4">3.1.6</span> Loop over all the slits and check the ratios</h4>
+<div class="outline-text-4" id="text-3-1-6">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #dfaf8f;">datasets</span> = <span style="color: #DCDCCC; font-weight: bold;">set</span>(tab[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>])
@@ -2664,12 +2691,12 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 </div>
 
-<div id="outline-container-orgheadline46" class="outline-3">
-<h3 id="orgheadline46"><span class="section-number-3">2.2</span> Check the pixel bounds for bg and line</h3>
-<div class="outline-text-3" id="text-2-2">
-</div><div id="outline-container-orgheadline37" class="outline-4">
-<h4 id="orgheadline37"><span class="section-number-4">2.2.1</span> Script to check the grating angles and other observational parameters</h4>
-<div class="outline-text-4" id="text-2-2-1">
+<div id="outline-container-orgheadline49" class="outline-3">
+<h3 id="orgheadline49"><span class="section-number-3">3.2</span> Check the pixel bounds for bg and line</h3>
+<div class="outline-text-3" id="text-3-2">
+</div><div id="outline-container-orgheadline40" class="outline-4">
+<h4 id="orgheadline40"><span class="section-number-4">3.2.1</span> Script to check the grating angles and other observational parameters</h4>
+<div class="outline-text-4" id="text-3-2-1">
 <div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock5"><span style="color: #b9d3ee;">import</span> os
@@ -2751,9 +2778,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline38" class="outline-4">
-<h4 id="orgheadline38"><span class="section-number-4">2.2.2</span> 2006-02 dataset</h4>
-<div class="outline-text-4" id="text-2-2-2">
+<div id="outline-container-orgheadline41" class="outline-4">
+<h4 id="orgheadline41"><span class="section-number-4">3.2.2</span> 2006-02 dataset</h4>
+<div class="outline-text-4" id="text-3-2-2">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Work/SPM2005/pp324.fits
@@ -2788,9 +2815,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 
 
-<div id="outline-container-orgheadline39" class="outline-4">
-<h4 id="orgheadline39"><span class="section-number-4">2.2.3</span> 2007-01b dataset</h4>
-<div class="outline-text-4" id="text-2-2-3">
+<div id="outline-container-orgheadline42" class="outline-4">
+<h4 id="orgheadline42"><span class="section-number-4">3.2.3</span> 2007-01b dataset</h4>
+<div class="outline-text-4" id="text-3-2-3">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2058-2060.fits
@@ -2806,9 +2833,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 
 
-<div id="outline-container-orgheadline40" class="outline-4">
-<h4 id="orgheadline40"><span class="section-number-4">2.2.4</span> 2007-01 dataset</h4>
-<div class="outline-text-4" id="text-2-2-4">
+<div id="outline-container-orgheadline43" class="outline-4">
+<h4 id="orgheadline43"><span class="section-number-4">3.2.4</span> 2007-01 dataset</h4>
+<div class="outline-text-4" id="text-3-2-4">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Work/SPM2007/Reduced/spec055-transf.fits
@@ -2822,9 +2849,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 
 
-<div id="outline-container-orgheadline41" class="outline-4">
-<h4 id="orgheadline41"><span class="section-number-4">2.2.5</span> 2010-01 dataset</h4>
-<div class="outline-text-4" id="text-2-2-5">
+<div id="outline-container-orgheadline44" class="outline-4">
+<h4 id="orgheadline44"><span class="section-number-4">3.2.5</span> 2010-01 dataset</h4>
+<div class="outline-text-4" id="text-3-2-5">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/SPMJAN10/reducciones/spm079-080h.fits
@@ -2836,9 +2863,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 </div>
 
-<div id="outline-container-orgheadline42" class="outline-4">
-<h4 id="orgheadline42"><span class="section-number-4">2.2.6</span> 2013-02</h4>
-<div class="outline-text-4" id="text-2-2-6">
+<div id="outline-container-orgheadline45" class="outline-4">
+<h4 id="orgheadline45"><span class="section-number-4">3.2.6</span> 2013-02</h4>
+<div class="outline-text-4" id="text-3-2-6">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/SPMFEB13/WesternShocks/spm025_bcr.fits
@@ -2853,9 +2880,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 
 
-<div id="outline-container-orgheadline43" class="outline-4">
-<h4 id="orgheadline43"><span class="section-number-4">2.2.7</span> 2013-12</h4>
-<div class="outline-text-4" id="text-2-2-7">
+<div id="outline-container-orgheadline46" class="outline-4">
+<h4 id="orgheadline46"><span class="section-number-4">3.2.7</span> 2013-12</h4>
+<div class="outline-text-4" id="text-3-2-7">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/papers/LL-Objects/SPMDIC13/spm112-113_bcrx.fits
@@ -2870,9 +2897,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 
 
-<div id="outline-container-orgheadline44" class="outline-4">
-<h4 id="orgheadline44"><span class="section-number-4">2.2.8</span> 2015-02</h4>
-<div class="outline-text-4" id="text-2-2-8">
+<div id="outline-container-orgheadline47" class="outline-4">
+<h4 id="orgheadline47"><span class="section-number-4">3.2.8</span> 2015-02</h4>
+<div class="outline-text-4" id="text-3-2-8">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/SPMFEB15/archivos/spm0013o_bcrx.fits
@@ -2890,9 +2917,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div>
 </div>
 
-<div id="outline-container-orgheadline45" class="outline-4">
-<h4 id="orgheadline45"><span class="section-number-4">2.2.9</span> Looking at the calibrated spectra</h4>
-<div class="outline-text-4" id="text-2-2-9">
+<div id="outline-container-orgheadline48" class="outline-4">
+<h4 id="orgheadline48"><span class="section-number-4">3.2.9</span> Looking at the calibrated spectra</h4>
+<div class="outline-text-4" id="text-3-2-9">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits $<span style="color: #dfaf8f;">PWD</span>/Calibrated/2006-02-303-ha.fits
@@ -2906,9 +2933,9 @@ So it seems like all the trouble was due to differences in the zero-level betwee
 </div>
 </div>
 
-<div id="outline-container-orgheadline47" class="outline-3">
-<h3 id="orgheadline47"><span class="section-number-3">2.3</span> Run slit-ratio-check.py</h3>
-<div class="outline-text-3" id="text-2-3">
+<div id="outline-container-orgheadline50" class="outline-3">
+<h3 id="orgheadline50"><span class="section-number-3">3.3</span> Run slit-ratio-check.py</h3>
+<div class="outline-text-3" id="text-3-3">
 <div class="org-src-container">
 
 <pre class="src src-sh">python slit-ratio-check.py <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1&gt;&amp;2</span>
@@ -2923,18 +2950,18 @@ So it seems like all the trouble was due to differences in the zero-level betwee
 
 
 
-<div id="outline-container-orgheadline51" class="outline-3">
-<h3 id="orgheadline51"><span class="section-number-3">2.4</span> Looking for more external constraints on the [N II]/Ha ratios</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-orgheadline54" class="outline-3">
+<h3 id="orgheadline54"><span class="section-number-3">3.4</span> Looking for more external constraints on the [N II]/Ha ratios</h3>
+<div class="outline-text-3" id="text-3-4">
 <p>
 We have the ODH values, but they are for large areas.  We could do with some actual images of the [N II]/Ha ratio.
 </p>
 </div>
 
 
-<div id="outline-container-orgheadline50" class="outline-4">
-<h4 id="orgheadline50"><span class="section-number-4">2.4.1</span> WFPC2 mosaic</h4>
-<div class="outline-text-4" id="text-2-4-1">
+<div id="outline-container-orgheadline53" class="outline-4">
+<h4 id="orgheadline53"><span class="section-number-4">3.4.1</span> WFPC2 mosaic</h4>
+<div class="outline-text-4" id="text-3-4-1">
 <ul class="org-ul">
 <li>We have the f658n and f656n images</li>
 <li>We ought to work out the difference in efficiency - use nebulio
@@ -2944,9 +2971,9 @@ We have the ODH values, but they are for large areas.  We could do with some act
 </ul>
 </div>
 
-<div id="outline-container-orgheadline48" class="outline-5">
-<h5 id="orgheadline48"><span class="section-number-5">2.4.1.1</span> Inferences from the mosaic</h5>
-<div class="outline-text-5" id="text-2-4-1-1">
+<div id="outline-container-orgheadline51" class="outline-5">
+<h5 id="orgheadline51"><span class="section-number-5">3.4.1.1</span> Inferences from the mosaic</h5>
+<div class="outline-text-5" id="text-3-4-1-1">
 <ul class="org-ul">
 <li>LL1 region needs correction factor of 1.8</li>
 <li>Horizontal E slits also have correction factor of about 1.8, once we fix the zero-point problem
@@ -2957,9 +2984,9 @@ We have the ODH values, but they are for large areas.  We could do with some act
 </div>
 </div>
 
-<div id="outline-container-orgheadline49" class="outline-5">
-<h5 id="orgheadline49"><span class="section-number-5">2.4.1.2</span> Make a ratio map from f658n and f656n</h5>
-<div class="outline-text-5" id="text-2-4-1-2">
+<div id="outline-container-orgheadline52" class="outline-5">
+<h5 id="orgheadline52"><span class="section-number-5">3.4.1.2</span> Make a ratio map from f658n and f656n</h5>
+<div class="outline-text-5" id="text-3-4-1-2">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
@@ -2978,9 +3005,9 @@ nii.writeto(<span style="color: #eee8aa; font-style: italic;">'wfpc2-mosaic-f658
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline56" class="outline-2">
-<h2 id="orgheadline56"><span class="section-number-2">3</span> <span class="done DONE">DONE</span> <code>[2/2]</code> Final tweaks to the zero level - fit 2D Chebyshev</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-orgheadline59" class="outline-2">
+<h2 id="orgheadline59"><span class="section-number-2">4</span> <span class="done DONE">DONE</span> <code>[2/2]</code> Final tweaks to the zero level - fit 2D Chebyshev</h2>
+<div class="outline-text-2" id="text-4">
 <ul class="org-ul">
 <li>Some spectra still have strangenesses in the background levels, especially the 2013 runs</li>
 <li>Plan is to fit a 2D Chebyshev surface to the regions away from the lines</li>
@@ -2991,16 +3018,16 @@ nii.writeto(<span style="color: #eee8aa; font-style: italic;">'wfpc2-mosaic-f658
 <li class="on"><code>[X]</code> If that works, then incorporate it directly into the calibration process
 <ul class="org-ul">
 <li>Finally decided not to do this - we keep it as a separate step</li>
-<li>Application to all the slits is <a href="#orgheadline53">down here</a></li>
+<li>Application to all the slits is <a href="#orgheadline56">down here</a></li>
 <li>Corrected spectra are saved to <a href="Calibrated/BGsub/">Calibrated/BGsub/</a></li>
 </ul></li>
 </ul>
 </div>
 
 
-<div id="outline-container-orgheadline54" class="outline-3">
-<h3 id="orgheadline54"><span class="section-number-3">3.1</span> Program to fit 2D Chebyshev to so-called continuum: chebfit2d.py</h3>
-<div class="outline-text-3" id="text-3-1">
+<div id="outline-container-orgheadline57" class="outline-3">
+<h3 id="orgheadline57"><span class="section-number-3">4.1</span> Program to fit 2D Chebyshev to so-called continuum: chebfit2d.py</h3>
+<div class="outline-text-3" id="text-4-1">
 <p>
 Zeroth, the imports
 </p>
@@ -3160,9 +3187,9 @@ Fourth, read a file from the command line if called interactively
 </div>
 </div>
 
-<div id="outline-container-orgheadline55" class="outline-3">
-<h3 id="orgheadline55"><span class="section-number-3">3.2</span> Test the chebyshev fitting</h3>
-<div class="outline-text-3" id="text-3-2">
+<div id="outline-container-orgheadline58" class="outline-3">
+<h3 id="orgheadline58"><span class="section-number-3">4.2</span> Test the chebyshev fitting</h3>
+<div class="outline-text-3" id="text-4-2">
 <div class="org-src-container">
 
 <pre class="src src-sh">mkdir -p Calibrated/BGsub
@@ -3197,9 +3224,9 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 </div>
 
 
-<div id="outline-container-orgheadline53" class="outline-3">
-<h3 id="orgheadline53"><a id="ID-41519B0D-E285-4BD1-929E-763BE12298F8"></a><span class="section-number-3">3.3</span> Apply to all the slits</h3>
-<div class="outline-text-3" id="text-3-3">
+<div id="outline-container-orgheadline56" class="outline-3">
+<h3 id="orgheadline56"><a id="ID-41519B0D-E285-4BD1-929E-763BE12298F8"></a><span class="section-number-3">4.3</span> Apply to all the slits</h3>
+<div class="outline-text-3" id="text-4-3">
 <ul class="org-ul">
 <li>At the same time, we will change wavelength to Vhel in the FITS headers</li>
 <li>And we could try and add pixel coordinates for the output image array too.</li>
@@ -3221,9 +3248,9 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 </div>
 
 
-<div id="outline-container-orgheadline71" class="outline-2">
-<h2 id="orgheadline71"><span class="section-number-2">4</span> <span class="done DONE">DONE</span> Back-propagate the heliocentric velocities to the spectra</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-orgheadline74" class="outline-2">
+<h2 id="orgheadline74"><span class="section-number-2">5</span> <span class="done DONE">DONE</span> Back-propagate the heliocentric velocities to the spectra</h2>
+<div class="outline-text-2" id="text-5">
 <ul class="org-ul">
 <li>This will allow better cross-referencing between the isovelocity images and the spectra</li>
 <li>We will also try and add a better spatial coordinate WCS
@@ -3233,9 +3260,9 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 </ul>
 </div>
 
-<div id="outline-container-orgheadline58" class="outline-3">
-<h3 id="orgheadline58"><span class="section-number-3">4.1</span> Program to add a better wcs to the spectra: spec_augment_wcs.py</h3>
-<div class="outline-text-3" id="text-4-1">
+<div id="outline-container-orgheadline61" class="outline-3">
+<h3 id="orgheadline61"><span class="section-number-3">5.1</span> Program to add a better wcs to the spectra: spec_augment_wcs.py</h3>
+<div class="outline-text-3" id="text-5-1">
 <p>
 The imports
 </p>
@@ -3251,7 +3278,7 @@ The imports
 
 
 <p>
-This is the WCS for the spectral maps, which is copied from down <a href="#orgheadline57">here</a>. The idea is that we can use this to define the spatial WCS for our slit spectrum that gives the corresponding pixel of the map. 
+This is the WCS for the spectral maps, which is copied from down <a href="#orgheadline60">here</a>. The idea is that we can use this to define the spatial WCS for our slit spectrum that gives the corresponding pixel of the map. 
 </p>
 <div class="org-src-container">
 
@@ -3395,9 +3422,9 @@ Read file from command line if called interactively
 </div>
 </div>
 
-<div id="outline-container-orgheadline59" class="outline-3">
-<h3 id="orgheadline59"><span class="section-number-3">4.2</span> Test the addition of the <code>V</code> WCS</h3>
-<div class="outline-text-3" id="text-4-2">
+<div id="outline-container-orgheadline62" class="outline-3">
+<h3 id="orgheadline62"><span class="section-number-3">5.2</span> Test the addition of the <code>V</code> WCS</h3>
+<div class="outline-text-3" id="text-5-2">
 <div class="org-src-container">
 
 <pre class="src src-sh">python spec_augment_wcs.py Calibrated/BGsub/2013-12-111-ha.fits
@@ -3431,9 +3458,9 @@ xpaset -p test zoom to fit
 
 
 
-<div id="outline-container-orgheadline60" class="outline-3">
-<h3 id="orgheadline60"><span class="section-number-3">4.3</span> Add the VHEL and pixel WCS to all the spectra</h3>
-<div class="outline-text-3" id="text-4-3">
+<div id="outline-container-orgheadline63" class="outline-3">
+<h3 id="orgheadline63"><span class="section-number-3">5.3</span> Add the VHEL and pixel WCS to all the spectra</h3>
+<div class="outline-text-3" id="text-5-3">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #b9d3ee;">for</span> f<span style="color: #b9d3ee;"> in</span> Calibrated/BGsub/*-{ha,nii}.fits; <span style="color: #b9d3ee;">do</span>
@@ -3559,12 +3586,12 @@ Writing Calibrated/BGsub/YY1280-2015-02-0012-nii-vhel.fits
 </div>
 </div>
 
-<div id="outline-container-orgheadline70" class="outline-3">
-<h3 id="orgheadline70"><span class="section-number-3">4.4</span> Displaying the new calibrated spectra in DS9</h3>
-<div class="outline-text-3" id="text-4-4">
-</div><div id="outline-container-orgheadline61" class="outline-4">
-<h4 id="orgheadline61"><a id="ID-795D79F6-A9F0-4E94-ADBD-18D540713A8C"></a><span class="section-number-4">4.4.1</span> Delete all exisiting frames</h4>
-<div class="outline-text-4" id="text-4-4-1">
+<div id="outline-container-orgheadline73" class="outline-3">
+<h3 id="orgheadline73"><span class="section-number-3">5.4</span> Displaying the new calibrated spectra in DS9</h3>
+<div class="outline-text-3" id="text-5-4">
+</div><div id="outline-container-orgheadline64" class="outline-4">
+<h4 id="orgheadline64"><a id="ID-795D79F6-A9F0-4E94-ADBD-18D540713A8C"></a><span class="section-number-4">5.4.1</span> Delete all exisiting frames</h4>
+<div class="outline-text-4" id="text-5-4-1">
 <div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 frame delete all
@@ -3583,9 +3610,9 @@ xpaset -p $<span style="color: #dfaf8f;">DS9</span> frame delete all
 </div>
 
 
-<div id="outline-container-orgheadline62" class="outline-4">
-<h4 id="orgheadline62"><span class="section-number-4">4.4.2</span> General function for displaying a bunch of spectra</h4>
-<div class="outline-text-4" id="text-4-4-2">
+<div id="outline-container-orgheadline65" class="outline-4">
+<h4 id="orgheadline65"><span class="section-number-4">5.4.2</span> General function for displaying a bunch of spectra</h4>
+<div class="outline-text-4" id="text-5-4-2">
 <ul class="org-ul">
 <li>Passing glob patterns to shell scripts is really fraught.</li>
 <li>I am reduced to using <code>find</code> instead</li>
@@ -3651,12 +3678,12 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> contour yes
 </div>
 
 
-<div id="outline-container-orgheadline67" class="outline-4">
-<h4 id="orgheadline67"><span class="section-number-4">4.4.3</span> Trying out the spectra display</h4>
-<div class="outline-text-4" id="text-4-4-3">
-</div><div id="outline-container-orgheadline63" class="outline-5">
-<h5 id="orgheadline63"><span class="section-number-5">4.4.3.1</span> Horizontal western slits</h5>
-<div class="outline-text-5" id="text-4-4-3-1">
+<div id="outline-container-orgheadline70" class="outline-4">
+<h4 id="orgheadline70"><span class="section-number-4">5.4.3</span> Trying out the spectra display</h4>
+<div class="outline-text-4" id="text-5-4-3">
+</div><div id="outline-container-orgheadline66" class="outline-5">
+<h5 id="orgheadline66"><span class="section-number-5">5.4.3.1</span> Horizontal western slits</h5>
+<div class="outline-text-5" id="text-5-4-3-1">
 <div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh YY[01][019]*-ha ha-horiz
@@ -3671,9 +3698,9 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> contour yes
 </div>
 </div>
 
-<div id="outline-container-orgheadline64" class="outline-5">
-<h5 id="orgheadline64"><span class="section-number-5">4.4.3.2</span> Vertical western slits</h5>
-<div class="outline-text-5" id="text-4-4-3-2">
+<div id="outline-container-orgheadline67" class="outline-5">
+<h5 id="orgheadline67"><span class="section-number-5">5.4.3.2</span> Vertical western slits</h5>
+<div class="outline-text-5" id="text-5-4-3-2">
 <div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh XX1[56]??-2010-01-*-ha ha-vert
@@ -3688,9 +3715,9 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> contour yes
 </div>
 </div>
 
-<div id="outline-container-orgheadline65" class="outline-5">
-<h5 id="orgheadline65"><span class="section-number-5">4.4.3.3</span> LL2 vertical slits</h5>
-<div class="outline-text-5" id="text-4-4-3-3">
+<div id="outline-container-orgheadline68" class="outline-5">
+<h5 id="orgheadline68"><span class="section-number-5">5.4.3.3</span> LL2 vertical slits</h5>
+<div class="outline-text-5" id="text-5-4-3-3">
 <p>
 Ha line
 </p>
@@ -3709,9 +3736,9 @@ Ha line
 </div>
 </div>
 
-<div id="outline-container-orgheadline66" class="outline-5">
-<h5 id="orgheadline66"><span class="section-number-5">4.4.3.4</span> More eastern horizontal slits</h5>
-<div class="outline-text-5" id="text-4-4-3-4">
+<div id="outline-container-orgheadline69" class="outline-5">
+<h5 id="orgheadline69"><span class="section-number-5">5.4.3.4</span> More eastern horizontal slits</h5>
+<div class="outline-text-5" id="text-5-4-3-4">
 <div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh YY1[234]*-ha ha-east
@@ -3728,9 +3755,9 @@ Ha line
 </div>
 
 
-<div id="outline-container-orgheadline68" class="outline-4">
-<h4 id="orgheadline68"><span class="section-number-4">4.4.4</span> Testing passing glob patterns to a shell script</h4>
-<div class="outline-text-4" id="text-4-4-4">
+<div id="outline-container-orgheadline71" class="outline-4">
+<h4 id="orgheadline71"><span class="section-number-4">5.4.4</span> Testing passing glob patterns to a shell script</h4>
+<div class="outline-text-4" id="text-5-4-4">
 <p>
 For debugging use <code>-x</code> option to bash and redirect stderr to stout
 </p>
@@ -3789,9 +3816,9 @@ For debugging use <code>-x</code> option to bash and redirect stderr to stout
 
 
 
-<div id="outline-container-orgheadline69" class="outline-4">
-<h4 id="orgheadline69"><span class="section-number-4">4.4.5</span> Earlier stuff</h4>
-<div class="outline-text-4" id="text-4-4-5">
+<div id="outline-container-orgheadline72" class="outline-4">
+<h4 id="orgheadline72"><span class="section-number-4">5.4.5</span> Earlier stuff</h4>
+<div class="outline-text-4" id="text-5-4-5">
 <p>
 Western vertical slits
 </p>
@@ -3840,12 +3867,12 @@ bb
 </div>
 </div>
 
-<div id="outline-container-orgheadline88" class="outline-2">
-<h2 id="orgheadline88"><span class="section-number-2">5</span> <span class="todo TODO">TODO</span> New version of spectral map</h2>
-<div class="outline-text-2" id="text-5">
-</div><div id="outline-container-orgheadline74" class="outline-3">
-<h3 id="orgheadline74"><span class="section-number-3">5.1</span> Convert wavelengths to velocities</h3>
-<div class="outline-text-3" id="text-5-1">
+<div id="outline-container-orgheadline91" class="outline-2">
+<h2 id="orgheadline91"><span class="section-number-2">6</span> <span class="todo TODO">TODO</span> New version of spectral map</h2>
+<div class="outline-text-2" id="text-6">
+</div><div id="outline-container-orgheadline77" class="outline-3">
+<h3 id="orgheadline77"><span class="section-number-3">6.1</span> Convert wavelengths to velocities</h3>
+<div class="outline-text-3" id="text-6-1">
 <ul class="org-ul">
 <li>The main difficulty here is calculating the heliocentric correction
 <ul class="org-ul">
@@ -3855,9 +3882,9 @@ bb
 </ul>
 </div>
 
-<div id="outline-container-orgheadline72" class="outline-4">
-<h4 id="orgheadline72"><span class="section-number-4">5.1.1</span> Module to find heliocentric correction: helio_utils.py</h4>
-<div class="outline-text-4" id="text-5-1-1">
+<div id="outline-container-orgheadline75" class="outline-4">
+<h4 id="orgheadline75"><span class="section-number-4">6.1.1</span> Module to find heliocentric correction: helio_utils.py</h4>
+<div class="outline-text-4" id="text-6-1-1">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
@@ -3958,9 +3985,9 @@ bb
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline73" class="outline-4">
-<h4 id="orgheadline73"><span class="section-number-4">5.1.2</span> Script to test obtaining heliocentric correction from spectrum headers</h4>
-<div class="outline-text-4" id="text-5-1-2">
+<div id="outline-container-orgheadline76" class="outline-4">
+<h4 id="orgheadline76"><span class="section-number-4">6.1.2</span> Script to test obtaining heliocentric correction from spectrum headers</h4>
+<div class="outline-text-4" id="text-6-1-2">
 <div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock8"><span style="color: #b9d3ee;">import</span> glob
@@ -3982,11 +4009,11 @@ bb
 </div>
 </div>
 
-<div id="outline-container-orgheadline57" class="outline-3">
-<h3 id="orgheadline57"><a id="ID-20ADFA6F-DE49-454E-B433-D684CF3FB826"></a><span class="section-number-3">5.2</span> Program to generate spectral map: spectral-map.py</h3>
-<div class="outline-text-3" id="text-5-2">
+<div id="outline-container-orgheadline60" class="outline-3">
+<h3 id="orgheadline60"><a id="ID-20ADFA6F-DE49-454E-B433-D684CF3FB826"></a><span class="section-number-3">6.2</span> Program to generate spectral map: spectral-map.py</h3>
+<div class="outline-text-3" id="text-6-2">
 <ul class="org-ul">
-<li>This based on previous versions for the <a href="#orgheadline5">vertical</a> and <a href="#orgheadline6">horizontal</a> slits</li>
+<li>This based on previous versions for the <a href="#orgheadline8">vertical</a> and <a href="#orgheadline9">horizontal</a> slits</li>
 <li>We will start off with bigger pixels and same pixel dims, so bigger area</li>
 <li>It is much more general than the earlier versions since the spectra are already flux-calibrated and all the WCS info comes from the spectrum files themselves, instead of from tables</li>
 <li>It is also much simpler and more efficient:</li>
@@ -4146,9 +4173,9 @@ fits.HDUList([
 </div>
 
 
-<div id="outline-container-orgheadline75" class="outline-3">
-<h3 id="orgheadline75"><span class="section-number-3">5.3</span> Run spectral-map.py for the nii or ha spectra</h3>
-<div class="outline-text-3" id="text-5-3">
+<div id="outline-container-orgheadline78" class="outline-3">
+<h3 id="orgheadline78"><span class="section-number-3">6.3</span> Run spectral-map.py for the nii or ha spectra</h3>
+<div class="outline-text-3" id="text-6-3">
 <div class="org-src-container">
 
 <pre class="src src-sh">python spectral-map.py ha
@@ -4215,9 +4242,9 @@ Some ranges further to the red
 </div>
 
 
-<div id="outline-container-orgheadline76" class="outline-3">
-<h3 id="orgheadline76"><span class="section-number-3">5.4</span> Program to do multigridding of new spectral maps: multibin-map.py</h3>
-<div class="outline-text-3" id="text-5-4">
+<div id="outline-container-orgheadline79" class="outline-3">
+<h3 id="orgheadline79"><span class="section-number-3">6.4</span> Program to do multigridding of new spectral maps: multibin-map.py</h3>
+<div class="outline-text-3" id="text-6-4">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> sys
@@ -4257,9 +4284,9 @@ sys.path.append(<span style="color: #eee8aa; font-style: italic;">'/Users/will/W
 </div>
 </div>
 
-<div id="outline-container-orgheadline77" class="outline-3">
-<h3 id="orgheadline77"><span class="section-number-3">5.5</span> Perform the multigridding</h3>
-<div class="outline-text-3" id="text-5-5">
+<div id="outline-container-orgheadline80" class="outline-3">
+<h3 id="orgheadline80"><span class="section-number-3">6.5</span> Perform the multigridding</h3>
+<div class="outline-text-3" id="text-6-5">
 <div class="org-src-container">
 
 <pre class="src src-sh">python multibin-map.py new-slits-ha-allvels.fits
@@ -4347,9 +4374,9 @@ xpaset -p ds9 frame next
 </div>
 </div>
 
-<div id="outline-container-orgheadline78" class="outline-3">
-<h3 id="orgheadline78"><span class="section-number-3">5.6</span> <span class="done DONE">DONE</span> Program to combine different grids: multibin-combine.py</h3>
-<div class="outline-text-3" id="text-5-6">
+<div id="outline-container-orgheadline81" class="outline-3">
+<h3 id="orgheadline81"><span class="section-number-3">6.6</span> <span class="done DONE">DONE</span> Program to combine different grids: multibin-combine.py</h3>
+<div class="outline-text-3" id="text-6-6">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-25 Fri] </span></span> We set minweight = 0 for the coarsest grid so that the spatial coverage at that level does not depend on the line intensity, only on the arrangement of slits.  This is necessary so that all RGB channels have the same coverage when we combine them in a color image.</li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-30 Wed] </span></span> But this has the disadvantage that the hig velocity channels where the intensity is very low often do not have enough signal, even in the coarsest bins - so we get noisy rubbish there</li>
@@ -4385,9 +4412,9 @@ fits.PrimaryHDU(header=hdr, data=outim).writeto(prefix + <span style="color: #ee
 </div>
 
 
-<div id="outline-container-orgheadline85" class="outline-3">
-<h3 id="orgheadline85"><span class="section-number-3">5.7</span> <span class="done DONE">DONE</span> Perform the combining</h3>
-<div class="outline-text-3" id="text-5-7">
+<div id="outline-container-orgheadline88" class="outline-3">
+<h3 id="orgheadline88"><span class="section-number-3">6.7</span> <span class="done DONE">DONE</span> Perform the combining</h3>
+<div class="outline-text-3" id="text-6-7">
 <div class="org-src-container">
 
 <pre class="src src-sh">python multibin-combine.py new-slits-ha-allvels 3e5
@@ -4402,9 +4429,9 @@ python multibin-combine.py new-slits-nii-allvels 2e5
 </div>
 </div>
 
-<div id="outline-container-orgheadline79" class="outline-4">
-<h4 id="orgheadline79"><span class="section-number-4">5.7.1</span> Wide bands</h4>
-<div class="outline-text-4" id="text-5-7-1">
+<div id="outline-container-orgheadline82" class="outline-4">
+<h4 id="orgheadline82"><span class="section-number-4">6.7.1</span> Wide bands</h4>
+<div class="outline-text-4" id="text-6-7-1">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">vrange</span>=+000+060               <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">wide red</span>
@@ -4454,9 +4481,9 @@ xpaset -p ds9 frame next
 </div>
 
 
-<div id="outline-container-orgheadline80" class="outline-4">
-<h4 id="orgheadline80"><span class="section-number-4">5.7.2</span> Line core V = -10 to +50 km/s</h4>
-<div class="outline-text-4" id="text-5-7-2">
+<div id="outline-container-orgheadline83" class="outline-4">
+<h4 id="orgheadline83"><span class="section-number-4">6.7.2</span> Line core V = -10 to +50 km/s</h4>
+<div class="outline-text-4" id="text-6-7-2">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">redranges</span>=<span style="color: #eee8aa; font-style: italic;">'+030+050 +010+030 -010+010'</span>
@@ -4501,9 +4528,9 @@ xpaset -p ds9 frame next
 </div>
 
 
-<div id="outline-container-orgheadline81" class="outline-4">
-<h4 id="orgheadline81"><span class="section-number-4">5.7.3</span> Blue flank: V = -70 to -10 km/s</h4>
-<div class="outline-text-4" id="text-5-7-3">
+<div id="outline-container-orgheadline84" class="outline-4">
+<h4 id="orgheadline84"><span class="section-number-4">6.7.3</span> Blue flank: V = -70 to -10 km/s</h4>
+<div class="outline-text-4" id="text-6-7-3">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">blueranges</span>=<span style="color: #eee8aa; font-style: italic;">'-030-010 -050-030 -070-050'</span>
@@ -4547,9 +4574,9 @@ xpaset -p ds9 frame next
 </div>
 
 
-<div id="outline-container-orgheadline82" class="outline-4">
-<h4 id="orgheadline82"><span class="section-number-4">5.7.4</span> Far blue wing: V = -110 to -70 km/s</h4>
-<div class="outline-text-4" id="text-5-7-4">
+<div id="outline-container-orgheadline85" class="outline-4">
+<h4 id="orgheadline85"><span class="section-number-4">6.7.4</span> Far blue wing: V = -110 to -70 km/s</h4>
+<div class="outline-text-4" id="text-6-7-4">
 <p>
 We actually calculate out to -130, but we don't use it in the image
 </p>
@@ -4601,9 +4628,9 @@ xpaset -p ds9 frame next
 
 
 
-<div id="outline-container-orgheadline83" class="outline-4">
-<h4 id="orgheadline83"><span class="section-number-4">5.7.5</span> Near red flank: V = +50 to +110 km/s</h4>
-<div class="outline-text-4" id="text-5-7-5">
+<div id="outline-container-orgheadline86" class="outline-4">
+<h4 id="orgheadline86"><span class="section-number-4">6.7.5</span> Near red flank: V = +50 to +110 km/s</h4>
+<div class="outline-text-4" id="text-6-7-5">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">nearredranges</span>=<span style="color: #eee8aa; font-style: italic;">'+050+070 +070+090 +090+110'</span>
@@ -4648,9 +4675,9 @@ xpaset -p ds9 frame next
 </div>
 </div>
 
-<div id="outline-container-orgheadline84" class="outline-4">
-<h4 id="orgheadline84"><span class="section-number-4">5.7.6</span> Far red wing: V = +110 to +170 km/s</h4>
-<div class="outline-text-4" id="text-5-7-6">
+<div id="outline-container-orgheadline87" class="outline-4">
+<h4 id="orgheadline87"><span class="section-number-4">6.7.6</span> Far red wing: V = +110 to +170 km/s</h4>
+<div class="outline-text-4" id="text-6-7-6">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">farredranges</span>=<span style="color: #eee8aa; font-style: italic;">'+110+130 +130+150 +150+170'</span>
@@ -4697,9 +4724,9 @@ xpaset -p ds9 frame next
 </div>
 
 
-<div id="outline-container-orgheadline86" class="outline-3">
-<h3 id="orgheadline86"><span class="section-number-3">5.8</span> <span class="done DONE">DONE</span> Calculate [N II]/Ha ratio and [N II] + Ha sum</h3>
-<div class="outline-text-3" id="text-5-8">
+<div id="outline-container-orgheadline89" class="outline-3">
+<h3 id="orgheadline89"><span class="section-number-3">6.8</span> <span class="done DONE">DONE</span> Calculate [N II]/Ha ratio and [N II] + Ha sum</h3>
+<div class="outline-text-3" id="text-6-8">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-16 Wed] </span></span> I suspect that much of the remaining issues with the spectra calibration are down to variations in throughput between [N II] and Ha</li>
 <li class="on"><code>[X]</code> We can use the O'Dell &amp; Harris spectrophotometry to tie everything down
@@ -4809,9 +4836,9 @@ ha.writeto(<span style="color: #eee8aa; font-style: italic;">'new-slits-nii-plus
 </div>
 </div>
 
-<div id="outline-container-orgheadline87" class="outline-3">
-<h3 id="orgheadline87"><span class="section-number-3">5.9</span> Load the spectral map into ds9</h3>
-<div class="outline-text-3" id="text-5-9">
+<div id="outline-container-orgheadline90" class="outline-3">
+<h3 id="orgheadline90"><span class="section-number-3">6.9</span> Load the spectral map into ds9</h3>
+<div class="outline-text-3" id="text-6-9">
 <p>
 This shows the scaled image in ds9
 </p>
@@ -4832,12 +4859,12 @@ This shows the scaled image in ds9
 
 
 
-<div id="outline-container-orgheadline92" class="outline-2">
-<h2 id="orgheadline92"><span class="section-number-2">6</span> Features seen in the isovelocity maps</h2>
-<div class="outline-text-2" id="text-6">
-</div><div id="outline-container-orgheadline89" class="outline-3">
-<h3 id="orgheadline89"><span class="section-number-3">6.1</span> Point objects</h3>
-<div class="outline-text-3" id="text-6-1">
+<div id="outline-container-orgheadline95" class="outline-2">
+<h2 id="orgheadline95"><span class="section-number-2">7</span> Features seen in the isovelocity maps</h2>
+<div class="outline-text-2" id="text-7">
+</div><div id="outline-container-orgheadline92" class="outline-3">
+<h3 id="orgheadline92"><span class="section-number-3">7.1</span> Point objects</h3>
+<div class="outline-text-3" id="text-7-1">
 <ul class="org-ul">
 <li>4410-139
 <ul class="org-ul">
@@ -4854,14 +4881,14 @@ This shows the scaled image in ds9
 </div>
 
 
-<div id="outline-container-orgheadline91" class="outline-3">
-<h3 id="orgheadline91"><span class="section-number-3">6.2</span> The red bows</h3>
-<div class="outline-text-3" id="text-6-2">
+<div id="outline-container-orgheadline94" class="outline-3">
+<h3 id="orgheadline94"><span class="section-number-3">7.2</span> The red bows</h3>
+<div class="outline-text-3" id="text-7-2">
 </div>
 
-<div id="outline-container-orgheadline90" class="outline-4">
-<h4 id="orgheadline90"><span class="section-number-4">6.2.1</span> Identification from imaging</h4>
-<div class="outline-text-4" id="text-6-2-1">
+<div id="outline-container-orgheadline93" class="outline-4">
+<h4 id="orgheadline93"><span class="section-number-4">7.2.1</span> Identification from imaging</h4>
+<div class="outline-text-4" id="text-7-2-1">
 <p>
 I have marked 4 different bows in the region file <a href="red-bow-all.reg">red-bow-all.reg</a>
 </p>
@@ -4900,9 +4927,9 @@ I have marked 4 different bows in the region file <a href="red-bow-all.reg">red-
 </div>
 </div>
 
-<div id="outline-container-orgheadline93" class="outline-2">
-<h2 id="orgheadline93"><span class="section-number-2">7</span> T diagnostics from linewidths</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-orgheadline96" class="outline-2">
+<h2 id="orgheadline96"><span class="section-number-2">8</span> T diagnostics from linewidths</h2>
+<div class="outline-text-2" id="text-8">
 <ul class="org-ul">
 <li>We could repeat what we did for the Teresa Atlas Paper, but we only have one slit with [O III] spectrum</li>
 <li>For the jet knots, assuming they are kinematically homogeneous, we should be able to measure the T from</li>
@@ -4918,9 +4945,9 @@ I have marked 4 different bows in the region file <a href="red-bow-all.reg">red-
 </div>
 
 
-<div id="outline-container-orgheadline94" class="outline-2">
-<h2 id="orgheadline94"><span class="section-number-2">8</span> The big bowshock</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-orgheadline97" class="outline-2">
+<h2 id="orgheadline97"><span class="section-number-2">9</span> The big bowshock</h2>
+<div class="outline-text-2" id="text-9">
 <ul class="org-ul">
 <li>There is a giant, possibly double, possibly triple bow</li>
 <li>It's N wing crosses LL2, and is red-shifted
@@ -4935,9 +4962,9 @@ I have marked 4 different bows in the region file <a href="red-bow-all.reg">red-
 
 
 
-<div id="outline-container-orgheadline95" class="outline-2">
-<h2 id="orgheadline95"><span class="section-number-2">9</span> Proper motions of the Orion West shocks</h2>
-<div class="outline-text-2" id="text-9">
+<div id="outline-container-orgheadline98" class="outline-2">
+<h2 id="orgheadline98"><span class="section-number-2">10</span> Proper motions of the Orion West shocks</h2>
+<div class="outline-text-2" id="text-10">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-26 Wed] </span></span> Today I discovered that there is a new Massimo Robberto program that has re-observed the whole of Orion with the ACS F775W filter</li>
 <li>And also various bits with the F130N and F139M WFC3 IR filters</li>
@@ -4975,16 +5002,16 @@ I have marked 4 different bows in the region file <a href="red-bow-all.reg">red-
 
 
 
-<div id="outline-container-orgheadline124" class="outline-2">
-<h2 id="orgheadline124"><span class="section-number-2">10</span> Old stuff on calibration</h2>
-<div class="outline-text-2" id="text-10">
+<div id="outline-container-orgheadline127" class="outline-2">
+<h2 id="orgheadline127"><span class="section-number-2">11</span> Old stuff on calibration</h2>
+<div class="outline-text-2" id="text-11">
 <p>
 Most of the following has been superseded. 
 </p>
 </div>
-<div id="outline-container-orgheadline98" class="outline-3">
-<h3 id="orgheadline98"><span class="section-number-3">10.1</span> Dealing with the offset between image and spectrum</h3>
-<div class="outline-text-3" id="text-10-1">
+<div id="outline-container-orgheadline101" class="outline-3">
+<h3 id="orgheadline101"><span class="section-number-3">11.1</span> Dealing with the offset between image and spectrum</h3>
+<div class="outline-text-3" id="text-11-1">
 <ul class="org-ul">
 <li>It seems that this is not as constant as I had hoped
 <ul class="org-ul">
@@ -5005,9 +5032,9 @@ Most of the following has been superseded.
 </div>
 
 
-<div id="outline-container-orgheadline1" class="outline-4">
-<h4 id="orgheadline1"><a id="ID-0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B"></a><span class="section-number-4">10.1.1</span> Application to the vertical slits</h4>
-<div class="outline-text-4" id="text-10-1-1">
+<div id="outline-container-orgheadline4" class="outline-4">
+<h4 id="orgheadline4"><a id="ID-0B8D02D8-4C57-48A1-8F17-6AD60BFA1A7B"></a><span class="section-number-4">11.1.1</span> Application to the vertical slits</h4>
+<div class="outline-text-4" id="text-11-1-1">
 <br><pre class="example">Table name: horizontal-image-and-fullspec</pre><table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -5193,7 +5220,7 @@ Most of the following has been superseded.
 <ul class="org-ul">
 <li>Read in the images and spectra, and overplot the profiles</li>
 <li>There are 16 positions now, so we can use a 4 x 4 grid</li>
-<li>The <code>bfac</code> factors are the inter-position image brightness correction factors, calculated <a href="#orgheadline96">below</a> - they multiply all the brightnesses
+<li>The <code>bfac</code> factors are the inter-position image brightness correction factors, calculated <a href="#orgheadline99">below</a> - they multiply all the brightnesses
 <ul class="org-ul">
 <li>On the graphs, I print out <code>bright = 1/bfac</code></li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I am modifying by hand the bfac for 248 from 2.222 to 2.4
@@ -5284,9 +5311,9 @@ fig.savefig(figfile)
 </div>
 
 
-<div id="outline-container-orgheadline2" class="outline-4">
-<h4 id="orgheadline2"><a id="ID-6CE33437-BC17-49AA-B048-5BACCBB8C99B"></a><span class="section-number-4">10.1.2</span> Repeat for the horizontal slits</h4>
-<div class="outline-text-4" id="text-10-1-2">
+<div id="outline-container-orgheadline5" class="outline-4">
+<h4 id="orgheadline5"><a id="ID-6CE33437-BC17-49AA-B048-5BACCBB8C99B"></a><span class="section-number-4">11.1.2</span> Repeat for the horizontal slits</h4>
+<div class="outline-text-4" id="text-11-1-2">
 <br><pre class="example">Results table name: horizontal-all-parameters</pre><table id="orgtable2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -5471,13 +5498,13 @@ fig.savefig(figfile)
 <li>This is equivalent to interpolating the bg underneath the slit profile</li>
 <li>It seems to give better results than the previous method</li>
 </ul></li>
-<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-22 Sat] </span></span> The bright and bgrad columns can now be filled in from the calculation <a href="#orgheadline97">down here</a>
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-22 Sat] </span></span> The bright and bgrad columns can now be filled in from the calculation <a href="#orgheadline100">down here</a>
 <ul class="org-ul">
 <li>Note that <b>bright is the reciprocal of bfac</b>, which I used in the table for the vertical slits</li>
 <li>The bgrad is for a linear E-W gradient correction to the brightnesses</li>
 <li>I rounded it to 1 decimal place, since it is not that well determined</li>
 </ul></li>
-<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I redid the calculation of the <code>bright</code> factors, see <a href="#orgheadline97">down here</a>, so we are now using the <code>corrnorm</code> column of the last table</li>
+<li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I redid the calculation of the <code>bright</code> factors, see <a href="#orgheadline100">down here</a>, so we are now using the <code>corrnorm</code> column of the last table</li>
 <li>Also experimented with increasing bgrad from 1.5 to 1.7 for 149, 154, 159</li>
 </ul>
 
@@ -5556,12 +5583,12 @@ fig.savefig(figfile)
 
 
 
-<div id="outline-container-orgheadline112" class="outline-3">
-<h3 id="orgheadline112"><span class="section-number-3">10.2</span> Datasets that we will use</h3>
-<div class="outline-text-3" id="text-10-2">
-</div><div id="outline-container-orgheadline99" class="outline-4">
-<h4 id="orgheadline99"><span class="section-number-4">10.2.1</span> Odd slits that we don't want to forget</h4>
-<div class="outline-text-4" id="text-10-2-1">
+<div id="outline-container-orgheadline115" class="outline-3">
+<h3 id="orgheadline115"><span class="section-number-3">11.2</span> Datasets that we will use</h3>
+<div class="outline-text-3" id="text-11-2">
+</div><div id="outline-container-orgheadline102" class="outline-4">
+<h4 id="orgheadline102"><span class="section-number-4">11.2.1</span> Odd slits that we don't want to forget</h4>
+<div class="outline-text-4" id="text-11-2-1">
 <ul class="org-ul">
 <li>2007 Jan
 <ul class="org-ul">
@@ -5612,27 +5639,27 @@ fig.savefig(figfile)
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline100" class="outline-4">
-<h4 id="orgheadline100"><span class="section-number-4">10.2.2</span> Dec 2013</h4>
-<div class="outline-text-4" id="text-10-2-2">
+<div id="outline-container-orgheadline103" class="outline-4">
+<h4 id="orgheadline103"><span class="section-number-4">11.2.2</span> Dec 2013</h4>
+<div class="outline-text-4" id="text-11-2-2">
 <ul class="org-ul">
 <li>These are in <a href="file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/"><a href="file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/">file:///Users/will/Dropbox/papers/LL-Objects/SPMDIC13/</a></a></li>
 <li>They are horizontal slits in between LL2 and Orion S</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline101" class="outline-4">
-<h4 id="orgheadline101"><span class="section-number-4">10.2.3</span> Feb 2015</h4>
-<div class="outline-text-4" id="text-10-2-3">
+<div id="outline-container-orgheadline104" class="outline-4">
+<h4 id="orgheadline104"><span class="section-number-4">11.2.3</span> Feb 2015</h4>
+<div class="outline-text-4" id="text-11-2-3">
 <ul class="org-ul">
 <li>These are in <a href="file:///Users/will/Dropbox/SPMFEB15/"><a href="file:///Users/will/Dropbox/SPMFEB15/">file:///Users/will/Dropbox/SPMFEB15/</a></a></li>
 <li>They are horizontal slits in between LL2 and Orion S with a new chip</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline103" class="outline-4">
-<h4 id="orgheadline103"><a id="ID-CB720DCF-0A33-4C51-9A0B-932030BC0E45"></a><span class="section-number-4">10.2.4</span> Jan 2007 and Feb 2006</h4>
-<div class="outline-text-4" id="text-10-2-4">
+<div id="outline-container-orgheadline106" class="outline-4">
+<h4 id="orgheadline106"><a id="ID-CB720DCF-0A33-4C51-9A0B-932030BC0E45"></a><span class="section-number-4">11.2.4</span> Jan 2007 and Feb 2006</h4>
+<div class="outline-text-4" id="text-11-2-4">
 <ul class="org-ul">
 <li>These are the HH 505 observations in <a href="file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/"><a href="file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/">file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/</a></a></li>
 <li>And also in <a href="file:///Users/will/Work/SPM2005/">file:///Users/will/Work/SPM2005/</a> for the older ones
@@ -5643,9 +5670,9 @@ fig.savefig(figfile)
 <li>They are mainly vertical, but there are a few horizontal slits</li>
 </ul>
 </div>
-<div id="outline-container-orgheadline102" class="outline-5">
-<h5 id="orgheadline102"><span class="section-number-5">10.2.4.1</span> Original database for vertical slits</h5>
-<div class="outline-text-5" id="text-10-2-4-1">
+<div id="outline-container-orgheadline105" class="outline-5">
+<h5 id="orgheadline105"><span class="section-number-5">11.2.4.1</span> Original database for vertical slits</h5>
+<div class="outline-text-5" id="text-11-2-4-1">
 <ul class="org-ul">
 <li>Taken from <a href="file:///Users/will/Work/SPM2007/Reduced/HH505/slits/reducciones/jw0.csv">jw0.csv</a></li>
 <li>I have removed the following columns from the table because they were constants:
@@ -5936,9 +5963,9 @@ fig.savefig(figfile)
 </div>
 
 
-<div id="outline-container-orgheadline104" class="outline-4">
-<h4 id="orgheadline104"><span class="section-number-4">10.2.5</span> Feb 2013</h4>
-<div class="outline-text-4" id="text-10-2-5">
+<div id="outline-container-orgheadline107" class="outline-4">
+<h4 id="orgheadline107"><span class="section-number-4">11.2.5</span> Feb 2013</h4>
+<div class="outline-text-4" id="text-11-2-5">
 <ul class="org-ul">
 <li>These are in <a href="file:///Users/will/Dropbox/SPMFEB13/">file:///Users/will/Dropbox/SPMFEB13/</a>
 <ul class="org-ul">
@@ -5947,12 +5974,12 @@ fig.savefig(figfile)
 </ul></li>
 </ul>
 </div>
-<div id="outline-container-orgheadline4" class="outline-5">
-<h5 id="orgheadline4"><a id="ID-F6ED03C3-EC32-4444-9746-4E3C2A15CD63"></a><span class="section-number-5">10.2.5.1</span> WCS values</h5>
-<div class="outline-text-5" id="text-10-2-5-1">
+<div id="outline-container-orgheadline7" class="outline-5">
+<h5 id="orgheadline7"><a id="ID-F6ED03C3-EC32-4444-9746-4E3C2A15CD63"></a><span class="section-number-5">11.2.5.1</span> WCS values</h5>
+<div class="outline-text-5" id="text-11-2-5-1">
 <ul class="org-ul">
 <li>These are with a different chip, and with binning of 3x2</li>
-<li>Here I calculate a similar table to what I did for the <a href="#orgheadline3">vertical slits</a></li>
+<li>Here I calculate a similar table to what I did for the <a href="#orgheadline6">vertical slits</a></li>
 <li>This time we have dy = 0.52 arcsec</li>
 <li>The PA is within 0.5 deg of 90
 <ul class="org-ul">
@@ -6198,9 +6225,9 @@ fig.savefig(figfile)
 </div>
 
 
-<div id="outline-container-orgheadline97" class="outline-5">
-<h5 id="orgheadline97"><a id="ID-23506DE2-4D98-40C5-961F-4715BE7A1F55"></a><span class="section-number-5">10.2.5.2</span> Inter-position brightness calibration</h5>
-<div class="outline-text-5" id="text-10-2-5-2">
+<div id="outline-container-orgheadline100" class="outline-5">
+<h5 id="orgheadline100"><a id="ID-23506DE2-4D98-40C5-961F-4715BE7A1F55"></a><span class="section-number-5">11.2.5.2</span> Inter-position brightness calibration</h5>
+<div class="outline-text-5" id="text-11-2-5-2">
 <ul class="org-ul">
 <li>I have measured brightness in several parts of the image
 <ul class="org-ul">
@@ -6417,7 +6444,7 @@ fig.savefig(figfile)
 <li>So we get &delta; = -1.24 (W/E - 1)</li>
 </ul></li>
 </ul></li>
-<li>The columns "Mean" and "W/E" get copied to columns <code>bfac</code> and <code>bgrad</code> respectively in the <a href="#orgheadline2">table above</a></li>
+<li>The columns "Mean" and "W/E" get copied to columns <code>bfac</code> and <code>bgrad</code> respectively in the <a href="#orgheadline5">table above</a></li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-25 Tue] </span></span> I was not satisfied with the brightness normalizations
 <ul class="org-ul">
 <li>Some slits, notably 149, 154, 159 seem to be too bright in the combined image</li>
@@ -6428,7 +6455,7 @@ fig.savefig(figfile)
 <li>X0 = NX/2 = 312</li>
 <li>From the table, the Xpix values of the reference point can be smaller or larger than that</li>
 <li>So there is a further correction factor dcorr = 1 + &delta; (Xpix - X0)/NX, which we have to <i>multiply</i> the brightness norms by</li>
-<li>I copied the delta values from the table <a href="#orgheadline4">here</a></li>
+<li>I copied the delta values from the table <a href="#orgheadline7">here</a></li>
 </ul></li>
 <li>The result is that the corrections are closer to unity for nearly all the slits</li>
 </ul></li>
@@ -6581,17 +6608,17 @@ fig.savefig(figfile)
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline111" class="outline-4">
-<h4 id="orgheadline111"><span class="section-number-4">10.2.6</span> Jan 2010</h4>
-<div class="outline-text-4" id="text-10-2-6">
+<div id="outline-container-orgheadline114" class="outline-4">
+<h4 id="orgheadline114"><span class="section-number-4">11.2.6</span> Jan 2010</h4>
+<div class="outline-text-4" id="text-11-2-6">
 <ul class="org-ul">
 <li>Copied files to <a href="file:///Users/will/Dropbox/SPMJAN10/reducciones/">~/Dropbox/SPMJAN10/reducciones/</a></li>
 <li>Looking at which ones to use to see if I agree with Tere</li>
 </ul>
 </div>
-<div id="outline-container-orgheadline3" class="outline-5">
-<h5 id="orgheadline3"><a id="ID-6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D"></a><span class="section-number-5">10.2.6.1</span> WCS values and per-slit weighting</h5>
-<div class="outline-text-5" id="text-10-2-6-1">
+<div id="outline-container-orgheadline6" class="outline-5">
+<h5 id="orgheadline6"><a id="ID-6BFD88F6-71FD-48D3-B8E4-5FF55A3B3D9D"></a><span class="section-number-5">11.2.6.1</span> WCS values and per-slit weighting</h5>
+<div class="outline-text-5" id="text-11-2-6-1">
 <ul class="org-ul">
 <li>Alba's coordinates seem to be for the center of the slit in the image+slit</li>
 <li>dWav = 0.043752133846283 Ang (2 km/s)</li>
@@ -6879,10 +6906,10 @@ fig.savefig(figfile)
 </div>
 </div>
 
-<div id="outline-container-orgheadline109" class="outline-5">
-<h5 id="orgheadline109"><span class="section-number-5">10.2.6.2</span> Which to use</h5>
-<div class="outline-text-5" id="text-10-2-6-2">
-</div><ol class="org-ol"><li><a id="orgheadline96"></a><a id="ID-D625BE5F-BE3F-477A-8059-4B0AFEFEED54"></a>Positions in Alba's set that are acceptable<br  /><div class="outline-text-6" id="text-10-2-6-2-1">
+<div id="outline-container-orgheadline112" class="outline-5">
+<h5 id="orgheadline112"><span class="section-number-5">11.2.6.2</span> Which to use</h5>
+<div class="outline-text-5" id="text-11-2-6-2">
+</div><ol class="org-ol"><li><a id="orgheadline99"></a><a id="ID-D625BE5F-BE3F-477A-8059-4B0AFEFEED54"></a>Positions in Alba's set that are acceptable<br  /><div class="outline-text-6" id="text-11-2-6-2-1">
 <p>
 202, 124, 206, 133(+), 210, 137, 214, 248(+), 219, 236, 240, 244, 252
 </p>
@@ -7083,16 +7110,16 @@ fig.savefig(figfile)
 <li>The Inverse column <i>used</i> to agree closely with Alba's values</li>
 <li>But now it does not, because I realised that the radec images have not had the bias subtracted!</li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-17 Mon] </span></span> Dones it again to include more positions - new version is in columns 2 to 4</li>
-<li>Note that values from this table are used <a href="#orgheadline1">above</a> to calculate the slit normalizations</li>
+<li>Note that values from this table are used <a href="#orgheadline4">above</a> to calculate the slit normalizations</li>
 </ul>
 </div></li>
 
-<li><a id="orgheadline106"></a>Positions in Alba's set that are bad<br  /><div class="outline-text-6" id="text-10-2-6-2-2">
+<li><a id="orgheadline109"></a>Positions in Alba's set that are bad<br  /><div class="outline-text-6" id="text-11-2-6-2-2">
 <p>
 128(+), 101, 145, 157, 173
 </p>
 </div>
-<ol class="org-ol"><li><a id="orgheadline105"></a>Rehabilitation of some of these positions<br  /><div class="outline-text-7" id="text-10-2-6-2-2-1">
+<ol class="org-ol"><li><a id="orgheadline108"></a>Rehabilitation of some of these positions<br  /><div class="outline-text-7" id="text-11-2-6-2-2-1">
 <ul class="org-ul">
 <li>From my experience with the image-spectrum calibration, there is often a big difference between the quality of the image and that of hte spectrum</li>
 <li>So we shouldn't rule out a position, just based on a poor image</li>
@@ -7105,12 +7132,12 @@ fig.savefig(figfile)
 <li>Still terrible: 101 (no spectrum), 173 (just bad)</li>
 </ul>
 </div></li></ol></li>
-<li><a id="orgheadline107"></a>Positions over to the NE<br  /><div class="outline-text-6" id="text-10-2-6-2-3">
+<li><a id="orgheadline110"></a>Positions over to the NE<br  /><div class="outline-text-6" id="text-11-2-6-2-3">
 <p>
 spm078, spm085
 </p>
 </div></li>
-<li><a id="orgheadline108"></a>Other positions omitted ny Alba<br  /><div class="outline-text-6" id="text-10-2-6-2-4">
+<li><a id="orgheadline111"></a>Other positions omitted ny Alba<br  /><div class="outline-text-6" id="text-11-2-6-2-4">
 <ul class="org-ul">
 <li>spm142 - no spectrum</li>
 <li>spm150 - ha spec exists, but looks weak and Tere says no</li>
@@ -7121,9 +7148,9 @@ spm078, spm085
 </ul>
 </div></li></ol>
 </div>
-<div id="outline-container-orgheadline110" class="outline-5">
-<h5 id="orgheadline110"><span class="section-number-5">10.2.6.3</span> Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></h5>
-<div class="outline-text-5" id="text-10-2-6-3">
+<div id="outline-container-orgheadline113" class="outline-5">
+<h5 id="orgheadline113"><span class="section-number-5">11.2.6.3</span> Message from Teresa <span class="timestamp-wrapper"><span class="timestamp">[2010-02-18 Thu]</span></span></h5>
+<div class="outline-text-5" id="text-11-2-6-3">
 <pre class="example">
 Acabo de terminar las reducciones de las observaciones de Enero. Al
 final nos quedamos con 16 posiciones, eliminé 7 posiciones
@@ -7179,9 +7206,9 @@ que son los que anexo a este email.
 </div>
 </div>
 
-<div id="outline-container-orgheadline117" class="outline-3">
-<h3 id="orgheadline117"><span class="section-number-3">10.3</span> Making spectral maps</h3>
-<div class="outline-text-3" id="text-10-3">
+<div id="outline-container-orgheadline120" class="outline-3">
+<h3 id="orgheadline120"><span class="section-number-3">11.3</span> Making spectral maps</h3>
+<div class="outline-text-3" id="text-11-3">
 <ul class="org-ul">
 <li>The plan is to start with a fine orthogonal RA-dec grid
 <ul class="org-ul">
@@ -7200,9 +7227,9 @@ que son los que anexo a este email.
 </ul></li>
 </ul>
 </div>
-<div id="outline-container-orgheadline113" class="outline-4">
-<h4 id="orgheadline113"><span class="section-number-4">10.3.1</span> Define the output grid</h4>
-<div class="outline-text-4" id="text-10-3-1">
+<div id="outline-container-orgheadline116" class="outline-4">
+<h4 id="orgheadline116"><span class="section-number-4">11.3.1</span> Define the output grid</h4>
+<div class="outline-text-4" id="text-11-3-1">
 <ul class="org-ul">
 <li>1 arcsec is
 <ul class="org-ul">
@@ -7232,9 +7259,9 @@ que son los que anexo a este email.
 </div>
 </div>
 
-<div id="outline-container-orgheadline5" class="outline-4">
-<h4 id="orgheadline5"><a id="ID-23C29E96-4471-454E-A463-D365731119C0"></a><span class="section-number-4">10.3.2</span> Test with the velocity-integrated emission</h4>
-<div class="outline-text-4" id="text-10-3-2">
+<div id="outline-container-orgheadline8" class="outline-4">
+<h4 id="orgheadline8"><a id="ID-23C29E96-4471-454E-A463-D365731119C0"></a><span class="section-number-4">11.3.2</span> Test with the velocity-integrated emission</h4>
+<div class="outline-text-4" id="text-11-3-2">
 <p>
 Some positions are a bit problematic - try missing them out: 
 </p>
@@ -8252,9 +8279,9 @@ This shows the scaled image in ds9
 </div>
 
 
-<div id="outline-container-orgheadline6" class="outline-4">
-<h4 id="orgheadline6"><a id="ID-60833550-A462-4F18-86DE-895625FF3E7A"></a><span class="section-number-4">10.3.3</span> Repeat the spectral map for the horizontal slits</h4>
-<div class="outline-text-4" id="text-10-3-3">
+<div id="outline-container-orgheadline9" class="outline-4">
+<h4 id="orgheadline9"><a id="ID-60833550-A462-4F18-86DE-895625FF3E7A"></a><span class="section-number-4">11.3.3</span> Repeat the spectral map for the horizontal slits</h4>
+<div class="outline-text-4" id="text-11-3-3">
 <ul class="org-ul">
 <li>We can't use the same program as for the vertical slits because the table has extra columns
 <ul class="org-ul">
@@ -8379,9 +8406,9 @@ This shows the scaled image in ds9
 </div>
 
 
-<div id="outline-container-orgheadline114" class="outline-4">
-<h4 id="orgheadline114"><span class="section-number-4">10.3.4</span> <span class="todo TODO">TODO</span> Correction for heliocentric velocity</h4>
-<div class="outline-text-4" id="text-10-3-4">
+<div id="outline-container-orgheadline117" class="outline-4">
+<h4 id="orgheadline117"><span class="section-number-4">11.3.4</span> <span class="todo TODO">TODO</span> Correction for heliocentric velocity</h4>
+<div class="outline-text-4" id="text-11-3-4">
 <ul class="org-ul">
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-08-23 Sun] </span></span> I haven't done this yet</li>
 <li>I have it in a table for the 2013 observations, but need to calculate it for the others</li>
@@ -8394,9 +8421,9 @@ This shows the scaled image in ds9
 </div>
 </div>
 
-<div id="outline-container-orgheadline115" class="outline-4">
-<h4 id="orgheadline115"><span class="section-number-4">10.3.5</span> Try to use different velocity ranges</h4>
-<div class="outline-text-4" id="text-10-3-5">
+<div id="outline-container-orgheadline118" class="outline-4">
+<h4 id="orgheadline118"><span class="section-number-4">11.3.5</span> Try to use different velocity ranges</h4>
+<div class="outline-text-4" id="text-11-3-5">
 <ul class="org-ul">
 <li>It would be more efficient to do these all at the sane time, but for the time being I will do them separately</li>
 <li>Although the noisiest slit looked fine on the integrated maps, it makes a mess of the velocity channels where the emission is faint</li>
@@ -8497,9 +8524,9 @@ xpaset -p ds9 scale limits 0 6000
 
 
 
-<div id="outline-container-orgheadline116" class="outline-4">
-<h4 id="orgheadline116"><span class="section-number-4">10.3.6</span> Combine both the horizontal and vertical slits</h4>
-<div class="outline-text-4" id="text-10-3-6">
+<div id="outline-container-orgheadline119" class="outline-4">
+<h4 id="orgheadline119"><span class="section-number-4">11.3.6</span> Combine both the horizontal and vertical slits</h4>
+<div class="outline-text-4" id="text-11-3-6">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
@@ -8619,9 +8646,9 @@ Binning 1 - pixels used 0
 </div>
 </div>
 
-<div id="outline-container-orgheadline118" class="outline-3">
-<h3 id="orgheadline118"><span class="section-number-3">10.4</span> The multigrid smoothing method</h3>
-<div class="outline-text-3" id="text-10-4">
+<div id="outline-container-orgheadline121" class="outline-3">
+<h3 id="orgheadline121"><span class="section-number-3">11.4</span> The multigrid smoothing method</h3>
+<div class="outline-text-3" id="text-11-4">
 <div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock13"><span style="color: #b9d3ee;">import</span> sys
@@ -8817,17 +8844,17 @@ Binning 1 - pixels used 1135
 </div>
 
 
-<div id="outline-container-orgheadline123" class="outline-3">
-<h3 id="orgheadline123"><span class="section-number-3">10.5</span> Coordinates of the slits</h3>
-<div class="outline-text-3" id="text-10-5">
+<div id="outline-container-orgheadline126" class="outline-3">
+<h3 id="orgheadline126"><span class="section-number-3">11.5</span> Coordinates of the slits</h3>
+<div class="outline-text-3" id="text-11-5">
 <ul class="org-ul">
 <li>Data received from Alba <span class="timestamp-wrapper"><span class="timestamp">[2015-08-11 Tue]</span></span></li>
 </ul>
 </div>
 
-<div id="outline-container-orgheadline119" class="outline-4">
-<h4 id="orgheadline119"><span class="section-number-4">10.5.1</span> Description from Alba</h4>
-<div class="outline-text-4" id="text-10-5-1">
+<div id="outline-container-orgheadline122" class="outline-4">
+<h4 id="orgheadline122"><span class="section-number-4">11.5.1</span> Description from Alba</h4>
+<div class="outline-text-4" id="text-11-5-1">
 <pre class="example">
 Todos los datos están en:
 /fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/0.Datos
@@ -8844,9 +8871,9 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 
 
 
-<div id="outline-container-orgheadline120" class="outline-4">
-<h4 id="orgheadline120"><span class="section-number-4">10.5.2</span> Brightness correction factors</h4>
-<div class="outline-text-4" id="text-10-5-2">
+<div id="outline-container-orgheadline123" class="outline-4">
+<h4 id="orgheadline123"><span class="section-number-4">11.5.2</span> Brightness correction factors</h4>
+<div class="outline-text-4" id="text-11-5-2">
 <ul class="org-ul">
 <li>The 2010 data in <code>3.CuboWS/0.Datos</code> are <code>.nc.cc.</code> have already had this applied</li>
 <li>The prior stage (just <code>.nc.</code>) is in <code>2.Datos2010/1.PreparandoDatos/1.SustraccionContinuo</code></li>
@@ -9009,9 +9036,9 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 </div>
 </div>
 
-<div id="outline-container-orgheadline121" class="outline-4">
-<h4 id="orgheadline121"><span class="section-number-4">10.5.3</span> HORIZONTALES 2013</h4>
-<div class="outline-text-4" id="text-10-5-3">
+<div id="outline-container-orgheadline124" class="outline-4">
+<h4 id="orgheadline124"><span class="section-number-4">11.5.3</span> HORIZONTALES 2013</h4>
+<div class="outline-text-4" id="text-11-5-3">
 <br><pre class="example">Results table name: nil</pre><table id="orgtable5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -9117,9 +9144,9 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 
 
 
-<div id="outline-container-orgheadline122" class="outline-4">
-<h4 id="orgheadline122"><span class="section-number-4">10.5.4</span> VERTICALES 2010</h4>
-<div class="outline-text-4" id="text-10-5-4">
+<div id="outline-container-orgheadline125" class="outline-4">
+<h4 id="orgheadline125"><span class="section-number-4">11.5.4</span> VERTICALES 2010</h4>
+<div class="outline-text-4" id="text-11-5-4">
 <ul class="org-ul">
 <li>From the region file <a href="file://ssh:nil:/fs/posgrado01/other0/albafm/WesternShocks/3.CuboWS/1.Posiciones/pos_todas.reg">pos_todas.reg</a> it looks like the PA = 3.03 deg</li>
 </ul>
@@ -9309,7 +9336,7 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: William Henney</p>
-<p class="date">Created: 2015-10-06 Tue 23:28</p>
+<p class="date">Created: 2015-10-06 Tue 23:35</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

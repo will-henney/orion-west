@@ -10,6 +10,13 @@
 
 #+PROPERTY: header-args    :exports both
 
+* Final products of calibration
+
+** Spectral images
++ =new-slits-*.fits=
+** Calibrated slit spectra
++ =Calibrated/BGsub/{XX,YY}*-vhel.fits=
+
 
 * DONE New general version of the slit flux calibration and astrometry
 CLOSED: [2015-10-06 Tue 23:02]
