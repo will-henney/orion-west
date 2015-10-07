@@ -11,7 +11,8 @@
 #+PROPERTY: header-args    :exports both
 
 
-* TODO New general version of the slit flux calibration and astrometry
+* DONE New general version of the slit flux calibration and astrometry
+CLOSED: [2015-10-06 Tue 23:02]
 + It would be better to use the [[file:~/Work/OrionTreasury/wfi/][WFI images]] to flux calibrate the spectra
   + As well as being more reliable, this is necessary in the case of some of the LL2 slits, since the Image+slit was taken in [S II] instead of H alpha
 + We will apply it first to the LL2 slits, plus any other odd slits that are lying around
@@ -28,8 +29,7 @@
   1. Tangle all python scripts to files
   2. Write all data tables to files
      - Initial input table can be written as TSV from org table
-     - Do I use JSON or astropy tables written to TSV, or to FITS or ...?
-  3. Do I control it all with a makefile?
+     - Read in with astropy tables 
 
 ** Outline of steps
 
@@ -42,7 +42,7 @@
      + Check for calibration gradients along the slit by plotting =spec/image= against =s= (distance along slit)
        + [2015-09-08 Tue] It appears that the trends are not linear.  They tend to either curve down near the left hand edge, or curve up at the right hand edge, combined with a more linear increase from left to right
        + A cubic would probably capture the behavior well
-       + [ ] Fit a chebychev polynomial to the ratio
+       + [X] Fit a chebychev polynomial to the ratio
      + Check for zero point errors by plotting  =spec= against =image=
      + [X] One problem will be disentangling the above two effects, because if there is a strong systematic brightness gradient along the slit then their effects will be degenerate
        + It turns out this is not too difficult in most cases, so long as we assume that the along-slit variation is a low-order polynomial
@@ -279,10 +279,11 @@ Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8
 + This is now dealt with in the [[id:1D9200A9-45BA-4128-894B-4D4DF84FC2F2][find_slit_coords]] function
 
 
-*** TODO Allow for offsets perpendicular to slit
+*** DONE Allow for offsets perpendicular to slit
+CLOSED: [2015-10-06 Tue 23:02]
 + In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure
 + I suspect this is happening with the 2013-12 spectra at least
-
++ [2015-10-06 Tue] *Cancel* this since it is not that important
 *** DONE Problems with the flux zero-point of the spectra
 CLOSED: [2015-09-10 Thu 18:00]
 :LOGBOOK:
@@ -851,7 +852,8 @@ else:
     selector_pattern = ''
 #+END_SRC
 
-*** TODO Remove background and sum over wavelength across line
+*** DONE Remove background and sum over wavelength across line
+CLOSED: [2015-10-06 Tue 23:01]
 :LOGBOOK:
 CLOCK: [2015-09-22 Tue 21:52]--[2015-09-28 Mon 11:53] => 134:01
 :END:
@@ -1012,7 +1014,7 @@ for row in tab:
 + For debugging we can redirect stdout to stderr with =1>&2=
   + This means that the normal output (e.g., print statements) will show up in the =*Org-Babel Error Output*= buffer 
 
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :exports code
 python slit-calibration.py  # 1>&2
 #+END_SRC
 
@@ -4478,7 +4480,7 @@ xpaset -p ds9 fits $PWD/Calibrated/2006-02-303-ha.fits
 So it seems like all the trouble was due to differences in the zero-level between the nii and the ha spectra! 
 
 ** Run slit-ratio-check.py
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :exports code
 python slit-ratio-check.py # 1>&2
 #+END_SRC
 
@@ -7584,7 +7586,7 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 + At the same time, we will change wavelength to Vhel in the FITS headers
 + And we could try and add pixel coordinates for the output image array too. 
 
-#+BEGIN_SRC python
+#+BEGIN_SRC python :exports code
 import glob
 import chebfit2d
 
@@ -8627,7 +8629,7 @@ fits.HDUList([
 
 
 ** Run spectral-map.py for the nii or ha spectra
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :exports code
 python spectral-map.py ha 
 #+END_SRC
 
@@ -8803,7 +8805,7 @@ Wavelength window: 6559.29 Angstrom to 6566.29 Angstrom
 Pixel window: 13.2364321915 to 135.385683307
 #+end_example
 
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :exports code
 python spectral-map.py nii 
 #+END_SRC
 
@@ -9460,6 +9462,7 @@ I have marked 4 different bows in the region file [[file:red-bow-all.reg]]
 
 
 * Old stuff on calibration
+Most of the following has been superseded. 
 ** Dealing with the offset between image and spectrum
 + It seems that this is not as constant as I had hoped
   + In the [[id:8685D060-12A9-4E73-B069-11D5315ED8EB][vertical slits]] it varies from 52 to 60 pixels
@@ -11756,7 +11759,7 @@ Based on http://kitchingroup.cheme.cmu.edu/blog/2014/09/22/Showing-what-data-wen
 ** This is all copied from John Kitchin's page
 Here is how we can get a list of the table-names indicating their name or that they are results (results are enclosed in ()).
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results list
 (org-element-map (org-element-parse-buffer) 'table
   (lambda (element)     
     (or (org-element-property :name element) (org-element-property :results element))))
@@ -11764,32 +11767,32 @@ Here is how we can get a list of the table-names indicating their name or that t
 
 #+RESULTS:
 - vertical-image-and-fullspec
+- horizontal-image-and-fullspec
+- ("horizontal-all-parameters")
 - ("vertical-all-parameters")
+- minweights-extended
+- minweights-standard
 - horizontal-slits
 - vertical-slits
+- ("")
 - ("")
 
 Similarly, here is the list of parameters for each block.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results list
 (org-element-map (org-element-parse-buffer) 'src-block
   (lambda (element)     
     (org-element-property :parameters element)))
 #+END_SRC
 
 #+RESULTS:
-- :return figfile :results file
-- :return table :dir ~/Dropbox/SPMJAN10/reducciones/posiciones :exports both
-- :results output
-- :results silent
-- :results output
-- :results silent
-- :results output
 - :results list
+- :results list
+- :results verbatim
 
 
 ** My attempt to extend it to '#+header:' elements
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results list
 (org-element-map (org-element-parse-buffer) 'src-block
   (lambda (element)
   (org-element-property :header element)))
@@ -11797,13 +11800,17 @@ Similarly, here is the list of parameters for each block.
 
 #+RESULTS:
 - (":var table=vertical-image-and-fullspec")
+- (":var table=horizontal-image-and-fullspec")
+- (":var intable=horizontal-image-and-fullspec")
 - (":var intable=vertical-image-and-fullspec")
-- (":var vtab=vertical-all-parameters" ":var ignore=positions-to-drop")
+- (":var vmin=-1000 vmax=1000 label=\"sum\"" ":var vtab=vertical-all-parameters" ":var ignore=positions-to-drop")
+- (":var vmin=-1000 vmax=1000 label=\"sum\"" ":var htab=horizontal-all-parameters")
+- (":var labels=vel-channels slits=\"vert\" wtab=minweights-standard imscale=1000")
 
 
 
 ** And to named plain lists
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results list
 (org-element-map (org-element-parse-buffer) 'plain-list
   (lambda (element)     
     (or (org-element-property :name element) (org-element-property :results element))))
@@ -11811,11 +11818,14 @@ Similarly, here is the list of parameters for each block.
 
 #+RESULTS:
 - positions-to-drop
+- noisy-slits
+- just-integrated
+- vel-channels
 - ("")
 - ("")
 - ("")
 
-
+  
 ** Now my version of Kitchin's output filters
 
 #+BEGIN_SRC emacs-lisp
@@ -11877,7 +11887,7 @@ Similarly, here is the list of parameters for each block.
 
       ;; register the filters
       (org-export-filter-table-functions '(ox-mrkup-filter-table))
-      (org-export-filter-plain-list-functions '(ox-mrkup-filter-plain-list))
+;;      (org-export-filter-plain-list-functions '(ox-mrkup-filter-plain-list))
       (org-export-filter-src-block-functions '(ox-mrkup-filter-src-block)))
 
   ;; and export the result
