@@ -1,0 +1,992 @@
+--- aow-v339.org	2015-10-07 10:35:37.000000000 -0500
++++ aow-v338.org	2015-10-07 10:35:01.000000000 -0500
+@@ -11,7 +11,8 @@
+ #+PROPERTY: header-args    :exports both
+ 
+ 
+-* TODO New general version of the slit flux calibration and astrometry
++* DONE New general version of the slit flux calibration and astrometry
++CLOSED: [2015-10-06 Tue 12:05]
+ + It would be better to use the [[file:~/Work/OrionTreasury/wfi/][WFI images]] to flux calibrate the spectra
+   + As well as being more reliable, this is necessary in the case of some of the LL2 slits, since the Image+slit was taken in [S II] instead of H alpha
+ + We will apply it first to the LL2 slits, plus any other odd slits that are lying around
+@@ -29,7 +30,6 @@
+   2. Write all data tables to files
+      - Initial input table can be written as TSV from org table
+      - Do I use JSON or astropy tables written to TSV, or to FITS or ...?
+-  3. Do I control it all with a makefile?
+ 
+ ** Outline of steps
+ 
+@@ -158,7 +158,7 @@
+ 
+ 
+ Run it for a single slit
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python slit-calibration.py 2015-02 # 1>&2
+ #+END_SRC
+ 
+@@ -279,10 +279,11 @@
+ + This is now dealt with in the [[id:1D9200A9-45BA-4128-894B-4D4DF84FC2F2][find_slit_coords]] function
+ 
+ 
+-*** TODO Allow for offsets perpendicular to slit
++*** DONE Allow for offsets perpendicular to slit
++CLOSED: [2015-10-06 Tue 12:04]
+ + In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure
+ + I suspect this is happening with the 2013-12 spectra at least
+-
+++ [2015-10-06 Tue] Cancelled this since I don't think it is important
+ *** DONE Problems with the flux zero-point of the spectra
+ CLOSED: [2015-09-10 Thu 18:00]
+ :LOGBOOK:
+@@ -321,7 +322,7 @@
+ :dir:      /Users/will/Work/SPM2007/Reduced
+ :ID:       4335A38B-52C8-4F0E-8F92-308DC4DBC4F6
+ :END:
+-#+BEGIN_SRC python
++#+BEGIN_SRC python :results output verbatim
+ import glob
+ import numpy as np
+ from astropy.io import fits
+@@ -379,7 +380,7 @@
+     + Strangely, the shift was slightly different for nii and ha
+ 
+ 
+-#+BEGIN_SRC python
++#+BEGIN_SRC python :results output verbatim
+ import numpy as np
+ from astropy.io import fits
+ jwin = 160
+@@ -851,7 +852,8 @@
+     selector_pattern = ''
+ #+END_SRC
+ 
+-*** TODO Remove background and sum over wavelength across line
++*** DONE Remove background and sum over wavelength across line
++CLOSED: [2015-10-06 Tue 12:05]
+ :LOGBOOK:
+ CLOCK: [2015-09-22 Tue 21:52]--[2015-09-28 Mon 11:53] => 134:01
+ :END:
+@@ -912,7 +914,7 @@
+ 
+ 
+ **** Original version
+-#+BEGIN_SRC python
++#+BEGIN_SRC python :tangle no
+ def extract_profile(data):
+     return remove_background(data).sum(axis=wavaxis)
+ 
+@@ -1012,7 +1014,7 @@
+ + For debugging we can redirect stdout to stderr with =1>&2=
+   + This means that the normal output (e.g., print statements) will show up in the =*Org-Babel Error Output*= buffer 
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python slit-calibration.py  # 1>&2
+ #+END_SRC
+ 
+@@ -4063,74 +4065,10 @@
+ + And also double check against the full spectrum image wherever possible
+ *** Re-use stuff from slit-calibration.py
+ #+BEGIN_SRC python
+-import os
+-import sys
+-import numpy as np
+-import astropy
+-from astropy.table import Table
+-from astropy.io import fits
+-from astropy.wcs import WCS
+-from astropy.wcs.utils import pixel_to_skycoord
+-from matplotlib import pyplot as plt
+-import seaborn as sns
+-from astropy import units as u
+-from astropy.coordinates import SkyCoord
+-from astropy.modeling import models, fitting
++  <<slit-calib-imports>>
+ from astropy.convolution import convolve_fft, Box1DKernel
+-converters = {'imid': [astropy.io.ascii.convert_numpy(np.str)]}
+-tab = Table.read('all-slits-input.tab',
+-                 format='ascii.tab', converters=converters)
+-file_templates = {
+-    'fullspec' : {
+-        '2006-02': 'Work/SPM2005/pp{}.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spec{}-transf.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/spm{}h.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits',
+-    },
+-    'ha' : {
+-        '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spec{}-ha-fix.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits',
+-    },
+-    'nii' : {
+-        '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spec{}-nii-fix.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits',
+-    },
+-    'image' : {
+-        '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spm{}-ardec.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}-ardec.fits',
+-    },
+-}
+-
+-def find_fits_filepath(db, filetype):
+-    """Return path to the FITS file for an image or spectrum 
+-    """
+-    id_ = db['imid'] if filetype == 'image' else db['specid']
+-    id_ = str(id_)
+-    if filetype in ('ha', 'nii') and db['Dataset'] not in ['2013-12']:
+-        id_ = id_.split('-')[0]
+-    template = file_templates[filetype][db['Dataset']]
+-    path = template.format(id_)
+-    print('~/'+path)
+-    homedir = os.path.expanduser('~')
+-    return os.path.join(homedir, path)
++  <<read-slit-table>>
++  <<slit-calib-filenames>>
+ #+END_SRC
+ *** Convert wavelength to pixel
+ #+BEGIN_SRC python
+@@ -4144,6 +4082,8 @@
+     return max(0, min(nwav, int(xpix+0.5)))
+ #+END_SRC
+ 
++#+RESULTS:
++
+ *** Make a sensible WCS (even if wavelength info missing)
+ 0.0994382022472
+ 
+@@ -4311,80 +4251,18 @@
+     fig.savefig('plots/{}-check-{}.png'.format(rtype, ds), dpi=300)
+ #+END_SRC
+ 
++#+RESULTS:
++
+ ** Check the pixel bounds for bg and line
+ *** Script to check the grating angles and other observational parameters
+ :PROPERTIES:
+ :header-args: :noweb yes
+ :END:
+ #+name: observational-parameters
+-#+BEGIN_SRC python
+-import os
+-import sys
+-import numpy as np
+-import astropy
+-from astropy.table import Table
+-from astropy.io import fits
+-from astropy.wcs import WCS
+-from astropy.wcs.utils import pixel_to_skycoord
+-from matplotlib import pyplot as plt
+-import seaborn as sns
+-from astropy import units as u
+-from astropy.coordinates import SkyCoord
+-from astropy.modeling import models, fitting
+-converters = {'imid': [astropy.io.ascii.convert_numpy(np.str)]}
+-tab = Table.read('all-slits-input.tab',
+-                 format='ascii.tab', converters=converters)
+-file_templates = {
+-    'fullspec' : {
+-        '2006-02': 'Work/SPM2005/pp{}.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spec{}-transf.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/spm{}h.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits',
+-    },
+-    'ha' : {
+-        '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spec{}-ha-fix.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits',
+-    },
+-    'nii' : {
+-        '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spec{}-nii-fix.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits',
+-    },
+-    'image' : {
+-        '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits',
+-        '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits',
+-        '2007-01': 'Work/SPM2007/Reduced/spm{}-ardec.fits',
+-        '2010-01': 'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits',
+-        '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits',
+-        '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits',
+-        '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}-ardec.fits',
+-    },
+-}
+-
+-def find_fits_filepath(db, filetype):
+-    """Return path to the FITS file for an image or spectrum 
+-    """
+-    id_ = db['imid'] if filetype == 'image' else db['specid']
+-    id_ = str(id_)
+-    if filetype in ('ha', 'nii') and db['Dataset'] not in ['2013-12']:
+-        id_ = id_.split('-')[0]
+-    template = file_templates[filetype][db['Dataset']]
+-    path = template.format(id_)
+-    print('~/'+path)
+-    homedir = os.path.expanduser('~')
+-    return os.path.join(homedir, path)
++#+BEGIN_SRC python :return outtab
++  <<slit-calib-imports>>
++  <<read-slit-table>>
++  <<slit-calib-filenames>>
+ outtab = [['ID', 'Spec', 'Date', 'Detector', 'Grating', 'Aperture', 'Gain'], None]
+ for row in tab:
+     full_id = row['Dataset'] + '-' + row['imid']
+@@ -4394,8 +4272,68 @@
+                    hdr.get('DETECTOR') or hdr.get('CAMERA'),
+                    hdr.get('APERTURE'), hdr.get('GRATING'), hdr.get('GAIN')])
+ #+END_SRC
++
++#+RESULTS: observational-parameters
++|            ID |      Spec |       Date | Detector | Grating     | Aperture | Gain |
++|---------------+-----------+------------+----------+-------------+----------+------|
++|   2006-02-326 |       324 | 2006-02-05 | SITE3    | 150 microns |      -11 |    4 |
++|   2006-02-318 |       319 | 2006-02-05 | SITE3    | 150 microns |      -11 |    4 |
++|   2006-02-260 |       261 | 2006-02-05 | SITE3    | 150 microns |       -7 |    4 |
++|   2006-02-270 |       271 | 2006-02-05 | SITE3    | 150 microns |       -4 |    4 |
++|   2006-02-276 |       277 | 2006-02-05 | SITE3    | 150 microns |       -4 |    4 |
++|   2006-02-281 |       282 | 2006-02-05 | SITE3    | 150 microns |       -6 |    4 |
++|   2006-02-286 |       287 | 2006-02-05 | SITE3    | 150 microns |       -7 |    4 |
++|   2006-02-291 |       292 | 2006-02-05 | SITE3    | 150 microns |       -8 |    4 |
++|   2006-02-296 |       297 | 2006-02-05 | SITE3    | 150 microns |       -8 |    4 |
++|   2006-02-303 |       304 | 2006-02-05 | SITE3    | 150 microns |       -8 |    4 |
++|   2006-02-313 |       312 | 2006-02-05 | SITE3    | 150 microns |      -10 |    4 |
++| 2007-01b-2061 |    2062-c | 2007-01-13 | SITE3    | 150 microns |        0 |    4 |
++| 2007-01b-2037 | 2038-2040 | 2007-01-13 | SITE3    | 150 microns |        0 |    4 |
++| 2007-01b-2041 | 2042-2044 | 2007-01-13 | SITE3    | 150 microns |        0 |    4 |
++| 2007-01b-2045 | 2046-2048 | 2007-01-13 | SITE3    | 150 microns |        0 |    4 |
++| 2007-01b-2049 | 2050-2052 | 2007-01-13 | SITE3    | 150 microns |        0 |    4 |
++| 2007-01b-2053 | 2054-2056 | 2007-01-13 | SITE3    | 150 microns |        0 |    4 |
++| 2007-01b-2057 | 2058-2060 | 2007-01-13 | SITE3    | 150 microns |        0 |    4 |
++|   2007-01-054 |       055 | 2007-01-10 | SITE3    | 150 microns |        0 |    4 |
++|   2007-01-067 |       068 | 2007-01-10 | SITE3    | 150 microns |        0 |    4 |
++|   2007-01-072 |       073 | 2007-01-10 | SITE3    | 150 microns |        0 |    4 |
++|   2010-01-078 |   079-080 | 2010-01-15 | SITE3    | 150 micron  |       -8 |    4 |
++|   2010-01-202 |   203-204 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-124 |   125-127 | 2010-01-16 | SITE3    | 150 micron  |       -1 |    4 |
++|   2010-01-206 |   207-208 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-128 |   129-130 | 2010-01-16 | SITE3    | 150 micron  |       -1 |    4 |
++|   2010-01-133 |   134-135 | 2010-01-16 | SITE3    | 150 micron  |       -1 |    4 |
++|   2010-01-210 |   211-212 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-137 |   138-139 | 2010-01-16 | SITE3    | 150 micron  |       -1 |    4 |
++|   2010-01-214 |   215-216 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-145 |   146-147 | 2010-01-16 | SITE3    | 150 micron  |       -1 |    4 |
++|   2010-01-248 |   249-250 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-219 |   220-221 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-157 |   158-159 | 2010-01-16 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-236 |   237-238 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-240 |   241-242 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-244 |   245-246 | 2010-01-17 | SITE3    | 150 micron  |        1 |    4 |
++|   2010-01-252 |   253-254 | 2010-01-17 | SITE3    | 150 micron  |        0 |    4 |
++|   2013-02-024 |       025 | 2013-02-16 | e2vm2    | 70 micron   |       -4 |  2.2 |
++|   2013-02-165 |   166-167 | 2013-02-18 | e2vm2    | 150 micron  |       13 |  2.2 |
++|   2013-02-169 |   170-171 | 2013-02-18 | e2vm2    | 150 micron  |       10 |  2.2 |
++|   2013-02-237 |   238-239 | 2013-02-19 | e2vm2    | 150 micron  |       11 |  2.2 |
++|   2013-02-232 |   233-234 | 2013-02-19 | e2vm2    | 150 micron  |        9 |  2.2 |
++|   2013-02-226 |   227-228 | 2013-02-19 | e2vm2    | 150 micron  |        9 |  2.2 |
++|   2013-02-149 |   150-151 | 2013-02-18 | e2vm2    | 150 micron  |        4 |  2.2 |
++|   2013-02-154 |   155-156 | 2013-02-18 | e2vm2    | 150 micron  |        7 |  2.2 |
++|   2013-02-159 |   160-161 | 2013-02-18 | e2vm2    | 150 micron  |        8 |  2.2 |
++|   2013-02-033 |   034-035 | 2013-02-16 | e2vm2    | 150 micron  |       -5 |  2.2 |
++|   2013-02-029 |   030-031 | 2013-02-16 | e2vm2    | 150 micron  |       -4 |  2.2 |
++|   2013-12-116 |   117-118 | 2013-12-11 | e2vm2    | 150         |        0 |  2.2 |
++|   2013-12-086 |       088 | 2013-12-11 | e2vm2    | 150         |       -2 |  2.2 |
++|   2013-12-090 |       089 | 2013-12-11 | e2vm2    | 150         |       -2 |  2.2 |
++|   2013-12-102 |   103-104 | 2013-12-11 | e2vm2    | 150         |       -2 |  2.2 |
++|   2013-12-111 |   112-113 | 2013-12-11 | e2vm2    | 150         |        0 |  2.2 |
++|  2015-02-0003 |      0004 | 2015-02-03 | e2vm2    | 70 microns  |        9 |  2.2 |
++|  2015-02-0012 |      0013 | 2015-02-03 | e2vm2    | 70 microns  |        2 |  2.2 |
+ *** 2006-02 dataset
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits ~/Work/SPM2005/pp324.fits
+ #+END_SRC
+ 
+@@ -4419,7 +4357,7 @@
+ 
+ 
+ *** 2007-01b dataset
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits ~/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2058-2060.fits
+ #+END_SRC
+ + All the same
+@@ -4429,7 +4367,7 @@
+ 
+ 
+ *** 2007-01 dataset
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits ~/Work/SPM2007/Reduced/spec055-transf.fits
+ #+END_SRC
+ + All the same
+@@ -4437,13 +4375,13 @@
+ 
+ 
+ *** 2010-01 dataset
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits ~/Dropbox/SPMJAN10/reducciones/spm079-080h.fits
+ #+END_SRC
+ + Only tiny changes in position between X=440 and X=443
+ 
+ *** 2013-02
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits ~/Dropbox/SPMFEB13/WesternShocks/spm025_bcr.fits
+ #+END_SRC
+ + dwav = -0.056
+@@ -4452,7 +4390,7 @@
+ 
+ 
+ *** 2013-12
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits ~/Dropbox/papers/LL-Objects/SPMDIC13/spm112-113_bcrx.fits
+ #+END_SRC
+ + dwav = 0.05664
+@@ -4461,7 +4399,7 @@
+ 
+ 
+ *** 2015-02
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits ~/Dropbox/SPMFEB15/archivos/spm0013o_bcrx.fits
+ #+END_SRC
+ + 0004 ::
+@@ -4471,14 +4409,14 @@
+   + Y = 888 (6583), Y = 271 (6548)
+ 
+ *** Looking at the calibrated spectra
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits $PWD/Calibrated/2006-02-303-ha.fits
+ #+END_SRC
+ 
+ So it seems like all the trouble was due to differences in the zero-level between the nii and the ha spectra! 
+ 
+ ** Run slit-ratio-check.py
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python slit-ratio-check.py # 1>&2
+ #+END_SRC
+ 
+@@ -7395,7 +7333,7 @@
+   + Unfortunately, we can't continue to the W end of the slit because the mosaic has fill-in data there
+ 
+ **** Make a ratio map from f658n and f656n
+-#+BEGIN_SRC python
++#+BEGIN_SRC python :results silent
+ from astropy.io import fits
+ template = '/Users/will/Dropbox/JorgeBowshocks/HST/mosaicf{}-fixw-align.fits'
+ 
+@@ -7554,11 +7492,11 @@
+ #+END_SRC
+ 
+ ** Test the chebyshev fitting
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ mkdir -p Calibrated/BGsub
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python chebfit2d.py Calibrated/2015-02-0003-ha.fits # 1>&2
+ #+END_SRC
+ 
+@@ -7569,7 +7507,7 @@
+ 
+ 
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits $PWD/Calibrated/BGsub/2010-01-236-nii.fits
+ xpaset -p ds9 zoom to fit frame
+ #+END_SRC
+@@ -7584,7 +7522,7 @@
+ + At the same time, we will change wavelength to Vhel in the FITS headers
+ + And we could try and add pixel coordinates for the output image array too. 
+ 
+-#+BEGIN_SRC python
++#+BEGIN_SRC python :results output
+ import glob
+ import chebfit2d
+ 
+@@ -7977,14 +7915,14 @@
+ #+END_SRC
+ 
+ ** Test the addition of the =V= WCS
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results output verbatim
+ python spec_augment_wcs.py Calibrated/BGsub/2013-12-111-ha.fits
+ #+END_SRC
+ 
+ #+RESULTS:
+ : Writing Calibrated/BGsub/YY1295-2013-12-111-ha-vhel.fits
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ xpaset -p test zoom 4 1
+ #+END_SRC
+ 
+@@ -7997,7 +7935,7 @@
+ 
+ #+RESULTS:
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ open -n -a SAOImage\ DS9 --args -title test
+ #+END_SRC
+ 
+@@ -8006,7 +7944,7 @@
+ ** Add the VHEL and pixel WCS to all the spectra
+ 
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ for f in Calibrated/BGsub/*-{ha,nii}.fits; do
+     python spec_augment_wcs.py $f
+ done
+@@ -8134,12 +8072,12 @@
+ :PROPERTIES:
+ :ID:       795D79F6-A9F0-4E94-ADBD-18D540713A8C
+ :END:
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 frame delete all
+ #+END_SRC
+ 
+ #+name: new-blank-ds9
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent :var DS9="ds9"
+ open -n -a SAOImage\ DS9 --args -title $DS9
+ sleep 1
+ xpaset -p $DS9 view buttons no
+@@ -8152,7 +8090,7 @@
+ + Passing glob patterns to shell scripts is really fraught.
+ + I am reduced to using =find= instead
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :tangle display-vel-spectra.sh
+ files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+ ds9=${2:-ds9}
+ for path in $files; do
+@@ -8183,7 +8121,7 @@
+ #+END_SRC
+ 
+ #+name: test-sh-args
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :tangle test-sh-args.sh
+ files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+ for f in $files; do
+     ls -l $f
+@@ -8206,48 +8144,64 @@
+ *** Trying out the spectra display
+ 
+ **** Horizontal western slits
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("ha-horiz") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh YY[01][019]*-ha ha-horiz
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("nii-horiz") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh YY[01][019]*-nii nii-horiz
+ #+END_SRC
+ 
+ **** Vertical western slits
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("ha-vert") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh XX1[56]??-2010-01-*-ha ha-vert
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("nii-vert") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh XX1[56]??-2010-01-*-nii nii-vert
+ #+END_SRC
+ 
+ **** LL2 vertical slits
+ Ha line
+ 
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("ha-ll2") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh XX1[12]*-ha ha-ll2
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("nii-ll2") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh XX1[12]*-nii nii-ll2
+ #+END_SRC
+ 
+ **** More eastern horizontal slits
+ 
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("ha-east") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh YY1[234]*-ha ha-east
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+call: new-blank-ds9("nii-east") :results silent
++
++#+BEGIN_SRC sh :results silent
+ bash display-vel-spectra.sh YY1[234]*-nii nii-east
+ #+END_SRC
+ 
+ 
+ *** Testing passing glob patterns to a shell script
+ For debugging use =-x= option to bash and redirect stderr to stout
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ bash -x test-sh-args.sh YY[01][019]*-ha 2>&1
+ #+END_SRC
+ 
+@@ -8301,7 +8255,7 @@
+ 
+ *** Earlier stuff
+ Western vertical slits
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ for f in $PWD/Calibrated/BGsub/XX1[56]??-2010-01-*-ha-vhel.fits; do
+     xpaset -p ds9 frame new
+     xpaset -p ds9 fits $f
+@@ -8311,7 +8265,7 @@
+ #+END_SRC
+ 
+ Western horizontal slits
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ for f in $PWD/Calibrated/BGsub/YY{09,10,11}*-nii-vhel.fits; do
+     xpaset -p ds9 frame new
+     xpaset -p ds9 fits $f
+@@ -8449,7 +8403,7 @@
+ :header-args: :noweb yes
+ :END:
+ #+name: more-observational-parameters
+-#+BEGIN_SRC python
++#+BEGIN_SRC python :return outtab
+ import glob
+ from astropy.io import fits
+ from helio_utils import helio_topo_from_header
+@@ -8465,6 +8419,66 @@
+     ])
+ #+END_SRC
+ 
++#+RESULTS: more-observational-parameters
++| File             |       Date |      JD |         ST |         RA |        Dec | Helio |
++|------------------+------------+---------+------------+------------+------------+-------|
++| 2006-02-260-ha   | 2006-02-05 | 53771.0 |   03:42:12 |   05:34:53 |  -05:21:09 | 20.87 |
++| 2006-02-270-ha   | 2006-02-05 | 53771.0 |   04:40:33 |   05:34:55 |  -05:21:11 | 20.97 |
++| 2006-02-276-ha   | 2006-02-05 | 53771.0 |   05:15:29 |   05:34:56 |  -05:21:11 | 21.03 |
++| 2006-02-281-ha   | 2006-02-05 | 53771.0 |   05:46:32 |   05:34:56 |  -05:21:11 | 21.08 |
++| 2006-02-286-ha   | 2006-02-05 | 53771.0 |   06:18:13 |   05:34:57 |  -05:21:10 | 21.14 |
++| 2006-02-291-ha   | 2006-02-05 | 53771.0 |   06:50:25 |   05:34:57 |  -05:21:10 | 21.19 |
++| 2006-02-296-ha   | 2006-02-05 | 53771.0 |   07:21:26 |   05:34:58 |  -05:21:09 | 21.24 |
++| 2006-02-303-ha   | 2006-02-05 | 53771.0 |   08:00:43 |   05:34:57 |  -05:21:06 | 21.30 |
++| 2006-02-313-ha   | 2006-02-05 | 53771.0 |   08:50:24 |   05:34:56 |  -05:20:58 | 21.37 |
++| 2006-02-318-ha   | 2006-02-05 | 53771.0 |   09:27:04 |   05:35:02 |  -05:20:47 | 21.40 |
++| 2006-02-326-ha   | 2006-02-05 | 53771.0 |   09:57:26 |   05:35:04 |  -05:20:34 | 21.42 |
++| 2007-01-054-ha   | 2007-01-10 | 54110.0 |   07:06:37 |   05:35:27 |  -05:24:59 | 11.87 |
++| 2007-01-067-ha   | 2007-01-10 | 54110.0 |   08:42:40 |   05:35:29 |  -05:24:45 | 12.01 |
++| 2007-01-072-ha   | 2007-01-10 | 54110.0 |   09:15:23 |   05:35:30 |  -05:24:37 | 12.05 |
++| 2007-01b-2037-ha | 2007-01-13 | 54113.0 |   03:52:24 |   05:34:59 |  -05:21:44 | 12.83 |
++| 2007-01b-2041-ha | 2007-01-13 | 54113.0 |   04:26:32 |   05:34:59 |  -05:21:45 | 12.89 |
++| 2007-01b-2045-ha | 2007-01-13 | 54113.0 |   04:58:44 |   05:34:59 |  -05:21:46 | 12.95 |
++| 2007-01b-2049-ha | 2007-01-13 | 54113.0 |   05:31:17 |   05:34:59 |  -05:21:46 | 13.00 |
++| 2007-01b-2053-ha | 2007-01-13 | 54113.0 |   06:08:30 |   05:34:59 |  -05:21:25 | 13.07 |
++| 2007-01b-2057-ha | 2007-01-13 | 54113.0 |   06:42:14 |   05:34:59 |  -05:21:24 | 13.13 |
++| 2007-01b-2061-ha | 2007-01-13 | 54113.0 |   07:17:30 |   05:35:04 |  -05:21:23 | 13.18 |
++| 2010-01-078-ha   | 2010-01-15 | 55211.0 |   06:52:49 | 05:35:07.3 |  -05:22:10 | 14.06 |
++| 2010-01-124-ha   | 2010-01-16 | 55212.0 |   03:40:00 | 05:34:57.6 |  -05:24:10 | 14.13 |
++| 2010-01-128-ha   | 2010-01-16 | 55212.0 |   04:12:20 | 05:34:58.1 |  -05:24:12 | 14.19 |
++| 2010-01-133-ha   | 2010-01-16 | 55212.0 |   04:46:47 | 05:34:59.0 |  -05:23:54 | 14.24 |
++| 2010-01-137-ha   | 2010-01-16 | 55212.0 |   05:16:29 | 05:34:59.4 |  -05:23:54 | 14.30 |
++| 2010-01-145-ha   | 2010-01-16 | 55212.0 |   06:00:23 | 05:34:59.6 |  -05:23:51 | 14.37 |
++| 2010-01-157-ha   | 2010-01-16 | 55212.0 |   07:18:44 | 05:35:00.3 |  -05:23:52 | 14.50 |
++| 2010-01-202-ha   | 2010-01-17 | 55213.0 |   02:42:07 | 05:34:56.3 |  -05:23:19 | 14.44 |
++| 2010-01-206-ha   | 2010-01-17 | 55213.0 |   03:11:47 | 05:34:56.5 |  -05:23:23 | 14.48 |
++| 2010-01-210-ha   | 2010-01-17 | 55213.0 |   03:40:46 | 05:34:57.2 |  -05:23:27 | 14.53 |
++| 2010-01-214-ha   | 2010-01-17 | 55213.0 |   04:11:15 | 05:34:57.5 |  -05:23:30 | 14.58 |
++| 2010-01-219-ha   | 2010-01-17 | 55213.0 |   04:46:31 | 05:34:57.6 |  -05:23:34 | 14.64 |
++| 2010-01-236-ha   | 2010-01-17 | 55213.0 |   06:31:24 | 05:34:59.7 |  -05:23:34 | 14.82 |
++| 2010-01-240-ha   | 2010-01-17 | 55213.0 |   07:00:20 | 05:34:59.7 |  -05:23:33 | 14.86 |
++| 2010-01-244-ha   | 2010-01-17 | 55213.0 |   07:29:14 | 05:34:59.6 |  -05:23:33 | 14.91 |
++| 2010-01-248-ha   | 2010-01-17 | 55213.0 |   07:59:47 | 05:35:01.1 |  -05:23:29 | 14.95 |
++| 2010-01-252-ha   | 2010-01-17 | 55213.0 |   08:29:45 | 05:34:59.7 |  -05:23:26 | 15.00 |
++| 2013-02-024-ha   | 2013-02-16 | 56339.0 |   05:57:04 | 05:35:07.5 | -5:21:27.0 | 23.80 |
++| 2013-02-029-ha   | 2013-02-16 | 56339.0 |   06:18:25 | 05:34:57.1 | -5:23:45.0 | 23.84 |
++| 2013-02-033-ha   | 2013-02-16 | 56339.0 |   06:47:54 | 05:34:57.9 | -5:23:47.0 | 23.89 |
++| 2013-02-149-ha   | 2013-02-18 | 56341.0 |   07:16:44 | 05:35:15.7 | -5:25:16.0 | 24.31 |
++| 2013-02-154-ha   | 2013-02-18 | 56341.0 |   07:50:00 | 05:35:15.7 |  -5:25:8.0 | 24.36 |
++| 2013-02-159-ha   | 2013-02-18 | 56341.0 |   08:20:58 | 05:35:15.9 | -5:24:55.0 | 24.40 |
++| 2013-02-165-ha   | 2013-02-18 | 56341.0 |   08:59:40 | 05:35:14.4 |  -5:26:3.0 | 24.44 |
++| 2013-02-169-ha   | 2013-02-18 | 56341.0 |   09:28:04 | 05:35:15.2 | -5:25:30.0 | 24.47 |
++| 2013-02-226-ha   | 2013-02-19 | 56342.0 |   04:54:51 | 05:35:08.6 |  -5:25:7.0 | 24.24 |
++| 2013-02-232-ha   | 2013-02-19 | 56342.0 |   05:16:09 | 05:35:11.5 | -5:25:17.0 | 24.28 |
++| 2013-02-237-ha   | 2013-02-19 | 56342.0 |   05:48:30 | 05:35:12.2 | -5:25:30.0 | 24.33 |
++| 2013-12-086-ha   | 2013-12-11 | 56637.0 |   06:04:43 | 05:35:43.1 | -5:22:47.0 | -1.59 |
++| 2013-12-090-ha   | 2013-12-11 | 56637.0 |   06:15:11 | 05:35:43.2 | -5:22:49.0 | -1.57 |
++| 2013-12-102-ha   | 2013-12-11 | 56637.0 |   07:25:18 | 05:35:37.0 | -5:22:39.0 | -1.44 |
++| 2013-12-111-ha   | 2013-12-11 | 56637.0 |   08:13:33 | 05:35:48.4 | -5:22:41.0 | -1.39 |
++| 2013-12-116-ha   | 2013-12-11 | 56637.0 |   08:49:55 | 05:35:28.9 | -5:22:39.0 | -1.30 |
++| 2015-02-0003-ha  | 2015-02-03 | 57056.0 | 6:09:40.70 | 05:35:42.2 | -5:22:55.0 | 20.43 |
++| 2015-02-0012-ha  | 2015-02-03 | 57056.0 | 6:57:37.56 | 05:35:42.9 |  -5:23:7.0 | 20.51 |
++
+ ** Program to generate spectral map: spectral-map.py
+ :PROPERTIES:
+ :ID:       20ADFA6F-DE49-454E-B433-D684CF3FB826
+@@ -8625,9 +8639,11 @@
+ 
+ #+END_SRC
+ 
++#+RESULTS:
++
+ 
+ ** Run spectral-map.py for the nii or ha spectra
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python spectral-map.py ha 
+ #+END_SRC
+ 
+@@ -8803,7 +8819,7 @@
+ Pixel window: 13.2364321915 to 135.385683307
+ #+end_example
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python spectral-map.py nii 
+ #+END_SRC
+ 
+@@ -8868,7 +8884,7 @@
+ #+end_example
+ 
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ redranges='+030+050 +010+030 -010+010'
+ blueranges='-030-010 -050-030 -070-050'
+ farblueranges='-090-070 -110-090 -130-110'
+@@ -8878,7 +8894,7 @@
+ done
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha+030+050.fits[3]
+ xpaset -p ds9 rgb green
+@@ -8888,7 +8904,7 @@
+ #+END_SRC
+ 
+ Try three wide bands that cover the whole line
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ widebands='+000+060 -060+000 -120-060'
+ for vrange in $widebands; do
+     python spectral-map.py ha $vrange
+@@ -8897,7 +8913,7 @@
+ #+END_SRC
+ 
+ Some ranges further to the red
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ nearredranges='+050+070 +070+090 +090+110'
+ farredranges='+110+130 +130+150 +150+170'
+ for vrange in $nearredranges $farredranges ; do
+@@ -8950,7 +8966,7 @@
+ #+END_SRC
+ 
+ ** Perform the multigridding
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python multibin-map.py new-slits-ha-allvels.fits
+ #+END_SRC
+ 
+@@ -8963,7 +8979,7 @@
+ : Saving new-slits-ha-allvels-bin032.fits
+ : Saving new-slits-ha-allvels-bin064.fits
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results verbatim
+ python multibin-map.py new-slits-nii-allvels.fits
+ #+END_SRC
+ 
+@@ -8976,11 +8992,11 @@
+ : Saving new-slits-nii-allvels-bin032.fits
+ : Saving new-slits-nii-allvels-bin064.fits
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits $PWD/new-slits-ha-allvels-bin064.fits
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ redranges='+030+050 +010+030 -010+010'
+ blueranges='-030-010 -050-030 -070-050'
+ farblueranges='-090-070 -110-090 -130-110'
+@@ -8990,7 +9006,7 @@
+ done
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=bin004
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha+030+050-$suff.fits
+@@ -9003,14 +9019,14 @@
+ xpaset -p ds9 frame next
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ widebands='+000+060 -060+000 -120-060'
+ for vrange in $widebands; do
+     python multibin-map.py new-slits-ha$vrange.fits
+     python multibin-map.py new-slits-nii$vrange.fits
+ done
+ #+END_SRC
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ nearredranges='+050+070 +070+090 +090+110'
+ farredranges='+110+130 +130+150 +150+170'
+ for vrange in $nearredranges $farredranges; do
+@@ -9056,17 +9072,17 @@
+ 
+ ** DONE Perform the combining
+ CLOSED: [2015-09-24 Thu 09:06]
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ python multibin-combine.py new-slits-ha-allvels 3e5
+ python multibin-combine.py new-slits-nii-allvels 2e5
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits $PWD/new-slits-nii-allvels-multibin.fits
+ #+END_SRC
+ 
+ *** Wide bands
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ vrange=+000+060               # wide red
+ python multibin-combine.py new-slits-ha$vrange 3e5
+ python multibin-combine.py new-slits-nii$vrange 3e4
+@@ -9078,7 +9094,7 @@
+ python multibin-combine.py new-slits-nii$vrange 2e3
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha+000+060-$suff.fits
+@@ -9092,7 +9108,7 @@
+ xpaset -p ds9 frame next
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-nii+000+060-$suff.fits
+@@ -9108,7 +9124,7 @@
+ 
+ 
+ *** Line core V = -10 to +50 km/s
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ redranges='+030+050 +010+030 -010+010'
+ for vrange in $redranges; do
+     python multibin-combine.py new-slits-ha$vrange 3e5
+@@ -9117,7 +9133,7 @@
+ #+END_SRC
+ 
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha+030+050-$suff.fits
+@@ -9130,7 +9146,7 @@
+ xpaset -p ds9 frame next
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-nii+030+050-$suff.fits
+@@ -9145,7 +9161,7 @@
+ 
+ 
+ *** Blue flank: V = -70 to -10 km/s
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ blueranges='-030-010 -050-030 -070-050'
+ for vrange in $blueranges; do
+     python multibin-combine.py new-slits-ha$vrange 3e3
+@@ -9153,7 +9169,7 @@
+ done
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha-030-010-$suff.fits
+@@ -9166,7 +9182,7 @@
+ xpaset -p ds9 frame next
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-nii-030-010-$suff.fits
+@@ -9182,7 +9198,7 @@
+ 
+ *** Far blue wing: V = -110 to -70 km/s  
+ We actually calculate out to -130, but we don't use it in the image
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ farblueranges='-090-070 -110-090 -130-110'
+ for vrange in $farblueranges; do
+     python multibin-combine.py new-slits-ha$vrange 1000
+@@ -9191,7 +9207,7 @@
+ #+END_SRC
+ 
+ Instead we overlap with the blue flank above.  The red channel here is the blue channel there
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha-070-050-$suff.fits
+@@ -9205,7 +9221,7 @@
+ xpaset -p ds9 frame next
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-nii-070-050-$suff.fits
+@@ -9221,7 +9237,7 @@
+ 
+ 
+ *** Near red flank: V = +50 to +110 km/s
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ nearredranges='+050+070 +070+090 +090+110'
+ for vrange in $nearredranges; do
+     python multibin-combine.py new-slits-ha$vrange 3e3
+@@ -9229,7 +9245,7 @@
+ done
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha+090+110-$suff.fits
+@@ -9243,7 +9259,7 @@
+ xpaset -p ds9 frame next
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-nii+090+110-$suff.fits
+@@ -9258,7 +9274,7 @@
+ #+END_SRC
+ 
+ *** Far red wing: V = +110 to +170 km/s
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ farredranges='+110+130 +130+150 +150+170'
+ for vrange in $farredranges; do
+     python multibin-combine.py new-slits-ha$vrange 900
+@@ -9266,7 +9282,7 @@
+ done
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-ha+150+170-$suff.fits
+@@ -9280,7 +9296,7 @@
+ xpaset -p ds9 frame next
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ suff=multibin
+ xpaset -p ds9 rgb red
+ xpaset -p ds9 fits $PWD/new-slits-nii+150+170-$suff.fits
+@@ -9348,7 +9364,7 @@
+   + *Conclusions*
+     + 
+ 
+-#+BEGIN_SRC python
++#+BEGIN_SRC python :results silent
+ from astropy.io import fits
+ 
+ ha = fits.open('new-slits-ha-allvels.fits')['scaled']
+@@ -9365,11 +9381,11 @@
+ 
+ ** Load the spectral map into ds9
+ This shows the scaled image in ds9
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits $PWD/new-slits-nii-allvels.fits[3]
+ #+END_SRC
+ 
+-#+BEGIN_SRC sh
++#+BEGIN_SRC sh :results silent
+ xpaset -p ds9 fits $PWD/new-slits-nii-over-ha-allvels.fits
+ #+END_SRC
+ 

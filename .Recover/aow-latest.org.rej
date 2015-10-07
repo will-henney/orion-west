@@ -1,0 +1,531 @@
+***************
+*** 11,17 ****
+  #+PROPERTY: header-args    :exports both
+  
+  
+- * TODO New general version of the slit flux calibration and astrometry
+  + It would be better to use the [[file:~/Work/OrionTreasury/wfi/][WFI images]] to flux calibrate the spectra
+    + As well as being more reliable, this is necessary in the case of some of the LL2 slits, since the Image+slit was taken in [S II] instead of H alpha
+  + We will apply it first to the LL2 slits, plus any other odd slits that are lying around
+--- 11,18 ----
+  #+PROPERTY: header-args    :exports both
+  
+  
++ * DONE New general version of the slit flux calibration and astrometry
++ CLOSED: [2015-10-06 Tue 12:05]
+  + It would be better to use the [[file:~/Work/OrionTreasury/wfi/][WFI images]] to flux calibrate the spectra
+    + As well as being more reliable, this is necessary in the case of some of the LL2 slits, since the Image+slit was taken in [S II] instead of H alpha
+  + We will apply it first to the LL2 slits, plus any other odd slits that are lying around
+***************
+*** 29,35 ****
+    2. Write all data tables to files
+       - Initial input table can be written as TSV from org table
+       - Do I use JSON or astropy tables written to TSV, or to FITS or ...?
+-   3. Do I control it all with a makefile?
+  
+  ** Outline of steps
+  
+--- 30,35 ----
+    2. Write all data tables to files
+       - Initial input table can be written as TSV from org table
+       - Do I use JSON or astropy tables written to TSV, or to FITS or ...?
+  
+  ** Outline of steps
+  
+***************
+*** 286,295 ****
+  + This is now dealt with in the [[id:1D9200A9-45BA-4128-894B-4D4DF84FC2F2][find_slit_coords]] function
+  
+  
+- *** TODO Allow for offsets perpendicular to slit
+  + In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure
+  + I suspect this is happening with the 2013-12 spectra at least
+- 
+  *** DONE Problems with the flux zero-point of the spectra
+  CLOSED: [2015-09-10 Thu 18:00]
+  :LOGBOOK:
+--- 286,296 ----
+  + This is now dealt with in the [[id:1D9200A9-45BA-4128-894B-4D4DF84FC2F2][find_slit_coords]] function
+  
+  
++ *** DONE Allow for offsets perpendicular to slit
++ CLOSED: [2015-10-06 Tue 12:04]
+  + In some cases, the pointing may have drifted in between the image+slit exposure and the spectrum exposure
+  + I suspect this is happening with the 2013-12 spectra at least
++ + [2015-10-06 Tue] Cancelled this since I don't think it is important
+  *** DONE Problems with the flux zero-point of the spectra
+  CLOSED: [2015-09-10 Thu 18:00]
+  :LOGBOOK:
+***************
+*** 859,865 ****
+      selector_pattern = ''
+  #+END_SRC
+  
+- *** TODO Remove background and sum over wavelength across line
+  :LOGBOOK:
+  CLOCK: [2015-09-22 Tue 21:52]--[2015-09-28 Mon 11:53] => 134:01
+  :END:
+--- 860,867 ----
+      selector_pattern = ''
+  #+END_SRC
+  
++ *** DONE Remove background and sum over wavelength across line
++ CLOSED: [2015-10-06 Tue 12:05]
+  :LOGBOOK:
+  CLOCK: [2015-09-22 Tue 21:52]--[2015-09-28 Mon 11:53] => 134:01
+  :END:
+***************
+*** 1021,1027 ****
+  + For debugging we can redirect stdout to stderr with =1>&2=
+    + This means that the normal output (e.g., print statements) will show up in the =*Org-Babel Error Output*= buffer 
+  
+- #+BEGIN_SRC sh
+  python slit-calibration.py  # 1>&2
+  #+END_SRC
+  
+--- 1023,1029 ----
+  + For debugging we can redirect stdout to stderr with =1>&2=
+    + This means that the normal output (e.g., print statements) will show up in the =*Org-Babel Error Output*= buffer 
+  
++ #+BEGIN_SRC sh :results verbatim
+  python slit-calibration.py  # 1>&2
+  #+END_SRC
+  
+***************
+*** 4480,4493 ****
+    + Y = 888 (6583), Y = 271 (6548)
+  
+  *** Looking at the calibrated spectra
+- #+BEGIN_SRC sh
+  xpaset -p ds9 fits $PWD/Calibrated/2006-02-303-ha.fits
+  #+END_SRC
+  
+  So it seems like all the trouble was due to differences in the zero-level between the nii and the ha spectra! 
+  
+  ** Run slit-ratio-check.py
+- #+BEGIN_SRC sh
+  python slit-ratio-check.py # 1>&2
+  #+END_SRC
+  
+--- 4418,4431 ----
+    + Y = 888 (6583), Y = 271 (6548)
+  
+  *** Looking at the calibrated spectra
++ #+BEGIN_SRC sh :results silent
+  xpaset -p ds9 fits $PWD/Calibrated/2006-02-303-ha.fits
+  #+END_SRC
+  
+  So it seems like all the trouble was due to differences in the zero-level between the nii and the ha spectra! 
+  
+  ** Run slit-ratio-check.py
++ #+BEGIN_SRC sh :results verbatim
+  python slit-ratio-check.py # 1>&2
+  #+END_SRC
+  
+***************
+*** 8879,8892 ****
+  #+END_SRC
+  
+  ** Test the addition of the =V= WCS
+- #+BEGIN_SRC sh
+  python spec_augment_wcs.py Calibrated/BGsub/2013-12-111-ha.fits
+  #+END_SRC
+  
+  #+RESULTS:
+  : Writing Calibrated/BGsub/YY1295-2013-12-111-ha-vhel.fits
+  
+- #+BEGIN_SRC sh
+  xpaset -p test zoom 4 1
+  #+END_SRC
+  
+--- 8817,8830 ----
+  #+END_SRC
+  
+  ** Test the addition of the =V= WCS
++ #+BEGIN_SRC sh :results output verbatim
+  python spec_augment_wcs.py Calibrated/BGsub/2013-12-111-ha.fits
+  #+END_SRC
+  
+  #+RESULTS:
+  : Writing Calibrated/BGsub/YY1295-2013-12-111-ha-vhel.fits
+  
++ #+BEGIN_SRC sh :results verbatim
+  xpaset -p test zoom 4 1
+  #+END_SRC
+  
+***************
+*** 8899,8905 ****
+  
+  #+RESULTS:
+  
+- #+BEGIN_SRC sh
+  open -n -a SAOImage\ DS9 --args -title test
+  #+END_SRC
+  
+--- 8837,8843 ----
+  
+  #+RESULTS:
+  
++ #+BEGIN_SRC sh :results silent
+  open -n -a SAOImage\ DS9 --args -title test
+  #+END_SRC
+  
+***************
+*** 8908,8914 ****
+  ** Add the VHEL and pixel WCS to all the spectra
+  
+  
+- #+BEGIN_SRC sh
+  for f in Calibrated/BGsub/*-{ha,nii}.fits; do
+      python spec_augment_wcs.py $f
+  done
+--- 8846,8852 ----
+  ** Add the VHEL and pixel WCS to all the spectra
+  
+  
++ #+BEGIN_SRC sh :results verbatim
+  for f in Calibrated/BGsub/*-{ha,nii}.fits; do
+      python spec_augment_wcs.py $f
+  done
+***************
+*** 9036,9047 ****
+  :PROPERTIES:
+  :ID:       795D79F6-A9F0-4E94-ADBD-18D540713A8C
+  :END:
+- #+BEGIN_SRC sh
+  xpaset -p ds9 frame delete all
+  #+END_SRC
+  
+  #+name: new-blank-ds9
+- #+BEGIN_SRC sh
+  open -n -a SAOImage\ DS9 --args -title $DS9
+  sleep 1
+  xpaset -p $DS9 view buttons no
+--- 8974,8985 ----
+  :PROPERTIES:
+  :ID:       795D79F6-A9F0-4E94-ADBD-18D540713A8C
+  :END:
++ #+BEGIN_SRC sh :results silent
+  xpaset -p ds9 frame delete all
+  #+END_SRC
+  
+  #+name: new-blank-ds9
++ #+BEGIN_SRC sh :results silent :var DS9="ds9"
+  open -n -a SAOImage\ DS9 --args -title $DS9
+  sleep 1
+  xpaset -p $DS9 view buttons no
+***************
+*** 9054,9060 ****
+  + Passing glob patterns to shell scripts is really fraught.
+  + I am reduced to using =find= instead
+  
+- #+BEGIN_SRC sh
+  files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+  ds9=${2:-ds9}
+  for path in $files; do
+--- 8992,8998 ----
+  + Passing glob patterns to shell scripts is really fraught.
+  + I am reduced to using =find= instead
+  
++ #+BEGIN_SRC sh :tangle display-vel-spectra.sh
+  files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+  ds9=${2:-ds9}
+  for path in $files; do
+***************
+*** 9085,9091 ****
+  #+END_SRC
+  
+  #+name: test-sh-args
+- #+BEGIN_SRC sh
+  files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+  for f in $files; do
+      ls -l $f
+--- 9023,9029 ----
+  #+END_SRC
+  
+  #+name: test-sh-args
++ #+BEGIN_SRC sh :tangle test-sh-args.sh
+  files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
+  for f in $files; do
+      ls -l $f
+***************
+*** 9108,9155 ****
+  *** Trying out the spectra display
+  
+  **** Horizontal western slits
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh YY[01][019]*-ha ha-horiz
+  #+END_SRC
+  
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh YY[01][019]*-nii nii-horiz
+  #+END_SRC
+  
+  **** Vertical western slits
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh XX1[56]??-2010-01-*-ha ha-vert
+  #+END_SRC
+  
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh XX1[56]??-2010-01-*-nii nii-vert
+  #+END_SRC
+  
+  **** LL2 vertical slits
+  Ha line
+  
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh XX1[12]*-ha ha-ll2
+  #+END_SRC
+  
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh XX1[12]*-nii nii-ll2
+  #+END_SRC
+  
+  **** More eastern horizontal slits
+  
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh YY1[234]*-ha ha-east
+  #+END_SRC
+  
+- #+BEGIN_SRC sh
+  bash display-vel-spectra.sh YY1[234]*-nii nii-east
+  #+END_SRC
+  
+  
+  *** Testing passing glob patterns to a shell script
+  For debugging use =-x= option to bash and redirect stderr to stout
+- #+BEGIN_SRC sh
+  bash -x test-sh-args.sh YY[01][019]*-ha 2>&1
+  #+END_SRC
+  
+--- 9046,9109 ----
+  *** Trying out the spectra display
+  
+  **** Horizontal western slits
++ #+call: new-blank-ds9("ha-horiz") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh YY[01][019]*-ha ha-horiz
+  #+END_SRC
+  
++ #+call: new-blank-ds9("nii-horiz") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh YY[01][019]*-nii nii-horiz
+  #+END_SRC
+  
+  **** Vertical western slits
++ #+call: new-blank-ds9("ha-vert") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh XX1[56]??-2010-01-*-ha ha-vert
+  #+END_SRC
+  
++ #+call: new-blank-ds9("nii-vert") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh XX1[56]??-2010-01-*-nii nii-vert
+  #+END_SRC
+  
+  **** LL2 vertical slits
+  Ha line
+  
++ #+call: new-blank-ds9("ha-ll2") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh XX1[12]*-ha ha-ll2
+  #+END_SRC
+  
++ #+call: new-blank-ds9("nii-ll2") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh XX1[12]*-nii nii-ll2
+  #+END_SRC
+  
+  **** More eastern horizontal slits
+  
++ #+call: new-blank-ds9("ha-east") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh YY1[234]*-ha ha-east
+  #+END_SRC
+  
++ #+call: new-blank-ds9("nii-east") :results silent
++ 
++ #+BEGIN_SRC sh :results silent
+  bash display-vel-spectra.sh YY1[234]*-nii nii-east
+  #+END_SRC
+  
+  
+  *** Testing passing glob patterns to a shell script
+  For debugging use =-x= option to bash and redirect stderr to stout
++ #+BEGIN_SRC sh :results verbatim
+  bash -x test-sh-args.sh YY[01][019]*-ha 2>&1
+  #+END_SRC
+  
+***************
+*** 9203,9209 ****
+  
+  *** Earlier stuff
+  Western vertical slits
+- #+BEGIN_SRC sh
+  for f in $PWD/Calibrated/BGsub/XX1[56]??-2010-01-*-ha-vhel.fits; do
+      xpaset -p ds9 frame new
+      xpaset -p ds9 fits $f
+--- 9157,9163 ----
+  
+  *** Earlier stuff
+  Western vertical slits
++ #+BEGIN_SRC sh :results silent
+  for f in $PWD/Calibrated/BGsub/XX1[56]??-2010-01-*-ha-vhel.fits; do
+      xpaset -p ds9 frame new
+      xpaset -p ds9 fits $f
+***************
+*** 9213,9219 ****
+  #+END_SRC
+  
+  Western horizontal slits
+- #+BEGIN_SRC sh
+  for f in $PWD/Calibrated/BGsub/YY{09,10,11}*-nii-vhel.fits; do
+      xpaset -p ds9 frame new
+      xpaset -p ds9 fits $f
+--- 9167,9173 ----
+  #+END_SRC
+  
+  Western horizontal slits
++ #+BEGIN_SRC sh :results silent
+  for f in $PWD/Calibrated/BGsub/YY{09,10,11}*-nii-vhel.fits; do
+      xpaset -p ds9 frame new
+      xpaset -p ds9 fits $f
+***************
+*** 9351,9357 ****
+  :header-args: :noweb yes
+  :END:
+  #+name: more-observational-parameters
+- #+BEGIN_SRC python
+  import glob
+  from astropy.io import fits
+  from helio_utils import helio_topo_from_header
+--- 9305,9311 ----
+  :header-args: :noweb yes
+  :END:
+  #+name: more-observational-parameters
++ #+BEGIN_SRC python :return outtab
+  import glob
+  from astropy.io import fits
+  from helio_utils import helio_topo_from_header
+***************
+*** 9367,9372 ****
+      ])
+  #+END_SRC
+  
+  ** Program to generate spectral map: spectral-map.py
+  :PROPERTIES:
+  :ID:       20ADFA6F-DE49-454E-B433-D684CF3FB826
+--- 9321,9386 ----
+      ])
+  #+END_SRC
+  
++ #+RESULTS: more-observational-parameters
++ | File             |       Date |      JD |         ST |         RA |        Dec | Helio |
++ |------------------+------------+---------+------------+------------+------------+-------|
++ | 2006-02-260-ha   | 2006-02-05 | 53771.0 |   03:42:12 |   05:34:53 |  -05:21:09 | 20.87 |
++ | 2006-02-270-ha   | 2006-02-05 | 53771.0 |   04:40:33 |   05:34:55 |  -05:21:11 | 20.97 |
++ | 2006-02-276-ha   | 2006-02-05 | 53771.0 |   05:15:29 |   05:34:56 |  -05:21:11 | 21.03 |
++ | 2006-02-281-ha   | 2006-02-05 | 53771.0 |   05:46:32 |   05:34:56 |  -05:21:11 | 21.08 |
++ | 2006-02-286-ha   | 2006-02-05 | 53771.0 |   06:18:13 |   05:34:57 |  -05:21:10 | 21.14 |
++ | 2006-02-291-ha   | 2006-02-05 | 53771.0 |   06:50:25 |   05:34:57 |  -05:21:10 | 21.19 |
++ | 2006-02-296-ha   | 2006-02-05 | 53771.0 |   07:21:26 |   05:34:58 |  -05:21:09 | 21.24 |
++ | 2006-02-303-ha   | 2006-02-05 | 53771.0 |   08:00:43 |   05:34:57 |  -05:21:06 | 21.30 |
++ | 2006-02-313-ha   | 2006-02-05 | 53771.0 |   08:50:24 |   05:34:56 |  -05:20:58 | 21.37 |
++ | 2006-02-318-ha   | 2006-02-05 | 53771.0 |   09:27:04 |   05:35:02 |  -05:20:47 | 21.40 |
++ | 2006-02-326-ha   | 2006-02-05 | 53771.0 |   09:57:26 |   05:35:04 |  -05:20:34 | 21.42 |
++ | 2007-01-054-ha   | 2007-01-10 | 54110.0 |   07:06:37 |   05:35:27 |  -05:24:59 | 11.87 |
++ | 2007-01-067-ha   | 2007-01-10 | 54110.0 |   08:42:40 |   05:35:29 |  -05:24:45 | 12.01 |
++ | 2007-01-072-ha   | 2007-01-10 | 54110.0 |   09:15:23 |   05:35:30 |  -05:24:37 | 12.05 |
++ | 2007-01b-2037-ha | 2007-01-13 | 54113.0 |   03:52:24 |   05:34:59 |  -05:21:44 | 12.83 |
++ | 2007-01b-2041-ha | 2007-01-13 | 54113.0 |   04:26:32 |   05:34:59 |  -05:21:45 | 12.89 |
++ | 2007-01b-2045-ha | 2007-01-13 | 54113.0 |   04:58:44 |   05:34:59 |  -05:21:46 | 12.95 |
++ | 2007-01b-2049-ha | 2007-01-13 | 54113.0 |   05:31:17 |   05:34:59 |  -05:21:46 | 13.00 |
++ | 2007-01b-2053-ha | 2007-01-13 | 54113.0 |   06:08:30 |   05:34:59 |  -05:21:25 | 13.07 |
++ | 2007-01b-2057-ha | 2007-01-13 | 54113.0 |   06:42:14 |   05:34:59 |  -05:21:24 | 13.13 |
++ | 2007-01b-2061-ha | 2007-01-13 | 54113.0 |   07:17:30 |   05:35:04 |  -05:21:23 | 13.18 |
++ | 2010-01-078-ha   | 2010-01-15 | 55211.0 |   06:52:49 | 05:35:07.3 |  -05:22:10 | 14.06 |
++ | 2010-01-124-ha   | 2010-01-16 | 55212.0 |   03:40:00 | 05:34:57.6 |  -05:24:10 | 14.13 |
++ | 2010-01-128-ha   | 2010-01-16 | 55212.0 |   04:12:20 | 05:34:58.1 |  -05:24:12 | 14.19 |
++ | 2010-01-133-ha   | 2010-01-16 | 55212.0 |   04:46:47 | 05:34:59.0 |  -05:23:54 | 14.24 |
++ | 2010-01-137-ha   | 2010-01-16 | 55212.0 |   05:16:29 | 05:34:59.4 |  -05:23:54 | 14.30 |
++ | 2010-01-145-ha   | 2010-01-16 | 55212.0 |   06:00:23 | 05:34:59.6 |  -05:23:51 | 14.37 |
++ | 2010-01-157-ha   | 2010-01-16 | 55212.0 |   07:18:44 | 05:35:00.3 |  -05:23:52 | 14.50 |
++ | 2010-01-202-ha   | 2010-01-17 | 55213.0 |   02:42:07 | 05:34:56.3 |  -05:23:19 | 14.44 |
++ | 2010-01-206-ha   | 2010-01-17 | 55213.0 |   03:11:47 | 05:34:56.5 |  -05:23:23 | 14.48 |
++ | 2010-01-210-ha   | 2010-01-17 | 55213.0 |   03:40:46 | 05:34:57.2 |  -05:23:27 | 14.53 |
++ | 2010-01-214-ha   | 2010-01-17 | 55213.0 |   04:11:15 | 05:34:57.5 |  -05:23:30 | 14.58 |
++ | 2010-01-219-ha   | 2010-01-17 | 55213.0 |   04:46:31 | 05:34:57.6 |  -05:23:34 | 14.64 |
++ | 2010-01-236-ha   | 2010-01-17 | 55213.0 |   06:31:24 | 05:34:59.7 |  -05:23:34 | 14.82 |
++ | 2010-01-240-ha   | 2010-01-17 | 55213.0 |   07:00:20 | 05:34:59.7 |  -05:23:33 | 14.86 |
++ | 2010-01-244-ha   | 2010-01-17 | 55213.0 |   07:29:14 | 05:34:59.6 |  -05:23:33 | 14.91 |
++ | 2010-01-248-ha   | 2010-01-17 | 55213.0 |   07:59:47 | 05:35:01.1 |  -05:23:29 | 14.95 |
++ | 2010-01-252-ha   | 2010-01-17 | 55213.0 |   08:29:45 | 05:34:59.7 |  -05:23:26 | 15.00 |
++ | 2013-02-024-ha   | 2013-02-16 | 56339.0 |   05:57:04 | 05:35:07.5 | -5:21:27.0 | 23.80 |
++ | 2013-02-029-ha   | 2013-02-16 | 56339.0 |   06:18:25 | 05:34:57.1 | -5:23:45.0 | 23.84 |
++ | 2013-02-033-ha   | 2013-02-16 | 56339.0 |   06:47:54 | 05:34:57.9 | -5:23:47.0 | 23.89 |
++ | 2013-02-149-ha   | 2013-02-18 | 56341.0 |   07:16:44 | 05:35:15.7 | -5:25:16.0 | 24.31 |
++ | 2013-02-154-ha   | 2013-02-18 | 56341.0 |   07:50:00 | 05:35:15.7 |  -5:25:8.0 | 24.36 |
++ | 2013-02-159-ha   | 2013-02-18 | 56341.0 |   08:20:58 | 05:35:15.9 | -5:24:55.0 | 24.40 |
++ | 2013-02-165-ha   | 2013-02-18 | 56341.0 |   08:59:40 | 05:35:14.4 |  -5:26:3.0 | 24.44 |
++ | 2013-02-169-ha   | 2013-02-18 | 56341.0 |   09:28:04 | 05:35:15.2 | -5:25:30.0 | 24.47 |
++ | 2013-02-226-ha   | 2013-02-19 | 56342.0 |   04:54:51 | 05:35:08.6 |  -5:25:7.0 | 24.24 |
++ | 2013-02-232-ha   | 2013-02-19 | 56342.0 |   05:16:09 | 05:35:11.5 | -5:25:17.0 | 24.28 |
++ | 2013-02-237-ha   | 2013-02-19 | 56342.0 |   05:48:30 | 05:35:12.2 | -5:25:30.0 | 24.33 |
++ | 2013-12-086-ha   | 2013-12-11 | 56637.0 |   06:04:43 | 05:35:43.1 | -5:22:47.0 | -1.59 |
++ | 2013-12-090-ha   | 2013-12-11 | 56637.0 |   06:15:11 | 05:35:43.2 | -5:22:49.0 | -1.57 |
++ | 2013-12-102-ha   | 2013-12-11 | 56637.0 |   07:25:18 | 05:35:37.0 | -5:22:39.0 | -1.44 |
++ | 2013-12-111-ha   | 2013-12-11 | 56637.0 |   08:13:33 | 05:35:48.4 | -5:22:41.0 | -1.39 |
++ | 2013-12-116-ha   | 2013-12-11 | 56637.0 |   08:49:55 | 05:35:28.9 | -5:22:39.0 | -1.30 |
++ | 2015-02-0003-ha  | 2015-02-03 | 57056.0 | 6:09:40.70 | 05:35:42.2 | -5:22:55.0 | 20.43 |
++ | 2015-02-0012-ha  | 2015-02-03 | 57056.0 | 6:57:37.56 | 05:35:42.9 |  -5:23:7.0 | 20.51 |
++ 
+  ** Program to generate spectral map: spectral-map.py
+  :PROPERTIES:
+  :ID:       20ADFA6F-DE49-454E-B433-D684CF3FB826
+***************
+*** 9527,9535 ****
+  
+  #+END_SRC
+  
+  
+  ** Run spectral-map.py for the nii or ha spectra
+- #+BEGIN_SRC sh
+  python spectral-map.py ha 
+  #+END_SRC
+  
+--- 9541,9551 ----
+  
+  #+END_SRC
+  
++ #+RESULTS:
++ 
+  
+  ** Run spectral-map.py for the nii or ha spectra
++ #+BEGIN_SRC sh :results verbatim
+  python spectral-map.py ha 
+  #+END_SRC
+  
+***************
+*** 9705,9711 ****
+  Pixel window: 13.2364321915 to 135.385683307
+  #+end_example
+  
+- #+BEGIN_SRC sh
+  python spectral-map.py nii 
+  #+END_SRC
+  
+--- 9721,9727 ----
+  Pixel window: 13.2364321915 to 135.385683307
+  #+end_example
+  
++ #+BEGIN_SRC sh :results verbatim
+  python spectral-map.py nii 
+  #+END_SRC
+  
