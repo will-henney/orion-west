@@ -10,6 +10,16 @@
 
 #+PROPERTY: header-args    :exports both
 
+* TODO Yet more datasets to look at
+** Orion S horizontal slits
++ These are the =os000.fits= files from 2007-01-11
++ In [[file:~/Work/SPM2007/][file:~/Work/SPM2007/]]
++ I think these are ha+nii
+** LL Ori later slits
++ [[file:~/Work/SPM2007/2009/TereReduce/bitacora::LL%20Ori]]
++ Seem to be 3 positions spm060, 064, 069
++ From 2009-01-15
++ How far N do they go?
 * Final products of calibration
 
 ** Spectral images

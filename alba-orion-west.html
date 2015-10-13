@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2015-10-06 Tue 23:35 -->
+<!-- 2015-10-07 Wed 11:53 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title>Notes on creating spectral maps from Orion West slit spectra</title>
@@ -530,7 +530,7 @@ for the JavaScript code in this tag.
 </dl></li>
 </ul>
 
-<br><pre class="example">Table name: vertical-image-and-fullspec</pre><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<br><pre class="example">Results table name: observational-parameters</pre><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
@@ -1311,7 +1311,7 @@ for the JavaScript code in this tag.
 Run it for a single slit
 </p>
 <pre class="example">Language = sh
-Parameters = :exports code
+Parameters = :results verbatim
 Header = (:var table=vertical-image-and-fullspec)</pre><div class="org-src-container">
 
 <pre class="src src-sh">python slit-calibration.py 2015-02 <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1&gt;&amp;2</span>
@@ -1505,7 +1505,7 @@ Displacements in arcsec: [  2.28999937e-11   2.76707470e-03   5.53416590e-03   8
 <h5 id="orgheadline14"><a id="ID-4335A38B-52C8-4F0E-8F92-308DC4DBC4F6"></a><span class="section-number-5">2.2.3.1</span> Script to fix the 2007 bias subtractions</h5>
 <div class="outline-text-5" id="text-2-2-3-1">
 <pre class="example">Language = python
-Parameters = :exports code
+Parameters = :results output verbatim
 Header = (:var table=horizontal-image-and-fullspec)</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> glob
@@ -1571,7 +1571,7 @@ spec078-nii.fits
 
 
 <pre class="example">Language = python
-Parameters = :exports code
+Parameters = :results output verbatim
 Header = (:var intable=horizontal-image-and-fullspec)</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
@@ -1609,7 +1609,7 @@ Header = (:var intable=horizontal-image-and-fullspec)</pre><div class="org-src-c
 <h4 id="orgheadline18"><span class="section-number-4">2.3.1</span> Imports</h4>
 <div class="outline-text-4" id="text-2-3-1">
 <pre class="example">Language = python
-Parameters = :exports code
+Parameters = :tangle no
 Header = (:var intable=vertical-image-and-fullspec)</pre><div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock1"><span style="color: #b9d3ee;">import</span> os
@@ -1638,7 +1638,7 @@ Header = (:var intable=vertical-image-and-fullspec)</pre><div class="org-src-con
 <li>This was not happening automatically for the <code>imid</code> column so I use a custom converter</li>
 </ul>
 <pre class="example">Language = python
-Parameters = :exports code
+Parameters = :exports code :results verbatim
 Header = (:var vmin=-1000 vmax=1000 label="sum" :var vtab=vertical-all-parameters :var ignore=positions-to-drop)</pre><div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock2"><span style="color: #dfaf8f;">converters</span> = {<span style="color: #eee8aa; font-style: italic;">'imid'</span>: [astropy.io.<span style="color: #DCDCCC; font-weight: bold;">ascii</span>.convert_numpy(np.<span style="color: #DCDCCC; font-weight: bold;">str</span>)]}
@@ -1691,7 +1691,7 @@ Header = (:var vmin=-1000 vmax=1000 label="sum" :var vtab=vertical-all-parameter
 </dl></li>
 </ul>
 <pre class="example">Language = python
-Parameters = :results list
+Parameters = :return outtab
 Header = (:var vmin=-1000 vmax=1000 label="sum" :var htab=horizontal-all-parameters)</pre><div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock3"><span style="color: #dfaf8f;">file_templates</span> = {
@@ -1772,7 +1772,7 @@ A function to trace the profile of a slit
 </ul></li>
 </ul>
 <pre class="example">Language = python
-Parameters = :results list
+Parameters = :results silent
 Header = (:var labels=vel-channels slits="vert" wtab=minweights-standard imscale=1000)</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">slit_profile</span>(ra, dec, image, wcs):
@@ -1792,7 +1792,7 @@ Header = (:var labels=vel-channels slits="vert" wtab=minweights-standard imscale
 The actual photometric standard image we are going to use.  This is from Massimo's ground-based program.  The pixel size is 0.238 arcsec 
 </p>
 <pre class="example">Language = python
-Parameters = :results list
+Parameters = :results silent
 Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #dfaf8f;">wfi_dir</span> = <span style="color: #eee8aa; font-style: italic;">'/Users/will/Work/OrionTreasury/wfi'</span>
@@ -1832,7 +1832,7 @@ photom, = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(os.p
 </ul>
 
 <pre class="example">Language = python
-Parameters = :results list
+Parameters = :results silent
 Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">find_slit_coords</span>(db, hdr, shdr):
@@ -1971,7 +1971,9 @@ We also need to create the WCS keywords so that the slit coordinates can be reco
 </ul></li>
 </ul>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">make_slit_wcs</span>(db, slit_coords, spechdu):
     <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Input WCS from original spectrum</span>
@@ -2063,7 +2065,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 <ul class="org-ul">
 <li>Actually I don't use this any more</li>
 </ul>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">fixup4ds9</span>(w):
     <span style="color: #dfaf8f;">w.wcs.ctype</span>  = [<span style="color: #eee8aa; font-style: italic;">'LINEAR'</span>, <span style="color: #eee8aa; font-style: italic;">'LINEAR'</span>, <span style="color: #eee8aa; font-style: italic;">'LINEAR'</span>]
@@ -2080,7 +2084,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 <div id="outline-container-orgheadline24" class="outline-4">
 <h4 id="orgheadline24"><span class="section-number-4">2.3.7</span> Fit Chebyshev polynomials to along-slit variation</h4>
 <div class="outline-text-4" id="text-2-3-7">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">fit_cheb</span>(x, y, npoly=3, mask=<span style="color: #cFfBcF;">None</span>):
     <span style="color: #eee8aa; font-style: italic;">"""Fits a Chebyshev poly to y(x) and returns fitted y-values"""</span>
@@ -2102,7 +2108,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 <li>Three-pane plot that we use for manually adjusting the calibration parameters</li>
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-22 Tue] </span></span> Add the nii/ha ratio to third pane</li>
 </ul>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python">sns.set_palette(<span style="color: #eee8aa; font-style: italic;">'RdPu_d'</span>, 3)
 <span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">make_three_plots</span>(spec, calib, prefix, niirat=<span style="color: #cFfBcF;">None</span>):
@@ -2184,7 +2192,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 </ul></li>
 <li>The purpose of this is to speed things up when iterating to find the offsets and norms</li>
 </ul>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">if</span> <span style="color: #DCDCCC; font-weight: bold;">len</span>(sys.argv) &gt; 1:
     <span style="color: #dfaf8f;">selector_pattern</span> = sys.argv[1]
@@ -2203,7 +2213,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 <li>We can get better results by simply removing it, as I did <a href="#orgheadline27">down here</a></li>
 <li>But for the time being we will stick to the original simple version</li>
 </ul>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :exports code :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">extract_profile</span>(data, wcs, wavrest, dw=7.0):
     <span style="color: #dfaf8f;">data</span> = remove_bg_and_regularize(data, wcs, wavrest)
@@ -2217,7 +2229,9 @@ Unfortunately, DS9 does not understand this lovely conformant and informative WC
 New version, adapted from what I did in the ratio section
 </p>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">wavs2slice</span>(wavs, wcs):
     <span style="color: #eee8aa; font-style: italic;">"""Convert a wavelength interval `wavs` (length-2 sequence) to a slice of the relevant axis`"""</span>
@@ -2263,7 +2277,9 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline28" class="outline-5">
 <h5 id="orgheadline28"><span class="section-number-5">2.3.10.1</span> Original version</h5>
 <div class="outline-text-5" id="text-2-3-10-1">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">extract_profile</span>(data):
     <span style="color: #b9d3ee;">return</span> remove_background(data).<span style="color: #DCDCCC; font-weight: bold;">sum</span>(axis=wavaxis)
@@ -2281,7 +2297,9 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline22" class="outline-4">
 <h4 id="orgheadline22"><a id="ID-C7D141C2-85FF-427D-AF2D-DCC34B14E1A4"></a><span class="section-number-4">2.3.11</span> Loop over the slit positions and do the stuff</h4>
 <div class="outline-text-4" id="text-2-3-11">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">for</span> row <span style="color: #b9d3ee;">in</span> tab:
     <span style="color: #dfaf8f;">full_id</span> = row[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>] + <span style="color: #eee8aa; font-style: italic;">'-'</span> + row[<span style="color: #eee8aa; font-style: italic;">'imid'</span>]
@@ -2362,7 +2380,9 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline30" class="outline-4">
 <h4 id="orgheadline30"><span class="section-number-4">2.3.12</span> Test what is going on</h4>
 <div class="outline-text-4" id="text-2-3-12">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">print(wphot.wcs)</span>
 <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">for row in tab:</span>
@@ -2383,7 +2403,9 @@ New version, adapted from what I did in the ratio section
 </ul></li>
 </ul>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :exports code
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">python slit-calibration.py  <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1&gt;&amp;2</span>
 </pre>
@@ -2410,76 +2432,14 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline34" class="outline-4">
 <h4 id="orgheadline34"><span class="section-number-4">3.1.1</span> Re-use stuff from slit-calibration.py</h4>
 <div class="outline-text-4" id="text-3-1-1">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results output verbatim
+Header = nil</pre><div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #b9d3ee;">import</span> os
-<span style="color: #b9d3ee;">import</span> sys
-<span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
-<span style="color: #b9d3ee;">import</span> astropy
-<span style="color: #b9d3ee;">from</span> astropy.table <span style="color: #b9d3ee;">import</span> Table
-<span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
-<span style="color: #b9d3ee;">from</span> astropy.wcs <span style="color: #b9d3ee;">import</span> WCS
-<span style="color: #b9d3ee;">from</span> astropy.wcs.utils <span style="color: #b9d3ee;">import</span> pixel_to_skycoord
-<span style="color: #b9d3ee;">from</span> matplotlib <span style="color: #b9d3ee;">import</span> pyplot <span style="color: #b9d3ee;">as</span> plt
-<span style="color: #b9d3ee;">import</span> seaborn <span style="color: #b9d3ee;">as</span> sns
-<span style="color: #b9d3ee;">from</span> astropy <span style="color: #b9d3ee;">import</span> units <span style="color: #b9d3ee;">as</span> u
-<span style="color: #b9d3ee;">from</span> astropy.coordinates <span style="color: #b9d3ee;">import</span> SkyCoord
-<span style="color: #b9d3ee;">from</span> astropy.modeling <span style="color: #b9d3ee;">import</span> models, fitting
+<pre class="src src-python">  &lt;&lt;slit-calib-imports&gt;&gt;
 <span style="color: #b9d3ee;">from</span> astropy.convolution <span style="color: #b9d3ee;">import</span> convolve_fft, Box1DKernel
-<span style="color: #dfaf8f;">converters</span> = {<span style="color: #eee8aa; font-style: italic;">'imid'</span>: [astropy.io.<span style="color: #DCDCCC; font-weight: bold;">ascii</span>.convert_numpy(np.<span style="color: #DCDCCC; font-weight: bold;">str</span>)]}
-<span style="color: #dfaf8f;">tab</span> = Table.read(<span style="color: #eee8aa; font-style: italic;">'all-slits-input.tab'</span>,
-                 <span style="color: #DCDCCC; font-weight: bold;">format</span>=<span style="color: #eee8aa; font-style: italic;">'ascii.tab'</span>, converters=converters)
-<span style="color: #dfaf8f;">file_templates</span> = {
-    <span style="color: #eee8aa; font-style: italic;">'fullspec'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2005/pp{}.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-transf.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spm{}h.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits'</span>,
-    },
-    <span style="color: #eee8aa; font-style: italic;">'ha'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-ha-fix.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits'</span>,
-    },
-    <span style="color: #eee8aa; font-style: italic;">'nii'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-nii-fix.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits'</span>,
-    },
-    <span style="color: #eee8aa; font-style: italic;">'image'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}-ardec.fits'</span>,
-    },
-}
-
-<span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">find_fits_filepath</span>(db, filetype):
-    <span style="color: #eee8aa; font-style: italic;">"""Return path to the FITS file for an image or spectrum </span>
-<span style="color: #eee8aa; font-style: italic;">    """</span>
-    <span style="color: #dfaf8f;">id_</span> = db[<span style="color: #eee8aa; font-style: italic;">'imid'</span>] <span style="color: #b9d3ee;">if</span> filetype == <span style="color: #eee8aa; font-style: italic;">'image'</span> <span style="color: #b9d3ee;">else</span> db[<span style="color: #eee8aa; font-style: italic;">'specid'</span>]
-    <span style="color: #dfaf8f;">id_</span> = <span style="color: #DCDCCC; font-weight: bold;">str</span>(id_)
-    <span style="color: #b9d3ee;">if</span> filetype <span style="color: #b9d3ee;">in</span> (<span style="color: #eee8aa; font-style: italic;">'ha'</span>, <span style="color: #eee8aa; font-style: italic;">'nii'</span>) <span style="color: #b9d3ee;">and</span> db[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>] <span style="color: #b9d3ee;">not</span> <span style="color: #b9d3ee;">in</span> [<span style="color: #eee8aa; font-style: italic;">'2013-12'</span>]:
-        <span style="color: #dfaf8f;">id_</span> = id_.split(<span style="color: #eee8aa; font-style: italic;">'-'</span>)[0]
-    <span style="color: #dfaf8f;">template</span> = file_templates[filetype][db[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>]]
-    <span style="color: #dfaf8f;">path</span> = template.<span style="color: #DCDCCC; font-weight: bold;">format</span>(id_)
-    <span style="color: #b9d3ee;">print</span>(<span style="color: #eee8aa; font-style: italic;">'~/'</span>+path)
-    <span style="color: #dfaf8f;">homedir</span> = os.path.expanduser(<span style="color: #eee8aa; font-style: italic;">'~'</span>)
-    <span style="color: #b9d3ee;">return</span> os.path.join(homedir, path)
+  &lt;&lt;read-slit-table&gt;&gt;
+  &lt;&lt;slit-calib-filenames&gt;&gt;
 </pre>
 </div>
 </div>
@@ -2487,7 +2447,9 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline35" class="outline-4">
 <h4 id="orgheadline35"><span class="section-number-4">3.1.2</span> Convert wavelength to pixel</h4>
 <div class="outline-text-4" id="text-3-1-2">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">wav2pix</span>(wav, wcs, nwav, isT):
     <span style="color: #b9d3ee;">if</span> isT:
@@ -2509,7 +2471,9 @@ New version, adapted from what I did in the ratio section
 0.0994382022472
 </p>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #dfaf8f;">wcs_extra</span> = {
     <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: (440, 6583.45, 0.1),
@@ -2545,7 +2509,9 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline27" class="outline-4">
 <h4 id="orgheadline27"><a id="ID-74998E9B-988D-4378-9465-DAC5EE6E15A0"></a><span class="section-number-4">3.1.4</span> <span class="done DONE">DONE</span> Extract profile along slit for an isolated line</h4>
 <div class="outline-text-4" id="text-3-1-4">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock4"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">extract_profile</span>(hdu, wavrest, dset, imid,
                     dw=4.0, dwbg_in=6.0, dwbg_out=8.0,
@@ -2589,7 +2555,9 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline37" class="outline-4">
 <h4 id="orgheadline37"><span class="section-number-4">3.1.5</span> Find the celestial coordinates along the slit by using the WCS of the calibrated spectrum</h4>
 <div class="outline-text-4" id="text-3-1-5">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">slit_coords_from_wcs</span>(w, isT, nslit):
     <span style="color: #eee8aa; font-style: italic;">"""Input arguments: `w` a WCS object with 3 dimensions and i axis</span>
@@ -2621,7 +2589,9 @@ New version, adapted from what I did in the ratio section
 <div id="outline-container-orgheadline38" class="outline-4">
 <h4 id="orgheadline38"><span class="section-number-4">3.1.6</span> Loop over all the slits and check the ratios</h4>
 <div class="outline-text-4" id="text-3-1-6">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent :var DS9="ds9"
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #dfaf8f;">datasets</span> = <span style="color: #DCDCCC; font-weight: bold;">set</span>(tab[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>])
 <span style="color: #dfaf8f;">MAXLINES</span> = 18
@@ -2697,75 +2667,13 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 </div><div id="outline-container-orgheadline40" class="outline-4">
 <h4 id="orgheadline40"><span class="section-number-4">3.2.1</span> Script to check the grating angles and other observational parameters</h4>
 <div class="outline-text-4" id="text-3-2-1">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :tangle display-vel-spectra.sh
+Header = nil</pre><div class="org-src-container">
 
-<pre class="src src-python" id="orgsrcblock5"><span style="color: #b9d3ee;">import</span> os
-<span style="color: #b9d3ee;">import</span> sys
-<span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
-<span style="color: #b9d3ee;">import</span> astropy
-<span style="color: #b9d3ee;">from</span> astropy.table <span style="color: #b9d3ee;">import</span> Table
-<span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
-<span style="color: #b9d3ee;">from</span> astropy.wcs <span style="color: #b9d3ee;">import</span> WCS
-<span style="color: #b9d3ee;">from</span> astropy.wcs.utils <span style="color: #b9d3ee;">import</span> pixel_to_skycoord
-<span style="color: #b9d3ee;">from</span> matplotlib <span style="color: #b9d3ee;">import</span> pyplot <span style="color: #b9d3ee;">as</span> plt
-<span style="color: #b9d3ee;">import</span> seaborn <span style="color: #b9d3ee;">as</span> sns
-<span style="color: #b9d3ee;">from</span> astropy <span style="color: #b9d3ee;">import</span> units <span style="color: #b9d3ee;">as</span> u
-<span style="color: #b9d3ee;">from</span> astropy.coordinates <span style="color: #b9d3ee;">import</span> SkyCoord
-<span style="color: #b9d3ee;">from</span> astropy.modeling <span style="color: #b9d3ee;">import</span> models, fitting
-<span style="color: #dfaf8f;">converters</span> = {<span style="color: #eee8aa; font-style: italic;">'imid'</span>: [astropy.io.<span style="color: #DCDCCC; font-weight: bold;">ascii</span>.convert_numpy(np.<span style="color: #DCDCCC; font-weight: bold;">str</span>)]}
-<span style="color: #dfaf8f;">tab</span> = Table.read(<span style="color: #eee8aa; font-style: italic;">'all-slits-input.tab'</span>,
-                 <span style="color: #DCDCCC; font-weight: bold;">format</span>=<span style="color: #eee8aa; font-style: italic;">'ascii.tab'</span>, converters=converters)
-<span style="color: #dfaf8f;">file_templates</span> = {
-    <span style="color: #eee8aa; font-style: italic;">'fullspec'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2005/pp{}.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-transf.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spm{}h.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits'</span>,
-    },
-    <span style="color: #eee8aa; font-style: italic;">'ha'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-ha-fix.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-ha.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_sub-ha.fits'</span>,
-    },
-    <span style="color: #eee8aa; font-style: italic;">'nii'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/SPMnii/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spec{}-nii-fix.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spec{}-nii.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}o_sub-nii.fits'</span>,
-    },
-    <span style="color: #eee8aa; font-style: italic;">'image'</span> : {
-        <span style="color: #eee8aa; font-style: italic;">'2006-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01b'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2007-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Work/SPM2007/Reduced/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2010-01'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2013-12'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits'</span>,
-        <span style="color: #eee8aa; font-style: italic;">'2015-02'</span>: <span style="color: #eee8aa; font-style: italic;">'Dropbox/SPMFEB15/archivos/spm{}-ardec.fits'</span>,
-    },
-}
-
-<span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">find_fits_filepath</span>(db, filetype):
-    <span style="color: #eee8aa; font-style: italic;">"""Return path to the FITS file for an image or spectrum </span>
-<span style="color: #eee8aa; font-style: italic;">    """</span>
-    <span style="color: #dfaf8f;">id_</span> = db[<span style="color: #eee8aa; font-style: italic;">'imid'</span>] <span style="color: #b9d3ee;">if</span> filetype == <span style="color: #eee8aa; font-style: italic;">'image'</span> <span style="color: #b9d3ee;">else</span> db[<span style="color: #eee8aa; font-style: italic;">'specid'</span>]
-    <span style="color: #dfaf8f;">id_</span> = <span style="color: #DCDCCC; font-weight: bold;">str</span>(id_)
-    <span style="color: #b9d3ee;">if</span> filetype <span style="color: #b9d3ee;">in</span> (<span style="color: #eee8aa; font-style: italic;">'ha'</span>, <span style="color: #eee8aa; font-style: italic;">'nii'</span>) <span style="color: #b9d3ee;">and</span> db[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>] <span style="color: #b9d3ee;">not</span> <span style="color: #b9d3ee;">in</span> [<span style="color: #eee8aa; font-style: italic;">'2013-12'</span>]:
-        <span style="color: #dfaf8f;">id_</span> = id_.split(<span style="color: #eee8aa; font-style: italic;">'-'</span>)[0]
-    <span style="color: #dfaf8f;">template</span> = file_templates[filetype][db[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>]]
-    <span style="color: #dfaf8f;">path</span> = template.<span style="color: #DCDCCC; font-weight: bold;">format</span>(id_)
-    <span style="color: #b9d3ee;">print</span>(<span style="color: #eee8aa; font-style: italic;">'~/'</span>+path)
-    <span style="color: #dfaf8f;">homedir</span> = os.path.expanduser(<span style="color: #eee8aa; font-style: italic;">'~'</span>)
-    <span style="color: #b9d3ee;">return</span> os.path.join(homedir, path)
+<pre class="src src-python" id="orgsrcblock5">  &lt;&lt;slit-calib-imports&gt;&gt;
+  &lt;&lt;read-slit-table&gt;&gt;
+  &lt;&lt;slit-calib-filenames&gt;&gt;
 <span style="color: #dfaf8f;">outtab</span> = [[<span style="color: #eee8aa; font-style: italic;">'ID'</span>, <span style="color: #eee8aa; font-style: italic;">'Spec'</span>, <span style="color: #eee8aa; font-style: italic;">'Date'</span>, <span style="color: #eee8aa; font-style: italic;">'Detector'</span>, <span style="color: #eee8aa; font-style: italic;">'Grating'</span>, <span style="color: #eee8aa; font-style: italic;">'Aperture'</span>, <span style="color: #eee8aa; font-style: italic;">'Gain'</span>], <span style="color: #cFfBcF;">None</span>]
 <span style="color: #b9d3ee;">for</span> row <span style="color: #b9d3ee;">in</span> tab:
     <span style="color: #dfaf8f;">full_id</span> = row[<span style="color: #eee8aa; font-style: italic;">'Dataset'</span>] + <span style="color: #eee8aa; font-style: italic;">'-'</span> + row[<span style="color: #eee8aa; font-style: italic;">'imid'</span>]
@@ -2776,12 +2684,606 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
                    hdr.get(<span style="color: #eee8aa; font-style: italic;">'APERTURE'</span>), hdr.get(<span style="color: #eee8aa; font-style: italic;">'GRATING'</span>), hdr.get(<span style="color: #eee8aa; font-style: italic;">'GAIN'</span>)])
 </pre>
 </div>
+
+<br><pre class="example">Results table name: more-observational-parameters</pre><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">ID</th>
+<th scope="col" class="org-right">Spec</th>
+<th scope="col" class="org-right">Date</th>
+<th scope="col" class="org-left">Detector</th>
+<th scope="col" class="org-left">Grating</th>
+<th scope="col" class="org-right">Aperture</th>
+<th scope="col" class="org-right">Gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">2006-02-326</td>
+<td class="org-right">324</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-11</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-318</td>
+<td class="org-right">319</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-11</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-260</td>
+<td class="org-right">261</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-7</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-270</td>
+<td class="org-right">271</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-4</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-276</td>
+<td class="org-right">277</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-4</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-281</td>
+<td class="org-right">282</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-6</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-286</td>
+<td class="org-right">287</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-7</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-291</td>
+<td class="org-right">292</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-8</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-296</td>
+<td class="org-right">297</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-8</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-303</td>
+<td class="org-right">304</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-8</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2006-02-313</td>
+<td class="org-right">312</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">-10</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01b-2061</td>
+<td class="org-right">2062-c</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01b-2037</td>
+<td class="org-right">2038-2040</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01b-2041</td>
+<td class="org-right">2042-2044</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01b-2045</td>
+<td class="org-right">2046-2048</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01b-2049</td>
+<td class="org-right">2050-2052</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01b-2053</td>
+<td class="org-right">2054-2056</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01b-2057</td>
+<td class="org-right">2058-2060</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01-054</td>
+<td class="org-right">055</td>
+<td class="org-right">2007-01-10</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01-067</td>
+<td class="org-right">068</td>
+<td class="org-right">2007-01-10</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2007-01-072</td>
+<td class="org-right">073</td>
+<td class="org-right">2007-01-10</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 microns</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-078</td>
+<td class="org-right">079-080</td>
+<td class="org-right">2010-01-15</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-8</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-202</td>
+<td class="org-right">203-204</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-124</td>
+<td class="org-right">125-127</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-206</td>
+<td class="org-right">207-208</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-128</td>
+<td class="org-right">129-130</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-133</td>
+<td class="org-right">134-135</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-210</td>
+<td class="org-right">211-212</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-137</td>
+<td class="org-right">138-139</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-214</td>
+<td class="org-right">215-216</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-145</td>
+<td class="org-right">146-147</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-248</td>
+<td class="org-right">249-250</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-219</td>
+<td class="org-right">220-221</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-157</td>
+<td class="org-right">158-159</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-236</td>
+<td class="org-right">237-238</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-240</td>
+<td class="org-right">241-242</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-244</td>
+<td class="org-right">245-246</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">1</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2010-01-252</td>
+<td class="org-right">253-254</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-left">SITE3</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">0</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-024</td>
+<td class="org-right">025</td>
+<td class="org-right">2013-02-16</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">70 micron</td>
+<td class="org-right">-4</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-165</td>
+<td class="org-right">166-167</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">13</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-169</td>
+<td class="org-right">170-171</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">10</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-237</td>
+<td class="org-right">238-239</td>
+<td class="org-right">2013-02-19</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">11</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-232</td>
+<td class="org-right">233-234</td>
+<td class="org-right">2013-02-19</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">9</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-226</td>
+<td class="org-right">227-228</td>
+<td class="org-right">2013-02-19</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">9</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-149</td>
+<td class="org-right">150-151</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">4</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-154</td>
+<td class="org-right">155-156</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">7</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-159</td>
+<td class="org-right">160-161</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">8</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-033</td>
+<td class="org-right">034-035</td>
+<td class="org-right">2013-02-16</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-5</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-02-029</td>
+<td class="org-right">030-031</td>
+<td class="org-right">2013-02-16</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150 micron</td>
+<td class="org-right">-4</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12-116</td>
+<td class="org-right">117-118</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150</td>
+<td class="org-right">0</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12-086</td>
+<td class="org-right">088</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150</td>
+<td class="org-right">-2</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12-090</td>
+<td class="org-right">089</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150</td>
+<td class="org-right">-2</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12-102</td>
+<td class="org-right">103-104</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150</td>
+<td class="org-right">-2</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2013-12-111</td>
+<td class="org-right">112-113</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">150</td>
+<td class="org-right">0</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2015-02-0003</td>
+<td class="org-right">0004</td>
+<td class="org-right">2015-02-03</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">70 microns</td>
+<td class="org-right">9</td>
+<td class="org-right">2.2</td>
+</tr>
+
+<tr>
+<td class="org-right">2015-02-0012</td>
+<td class="org-right">0013</td>
+<td class="org-right">2015-02-03</td>
+<td class="org-left">e2vm2</td>
+<td class="org-left">70 microns</td>
+<td class="org-right">2</td>
+<td class="org-right">2.2</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="outline-container-orgheadline41" class="outline-4">
 <h4 id="orgheadline41"><span class="section-number-4">3.2.2</span> 2006-02 dataset</h4>
 <div class="outline-text-4" id="text-3-2-2">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :tangle test-sh-args.sh
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Work/SPM2005/pp324.fits
 </pre>
@@ -2818,7 +3320,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 <div id="outline-container-orgheadline42" class="outline-4">
 <h4 id="orgheadline42"><span class="section-number-4">3.2.3</span> 2007-01b dataset</h4>
 <div class="outline-text-4" id="text-3-2-3">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Work/SPM2007/Reduced/HH505/slits/reducciones/spec2058-2060.fits
 </pre>
@@ -2836,7 +3340,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 <div id="outline-container-orgheadline43" class="outline-4">
 <h4 id="orgheadline43"><span class="section-number-4">3.2.4</span> 2007-01 dataset</h4>
 <div class="outline-text-4" id="text-3-2-4">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Work/SPM2007/Reduced/spec055-transf.fits
 </pre>
@@ -2852,7 +3358,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 <div id="outline-container-orgheadline44" class="outline-4">
 <h4 id="orgheadline44"><span class="section-number-4">3.2.5</span> 2010-01 dataset</h4>
 <div class="outline-text-4" id="text-3-2-5">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/SPMJAN10/reducciones/spm079-080h.fits
 </pre>
@@ -2866,7 +3374,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 <div id="outline-container-orgheadline45" class="outline-4">
 <h4 id="orgheadline45"><span class="section-number-4">3.2.6</span> 2013-02</h4>
 <div class="outline-text-4" id="text-3-2-6">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/SPMFEB13/WesternShocks/spm025_bcr.fits
 </pre>
@@ -2883,7 +3393,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 <div id="outline-container-orgheadline46" class="outline-4">
 <h4 id="orgheadline46"><span class="section-number-4">3.2.7</span> 2013-12</h4>
 <div class="outline-text-4" id="text-3-2-7">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/papers/LL-Objects/SPMDIC13/spm112-113_bcrx.fits
 </pre>
@@ -2900,7 +3412,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 <div id="outline-container-orgheadline47" class="outline-4">
 <h4 id="orgheadline47"><span class="section-number-4">3.2.8</span> 2015-02</h4>
 <div class="outline-text-4" id="text-3-2-8">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits ~/Dropbox/SPMFEB15/archivos/spm0013o_bcrx.fits
 </pre>
@@ -2920,7 +3434,9 @@ sns.set_palette(<span style="color: #eee8aa; font-style: italic;">"deep"</span>,
 <div id="outline-container-orgheadline48" class="outline-4">
 <h4 id="orgheadline48"><span class="section-number-4">3.2.9</span> Looking at the calibrated spectra</h4>
 <div class="outline-text-4" id="text-3-2-9">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits $<span style="color: #dfaf8f;">PWD</span>/Calibrated/2006-02-303-ha.fits
 </pre>
@@ -2936,7 +3452,9 @@ So it seems like all the trouble was due to differences in the zero-level betwee
 <div id="outline-container-orgheadline50" class="outline-3">
 <h3 id="orgheadline50"><span class="section-number-3">3.3</span> Run slit-ratio-check.py</h3>
 <div class="outline-text-3" id="text-3-3">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">python slit-ratio-check.py <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1&gt;&amp;2</span>
 </pre>
@@ -2987,7 +3505,9 @@ We have the ODH values, but they are for large areas.  We could do with some act
 <div id="outline-container-orgheadline52" class="outline-5">
 <h5 id="orgheadline52"><span class="section-number-5">3.4.1.2</span> Make a ratio map from f658n and f656n</h5>
 <div class="outline-text-5" id="text-3-4-1-2">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
 <span style="color: #dfaf8f;">template</span> = <span style="color: #eee8aa; font-style: italic;">'/Users/will/Dropbox/JorgeBowshocks/HST/mosaicf{}-fixw-align.fits'</span>
@@ -3031,7 +3551,9 @@ nii.writeto(<span style="color: #eee8aa; font-style: italic;">'wfpc2-mosaic-f658
 <p>
 Zeroth, the imports
 </p>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> sys
 <span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
@@ -3043,7 +3565,9 @@ Zeroth, the imports
 <p>
 First the function to fit the background to the data 
 </p>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">fit_background</span>(data, mask, npx=4, npy=4):
     <span style="color: #eee8aa; font-style: italic;">"""Fit a polynomial surface to all elements of a 2D `data` array where</span>
@@ -3094,7 +3618,9 @@ Second, how to set the mask for the BG fitting:
 <li>For this we use an excluded velocity window of -10 to +40 in Vhel</li>
 </ul></li>
 </ul>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :return outtab
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">from</span> astropy.wcs <span style="color: #b9d3ee;">import</span> WCS
 <span style="color: #b9d3ee;">from</span> astropy <span style="color: #b9d3ee;">import</span> units <span style="color: #b9d3ee;">as</span> u
@@ -3118,7 +3644,9 @@ Second, how to set the mask for the BG fitting:
 Third, a function to take a FITS file and fit the BG, saving both the BG and the BG-subtracted data
 </p>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results output
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">estimate_pixel_noise</span>(data, size=50):
     <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Slices for each corner of the image and one in the middle somewhere</span>
@@ -3172,7 +3700,9 @@ Third, a function to take a FITS file and fit the BG, saving both the BG and the
 Fourth, read a file from the command line if called interactively
 </p>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :exports code :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">if</span> <span style="color: #DCDCCC; font-weight: bold;">__name__</span> == <span style="color: #eee8aa; font-style: italic;">'__main__'</span>:
     <span style="color: #b9d3ee;">try</span>:
@@ -3190,13 +3720,17 @@ Fourth, read a file from the command line if called interactively
 <div id="outline-container-orgheadline58" class="outline-3">
 <h3 id="orgheadline58"><span class="section-number-3">4.2</span> Test the chebyshev fitting</h3>
 <div class="outline-text-3" id="text-4-2">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :exports code :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">mkdir -p Calibrated/BGsub
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">python chebfit2d.py Calibrated/2015-02-0003-ha.fits <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">1&gt;&amp;2</span>
 </pre>
@@ -3210,7 +3744,9 @@ Corner means: [0.00040226532, 0.0058213449, -0.00010916856, 0.0014264929, 0.0007
 
 
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 fits $<span style="color: #dfaf8f;">PWD</span>/Calibrated/BGsub/2010-01-236-nii.fits
 xpaset -p ds9 zoom to fit frame
@@ -3232,7 +3768,9 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 <li>And we could try and add pixel coordinates for the output image array too.</li>
 </ul>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> glob
 <span style="color: #b9d3ee;">import</span> chebfit2d
@@ -3266,7 +3804,9 @@ Note that 2015-02-0003 is a pathological case because we have no BG to right of 
 <p>
 The imports
 </p>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> sys
 <span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
@@ -3280,7 +3820,9 @@ The imports
 <p>
 This is the WCS for the spectral maps, which is copied from down <a href="#orgheadline60">here</a>. The idea is that we can use this to define the spatial WCS for our slit spectrum that gives the corresponding pixel of the map. 
 </p>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">get_specmap_wcs</span>():
     <span style="color: #dfaf8f;">pixel_scale</span> = 0.5               <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">arcsec</span>
@@ -3300,7 +3842,9 @@ This is the WCS for the spectral maps, which is copied from down <a href="#orghe
 <p>
 Function to fix up a single fits file
 </p>
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results verbatim
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">def</span> <span style="color: #cccccc;">fix_up_some_new_wcs</span>(filename, old_new=(<span style="color: #eee8aa; font-style: italic;">'.fits'</span>, <span style="color: #eee8aa; font-style: italic;">'-vhel.fits'</span>)):
     <span style="color: #dfaf8f;">hdu</span> = fits.<span style="color: #DCDCCC; font-weight: bold;">open</span>(filename)[0]  <span style="color: #5F7F5F;"># </span><span style="color: #8b8b83; font-style: italic;">Always use first HDU in file</span>
@@ -3407,7 +3951,9 @@ Function to fix up a single fits file
 Read file from command line if called interactively
 </p>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">if</span> <span style="color: #DCDCCC; font-weight: bold;">__name__</span> == <span style="color: #eee8aa; font-style: italic;">'__main__'</span>:
     <span style="color: #b9d3ee;">try</span>:
@@ -3425,7 +3971,9 @@ Read file from command line if called interactively
 <div id="outline-container-orgheadline62" class="outline-3">
 <h3 id="orgheadline62"><span class="section-number-3">5.2</span> Test the addition of the <code>V</code> WCS</h3>
 <div class="outline-text-3" id="text-5-2">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">python spec_augment_wcs.py Calibrated/BGsub/2013-12-111-ha.fits
 </pre>
@@ -3435,20 +3983,26 @@ Read file from command line if called interactively
 Writing Calibrated/BGsub/YY1295-2013-12-111-ha-vhel.fits
 </pre>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p test zoom 4 1
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p test fits $<span style="color: #dfaf8f;">PWD</span>/Calibrated/BGsub/YY1295-2013-12-111-ha-vhel.fits
 xpaset -p test zoom to fit
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">open -n -a SAOImage<span style="color: #eee8aa; font-style: italic;">\ </span>DS9 --args -title test
 </pre>
@@ -3461,7 +4015,9 @@ xpaset -p test zoom to fit
 <div id="outline-container-orgheadline63" class="outline-3">
 <h3 id="orgheadline63"><span class="section-number-3">5.3</span> Add the VHEL and pixel WCS to all the spectra</h3>
 <div class="outline-text-3" id="text-5-3">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #b9d3ee;">for</span> f<span style="color: #b9d3ee;"> in</span> Calibrated/BGsub/*-{ha,nii}.fits; <span style="color: #b9d3ee;">do</span>
     python spec_augment_wcs.py $<span style="color: #dfaf8f;">f</span>
@@ -3592,13 +4148,17 @@ Writing Calibrated/BGsub/YY1280-2015-02-0012-nii-vhel.fits
 </div><div id="outline-container-orgheadline64" class="outline-4">
 <h4 id="orgheadline64"><a id="ID-795D79F6-A9F0-4E94-ADBD-18D540713A8C"></a><span class="section-number-4">5.4.1</span> Delete all exisiting frames</h4>
 <div class="outline-text-4" id="text-5-4-1">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 frame delete all
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh" id="orgsrcblock6">open -n -a SAOImage<span style="color: #eee8aa; font-style: italic;">\ </span>DS9 --args -title $<span style="color: #dfaf8f;">DS9</span>
 sleep 1
@@ -3618,7 +4178,9 @@ xpaset -p $<span style="color: #dfaf8f;">DS9</span> frame delete all
 <li>I am reduced to using <code>find</code> instead</li>
 </ul>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">files</span>=$(<span style="color: #CC9393;">find</span> $<span style="color: #dfaf8f;">PWD</span>/Calibrated/BGsub -name <span style="color: #eee8aa; font-style: italic;">"$1-vhel.fits"</span>)
 <span style="color: #dfaf8f;">ds9</span>=${<span style="color: #dfaf8f;">2</span>:-ds9}
@@ -3650,7 +4212,9 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> lock frame wcs
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh" id="orgsrcblock7"><span style="color: #dfaf8f;">files</span>=$(<span style="color: #CC9393;">find</span> $<span style="color: #dfaf8f;">PWD</span>/Calibrated/BGsub -name <span style="color: #eee8aa; font-style: italic;">"$1-vhel.fits"</span>)
 <span style="color: #b9d3ee;">for</span> f<span style="color: #b9d3ee;"> in</span> $<span style="color: #dfaf8f;">files</span>; <span style="color: #b9d3ee;">do</span>
@@ -3663,7 +4227,9 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> lock frame wcs
 <li>Testing contour setting</li>
 <li>Important thing is to turn it off while fiddling, then turn it back on at the end</li>
 </ul>
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">ds9</span>=spectra
 xpaset -p $<span style="color: #dfaf8f;">ds9</span> contour no
@@ -3684,13 +4250,17 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> contour yes
 </div><div id="outline-container-orgheadline66" class="outline-5">
 <h5 id="orgheadline66"><span class="section-number-5">5.4.3.1</span> Horizontal western slits</h5>
 <div class="outline-text-5" id="text-5-4-3-1">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh YY[01][019]*-ha ha-horiz
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh YY[01][019]*-nii nii-horiz
 </pre>
@@ -3701,13 +4271,17 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> contour yes
 <div id="outline-container-orgheadline67" class="outline-5">
 <h5 id="orgheadline67"><span class="section-number-5">5.4.3.2</span> Vertical western slits</h5>
 <div class="outline-text-5" id="text-5-4-3-2">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh XX1[56]??-2010-01-*-ha ha-vert
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh XX1[56]??-2010-01-*-nii nii-vert
 </pre>
@@ -3722,13 +4296,17 @@ xpaset -p $<span style="color: #dfaf8f;">ds9</span> contour yes
 Ha line
 </p>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh XX1[12]*-ha ha-ll2
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh XX1[12]*-nii nii-ll2
 </pre>
@@ -3739,13 +4317,17 @@ Ha line
 <div id="outline-container-orgheadline69" class="outline-5">
 <h5 id="orgheadline69"><span class="section-number-5">5.4.3.4</span> More eastern horizontal slits</h5>
 <div class="outline-text-5" id="text-5-4-3-4">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh YY1[234]*-ha ha-east
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash display-vel-spectra.sh YY1[234]*-nii nii-east
 </pre>
@@ -3761,7 +4343,9 @@ Ha line
 <p>
 For debugging use <code>-x</code> option to bash and redirect stderr to stout
 </p>
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">bash -x test-sh-args.sh YY[01][019]*-ha 2&gt;&amp;1
 </pre>
@@ -3822,7 +4406,9 @@ For debugging use <code>-x</code> option to bash and redirect stderr to stout
 <p>
 Western vertical slits
 </p>
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #b9d3ee;">for</span> f<span style="color: #b9d3ee;"> in</span> $<span style="color: #dfaf8f;">PWD</span>/Calibrated/BGsub/XX1[56]??-2010-01-*-ha-vhel.fits; <span style="color: #b9d3ee;">do</span>
     xpaset -p ds9 frame new
@@ -3836,7 +4422,9 @@ xpaset -p ds9 match frame wcs
 <p>
 Western horizontal slits
 </p>
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #b9d3ee;">for</span> f<span style="color: #b9d3ee;"> in</span> $<span style="color: #dfaf8f;">PWD</span>/Calibrated/BGsub/YY{09,10,11}*-nii-vhel.fits; <span style="color: #b9d3ee;">do</span>
     xpaset -p ds9 frame new
@@ -3853,7 +4441,9 @@ xpaset -p ds9 match frame wcs
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaget ds9 cmap
 </pre>
@@ -3885,7 +4475,9 @@ bb
 <div id="outline-container-orgheadline75" class="outline-4">
 <h4 id="orgheadline75"><span class="section-number-4">6.1.1</span> Module to find heliocentric correction: helio_utils.py</h4>
 <div class="outline-text-4" id="text-6-1-1">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> numpy <span style="color: #b9d3ee;">as</span> np
 <span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
@@ -3988,7 +4580,9 @@ bb
 <div id="outline-container-orgheadline76" class="outline-4">
 <h4 id="orgheadline76"><span class="section-number-4">6.1.2</span> Script to test obtaining heliocentric correction from spectrum headers</h4>
 <div class="outline-text-4" id="text-6-1-2">
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python" id="orgsrcblock8"><span style="color: #b9d3ee;">import</span> glob
 <span style="color: #b9d3ee;">from</span> astropy.io <span style="color: #b9d3ee;">import</span> fits
@@ -4005,6 +4599,598 @@ bb
     ])
 </pre>
 </div>
+
+<br><pre class="example">Table name: vertical-image-and-fullspec</pre><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">File</th>
+<th scope="col" class="org-right">Date</th>
+<th scope="col" class="org-right">JD</th>
+<th scope="col" class="org-right">ST</th>
+<th scope="col" class="org-right">RA</th>
+<th scope="col" class="org-right">Dec</th>
+<th scope="col" class="org-right">Helio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">2006-02-260-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">03:42:12</td>
+<td class="org-right">05:34:53</td>
+<td class="org-right">-05:21:09</td>
+<td class="org-right">20.87</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-270-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">04:40:33</td>
+<td class="org-right">05:34:55</td>
+<td class="org-right">-05:21:11</td>
+<td class="org-right">20.97</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-276-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">05:15:29</td>
+<td class="org-right">05:34:56</td>
+<td class="org-right">-05:21:11</td>
+<td class="org-right">21.03</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-281-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">05:46:32</td>
+<td class="org-right">05:34:56</td>
+<td class="org-right">-05:21:11</td>
+<td class="org-right">21.08</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-286-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">06:18:13</td>
+<td class="org-right">05:34:57</td>
+<td class="org-right">-05:21:10</td>
+<td class="org-right">21.14</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-291-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">06:50:25</td>
+<td class="org-right">05:34:57</td>
+<td class="org-right">-05:21:10</td>
+<td class="org-right">21.19</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-296-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">07:21:26</td>
+<td class="org-right">05:34:58</td>
+<td class="org-right">-05:21:09</td>
+<td class="org-right">21.24</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-303-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">08:00:43</td>
+<td class="org-right">05:34:57</td>
+<td class="org-right">-05:21:06</td>
+<td class="org-right">21.30</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-313-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">08:50:24</td>
+<td class="org-right">05:34:56</td>
+<td class="org-right">-05:20:58</td>
+<td class="org-right">21.37</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-318-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">09:27:04</td>
+<td class="org-right">05:35:02</td>
+<td class="org-right">-05:20:47</td>
+<td class="org-right">21.40</td>
+</tr>
+
+<tr>
+<td class="org-left">2006-02-326-ha</td>
+<td class="org-right">2006-02-05</td>
+<td class="org-right">53771.0</td>
+<td class="org-right">09:57:26</td>
+<td class="org-right">05:35:04</td>
+<td class="org-right">-05:20:34</td>
+<td class="org-right">21.42</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01-054-ha</td>
+<td class="org-right">2007-01-10</td>
+<td class="org-right">54110.0</td>
+<td class="org-right">07:06:37</td>
+<td class="org-right">05:35:27</td>
+<td class="org-right">-05:24:59</td>
+<td class="org-right">11.87</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01-067-ha</td>
+<td class="org-right">2007-01-10</td>
+<td class="org-right">54110.0</td>
+<td class="org-right">08:42:40</td>
+<td class="org-right">05:35:29</td>
+<td class="org-right">-05:24:45</td>
+<td class="org-right">12.01</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01-072-ha</td>
+<td class="org-right">2007-01-10</td>
+<td class="org-right">54110.0</td>
+<td class="org-right">09:15:23</td>
+<td class="org-right">05:35:30</td>
+<td class="org-right">-05:24:37</td>
+<td class="org-right">12.05</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01b-2037-ha</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-right">54113.0</td>
+<td class="org-right">03:52:24</td>
+<td class="org-right">05:34:59</td>
+<td class="org-right">-05:21:44</td>
+<td class="org-right">12.83</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01b-2041-ha</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-right">54113.0</td>
+<td class="org-right">04:26:32</td>
+<td class="org-right">05:34:59</td>
+<td class="org-right">-05:21:45</td>
+<td class="org-right">12.89</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01b-2045-ha</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-right">54113.0</td>
+<td class="org-right">04:58:44</td>
+<td class="org-right">05:34:59</td>
+<td class="org-right">-05:21:46</td>
+<td class="org-right">12.95</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01b-2049-ha</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-right">54113.0</td>
+<td class="org-right">05:31:17</td>
+<td class="org-right">05:34:59</td>
+<td class="org-right">-05:21:46</td>
+<td class="org-right">13.00</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01b-2053-ha</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-right">54113.0</td>
+<td class="org-right">06:08:30</td>
+<td class="org-right">05:34:59</td>
+<td class="org-right">-05:21:25</td>
+<td class="org-right">13.07</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01b-2057-ha</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-right">54113.0</td>
+<td class="org-right">06:42:14</td>
+<td class="org-right">05:34:59</td>
+<td class="org-right">-05:21:24</td>
+<td class="org-right">13.13</td>
+</tr>
+
+<tr>
+<td class="org-left">2007-01b-2061-ha</td>
+<td class="org-right">2007-01-13</td>
+<td class="org-right">54113.0</td>
+<td class="org-right">07:17:30</td>
+<td class="org-right">05:35:04</td>
+<td class="org-right">-05:21:23</td>
+<td class="org-right">13.18</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-078-ha</td>
+<td class="org-right">2010-01-15</td>
+<td class="org-right">55211.0</td>
+<td class="org-right">06:52:49</td>
+<td class="org-right">05:35:07.3</td>
+<td class="org-right">-05:22:10</td>
+<td class="org-right">14.06</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-124-ha</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-right">55212.0</td>
+<td class="org-right">03:40:00</td>
+<td class="org-right">05:34:57.6</td>
+<td class="org-right">-05:24:10</td>
+<td class="org-right">14.13</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-128-ha</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-right">55212.0</td>
+<td class="org-right">04:12:20</td>
+<td class="org-right">05:34:58.1</td>
+<td class="org-right">-05:24:12</td>
+<td class="org-right">14.19</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-133-ha</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-right">55212.0</td>
+<td class="org-right">04:46:47</td>
+<td class="org-right">05:34:59.0</td>
+<td class="org-right">-05:23:54</td>
+<td class="org-right">14.24</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-137-ha</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-right">55212.0</td>
+<td class="org-right">05:16:29</td>
+<td class="org-right">05:34:59.4</td>
+<td class="org-right">-05:23:54</td>
+<td class="org-right">14.30</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-145-ha</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-right">55212.0</td>
+<td class="org-right">06:00:23</td>
+<td class="org-right">05:34:59.6</td>
+<td class="org-right">-05:23:51</td>
+<td class="org-right">14.37</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-157-ha</td>
+<td class="org-right">2010-01-16</td>
+<td class="org-right">55212.0</td>
+<td class="org-right">07:18:44</td>
+<td class="org-right">05:35:00.3</td>
+<td class="org-right">-05:23:52</td>
+<td class="org-right">14.50</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-202-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">02:42:07</td>
+<td class="org-right">05:34:56.3</td>
+<td class="org-right">-05:23:19</td>
+<td class="org-right">14.44</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-206-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">03:11:47</td>
+<td class="org-right">05:34:56.5</td>
+<td class="org-right">-05:23:23</td>
+<td class="org-right">14.48</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-210-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">03:40:46</td>
+<td class="org-right">05:34:57.2</td>
+<td class="org-right">-05:23:27</td>
+<td class="org-right">14.53</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-214-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">04:11:15</td>
+<td class="org-right">05:34:57.5</td>
+<td class="org-right">-05:23:30</td>
+<td class="org-right">14.58</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-219-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">04:46:31</td>
+<td class="org-right">05:34:57.6</td>
+<td class="org-right">-05:23:34</td>
+<td class="org-right">14.64</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-236-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">06:31:24</td>
+<td class="org-right">05:34:59.7</td>
+<td class="org-right">-05:23:34</td>
+<td class="org-right">14.82</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-240-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">07:00:20</td>
+<td class="org-right">05:34:59.7</td>
+<td class="org-right">-05:23:33</td>
+<td class="org-right">14.86</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-244-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">07:29:14</td>
+<td class="org-right">05:34:59.6</td>
+<td class="org-right">-05:23:33</td>
+<td class="org-right">14.91</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-248-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">07:59:47</td>
+<td class="org-right">05:35:01.1</td>
+<td class="org-right">-05:23:29</td>
+<td class="org-right">14.95</td>
+</tr>
+
+<tr>
+<td class="org-left">2010-01-252-ha</td>
+<td class="org-right">2010-01-17</td>
+<td class="org-right">55213.0</td>
+<td class="org-right">08:29:45</td>
+<td class="org-right">05:34:59.7</td>
+<td class="org-right">-05:23:26</td>
+<td class="org-right">15.00</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-024-ha</td>
+<td class="org-right">2013-02-16</td>
+<td class="org-right">56339.0</td>
+<td class="org-right">05:57:04</td>
+<td class="org-right">05:35:07.5</td>
+<td class="org-right">-5:21:27.0</td>
+<td class="org-right">23.80</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-029-ha</td>
+<td class="org-right">2013-02-16</td>
+<td class="org-right">56339.0</td>
+<td class="org-right">06:18:25</td>
+<td class="org-right">05:34:57.1</td>
+<td class="org-right">-5:23:45.0</td>
+<td class="org-right">23.84</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-033-ha</td>
+<td class="org-right">2013-02-16</td>
+<td class="org-right">56339.0</td>
+<td class="org-right">06:47:54</td>
+<td class="org-right">05:34:57.9</td>
+<td class="org-right">-5:23:47.0</td>
+<td class="org-right">23.89</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-149-ha</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-right">56341.0</td>
+<td class="org-right">07:16:44</td>
+<td class="org-right">05:35:15.7</td>
+<td class="org-right">-5:25:16.0</td>
+<td class="org-right">24.31</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-154-ha</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-right">56341.0</td>
+<td class="org-right">07:50:00</td>
+<td class="org-right">05:35:15.7</td>
+<td class="org-right">-5:25:8.0</td>
+<td class="org-right">24.36</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-159-ha</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-right">56341.0</td>
+<td class="org-right">08:20:58</td>
+<td class="org-right">05:35:15.9</td>
+<td class="org-right">-5:24:55.0</td>
+<td class="org-right">24.40</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-165-ha</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-right">56341.0</td>
+<td class="org-right">08:59:40</td>
+<td class="org-right">05:35:14.4</td>
+<td class="org-right">-5:26:3.0</td>
+<td class="org-right">24.44</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-169-ha</td>
+<td class="org-right">2013-02-18</td>
+<td class="org-right">56341.0</td>
+<td class="org-right">09:28:04</td>
+<td class="org-right">05:35:15.2</td>
+<td class="org-right">-5:25:30.0</td>
+<td class="org-right">24.47</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-226-ha</td>
+<td class="org-right">2013-02-19</td>
+<td class="org-right">56342.0</td>
+<td class="org-right">04:54:51</td>
+<td class="org-right">05:35:08.6</td>
+<td class="org-right">-5:25:7.0</td>
+<td class="org-right">24.24</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-232-ha</td>
+<td class="org-right">2013-02-19</td>
+<td class="org-right">56342.0</td>
+<td class="org-right">05:16:09</td>
+<td class="org-right">05:35:11.5</td>
+<td class="org-right">-5:25:17.0</td>
+<td class="org-right">24.28</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-02-237-ha</td>
+<td class="org-right">2013-02-19</td>
+<td class="org-right">56342.0</td>
+<td class="org-right">05:48:30</td>
+<td class="org-right">05:35:12.2</td>
+<td class="org-right">-5:25:30.0</td>
+<td class="org-right">24.33</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-12-086-ha</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-right">56637.0</td>
+<td class="org-right">06:04:43</td>
+<td class="org-right">05:35:43.1</td>
+<td class="org-right">-5:22:47.0</td>
+<td class="org-right">-1.59</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-12-090-ha</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-right">56637.0</td>
+<td class="org-right">06:15:11</td>
+<td class="org-right">05:35:43.2</td>
+<td class="org-right">-5:22:49.0</td>
+<td class="org-right">-1.57</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-12-102-ha</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-right">56637.0</td>
+<td class="org-right">07:25:18</td>
+<td class="org-right">05:35:37.0</td>
+<td class="org-right">-5:22:39.0</td>
+<td class="org-right">-1.44</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-12-111-ha</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-right">56637.0</td>
+<td class="org-right">08:13:33</td>
+<td class="org-right">05:35:48.4</td>
+<td class="org-right">-5:22:41.0</td>
+<td class="org-right">-1.39</td>
+</tr>
+
+<tr>
+<td class="org-left">2013-12-116-ha</td>
+<td class="org-right">2013-12-11</td>
+<td class="org-right">56637.0</td>
+<td class="org-right">08:49:55</td>
+<td class="org-right">05:35:28.9</td>
+<td class="org-right">-5:22:39.0</td>
+<td class="org-right">-1.30</td>
+</tr>
+
+<tr>
+<td class="org-left">2015-02-0003-ha</td>
+<td class="org-right">2015-02-03</td>
+<td class="org-right">57056.0</td>
+<td class="org-right">6:09:40.70</td>
+<td class="org-right">05:35:42.2</td>
+<td class="org-right">-5:22:55.0</td>
+<td class="org-right">20.43</td>
+</tr>
+
+<tr>
+<td class="org-left">2015-02-0012-ha</td>
+<td class="org-right">2015-02-03</td>
+<td class="org-right">57056.0</td>
+<td class="org-right">6:57:37.56</td>
+<td class="org-right">05:35:42.9</td>
+<td class="org-right">-5:23:7.0</td>
+<td class="org-right">20.51</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -4021,7 +5207,9 @@ bb
 <li><span class="timestamp-wrapper"><span class="timestamp">[2015-09-23 Wed] </span></span> Now cuts off vignetted sections at ends of slit</li>
 </ul>
 
-<div class="org-src-container">
+<pre class="example">Language = python
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #b9d3ee;">import</span> glob
 <span style="color: #b9d3ee;">import</span> sys
@@ -4176,20 +5364,26 @@ fits.HDUList([
 <div id="outline-container-orgheadline78" class="outline-3">
 <h3 id="orgheadline78"><span class="section-number-3">6.3</span> Run spectral-map.py for the nii or ha spectra</h3>
 <div class="outline-text-3" id="text-6-3">
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">python spectral-map.py ha
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results silent
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">python spectral-map.py nii
 </pre>
 </div>
 
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results list
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">redranges</span>=<span style="color: #eee8aa; font-style: italic;">'+030+050 +010+030 -010+010'</span>
 <span style="color: #dfaf8f;">blueranges</span>=<span style="color: #eee8aa; font-style: italic;">'-030-010 -050-030 -070-050'</span>
@@ -4201,7 +5395,9 @@ fits.HDUList([
 </pre>
 </div>
 
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results list
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh">xpaset -p ds9 rgb red
 xpaset -p ds9 fits $<span style="color: #dfaf8f;">PWD</span>/new-slits-ha+030+050.fits[3]
@@ -4215,7 +5411,9 @@ xpaset -p ds9 fits $<span style="color: #dfaf8f;">PWD</span>/new-slits-ha-010+01
 <p>
 Try three wide bands that cover the whole line
 </p>
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results list
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">widebands</span>=<span style="color: #eee8aa; font-style: italic;">'+000+060 -060+000 -120-060'</span>
 <span style="color: #b9d3ee;">for</span> vrange<span style="color: #b9d3ee;"> in</span> $<span style="color: #dfaf8f;">widebands</span>; <span style="color: #b9d3ee;">do</span>
@@ -4228,7 +5426,9 @@ Try three wide bands that cover the whole line
 <p>
 Some ranges further to the red
 </p>
-<div class="org-src-container">
+<pre class="example">Language = sh
+Parameters = :results list
+Header = nil</pre><div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #dfaf8f;">nearredranges</span>=<span style="color: #eee8aa; font-style: italic;">'+050+070 +070+090 +090+110'</span>
 <span style="color: #dfaf8f;">farredranges</span>=<span style="color: #eee8aa; font-style: italic;">'+110+130 +130+150 +150+170'</span>
@@ -9336,7 +10536,7 @@ Por ultimo te adjunto tabla las coordenadas de cada posicion de las rendijas.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: William Henney</p>
-<p class="date">Created: 2015-10-06 Tue 23:35</p>
+<p class="date">Created: 2015-10-07 Wed 11:53</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
