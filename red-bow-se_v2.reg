@@ -1,0 +1,24 @@
+# Region file format: DS9 version 4.1
+# Filename: new-slits-ha+010+030-multibin.fits[SCALED]
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(05:34:42.466,-05:27:15.94) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:42.014,-05:27:08.95) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:41.643,-05:27:01.71) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:41.094,-05:26:54.96) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:40.625,-05:26:48.45) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:39.996,-05:26:41.70) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:39.333,-05:26:35.67) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:38.720,-05:26:31.57) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:38.155,-05:26:25.30) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:37.848,-05:26:19.75) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:37.638,-05:26:08.66) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:37.864,-05:25:59.74) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:38.203,-05:25:50.82) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:38.946,-05:25:44.07) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:37.506,-05:25:22.57) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:36.636,-05:25:04.57) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:36.971,-05:25:15.57) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:38.209,-05:25:23.07) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:38.913,-05:25:25.57) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}
+point(05:34:39.314,-05:25:33.57) # point=circle color=magenta font="helvetica 10 normal roman" tag={Red Bow SE}

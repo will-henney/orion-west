@@ -1,0 +1,13 @@
+# Region file format: DS9 version 4.1
+# Filename: Orion_H_A_deep.fits
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(05:34:25.721,-05:26:41.38) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:26.510,-05:27:13.25) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:26.189,-05:27:10.88) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:25.771,-05:27:00.88) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:25.721,-05:26:55.88) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:25.687,-05:26:50.88) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:25.721,-05:26:46.38) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:25.939,-05:27:08.38) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:25.905,-05:27:04.88) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}

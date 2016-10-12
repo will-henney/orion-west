@@ -6,7 +6,7 @@ from astropy.wcs import WCS
 from helio_utils import waves2vels
 # Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:1 ends here
 
-# [[file:alba-orion-west.org::*Program%20to%20add%20a%20better%20wcs%20to%20the%20spectra:%20spec_augment_wcs.py][Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:1]]
+# [[file:alba-orion-west.org::*Program%20to%20add%20a%20better%20wcs%20to%20the%20spectra:%20spec_augment_wcs.py][Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:2]]
 def get_specmap_wcs():
     pixel_scale = 0.5               # arcsec
     NX, NY = 2048, 2048
@@ -19,9 +19,24 @@ def get_specmap_wcs():
     w.wcs.ctype = ['RA---TAN', 'DEC--TAN']
     w.wcs.cunit = ['deg', 'deg']
     return w
-# Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:1 ends here
+# Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:2 ends here
 
-# [[file:alba-orion-west.org::*Program%20to%20add%20a%20better%20wcs%20to%20the%20spectra:%20spec_augment_wcs.py][Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:1]]
+# [[file:alba-orion-west.org::*Program%20to%20add%20a%20better%20wcs%20to%20the%20spectra:%20spec_augment_wcs.py][Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:3]]
+def velocity_world2pix(wcs, vels, iaxis=0):
+    """Convert velocities `vels` to pixels by hand using the CDELT, CRPIX
+and CRVAL from `wcs`.  The velocity axis in the wcs is given by
+`iaxis`
+
+    """
+    crval = wcs.wcs.crval[iaxis]
+    crpix = wcs.wcs.crpix[iaxis]
+    cdelt = wcs.wcs.cdelt[iaxis]
+    cunit = wcs.wcs.cunit[iaxis]
+    print('CRVAL, CRPIX, CDELT, CUNIT', crval, crpix, cdelt, cunit)
+    pixels = crpix + (vels - crval)/cdelt
+    # return fractional pixel coordinates on 0-based scale
+    return pixels - 1
+
 def fix_up_some_new_wcs(filename, old_new=('.fits', '-vhel.fits')):
     hdu = fits.open(filename)[0]  # Always use first HDU in file
     # Start with the Wav, RA, Dec WCS
@@ -35,9 +50,9 @@ def fix_up_some_new_wcs(filename, old_new=('.fits', '-vhel.fits')):
     vel0, vel1 = waves2vels([wav0, wav0 + dwav]*u.m,
                             wold.wcs.restwav*u.m, hdu.header)
     dvel = vel1 - vel0
-    wnew.wcs.crval[0] = vel0.to('km/s').value
-    wnew.wcs.cdelt[0] = dvel.to('km/s').value
-    wnew.wcs.cunit[0] = u.km/u.s
+    wnew.wcs.crval[0] = vel0.to('m/s').value
+    wnew.wcs.cdelt[0] = dvel.to('m/s').value
+    wnew.wcs.cunit[0] = u.m/u.s
     wnew.wcs.ctype[0] = 'VOPT'
     wnew.wcs.cname[0] = 'Heliocentric velocity'
     wnew.wcs.specsys = 'HELIOCEN'
@@ -58,20 +73,22 @@ def fix_up_some_new_wcs(filename, old_new=('.fits', '-vhel.fits')):
 
     # Cut off the velocity range in the data array to [-150..200] km/s
     wnew.fix()                  # Make sure we know it is in SI units
+    print(wnew.sub([1]).wcs)
     vwindow = [-150, 200]*u.km/u.s
-    [j1, j2], _, _ = wnew.all_world2pix(vwindow.to(u.m/u.s).value,
-                                        [0, 0], [0, 0], 0)
+    print('Velocity window (m/s)', vwindow.to('m/s').value)
+    [j1, j2] = velocity_world2pix(wnew, vwindow.to('m/s').value)
     view = slice(None), slice(None), slice(int(j1), int(j2) + 2)
+    print('Pixel limits for slice', j1, j2)
     # Apply slice to data and to the WCS
     hdu.data = hdu.data[:, :, j1:j2]
     wnew = wnew.slice(view)
     wold = wold.slice(view)
-                                         
+
     # Update header with a new WCS called V
     hdu.header.update(wnew.to_header(key='V'))
     # And re-write 'A' too since we have changed it
     hdu.header.update(wold.to_header(key='A'))
-  
+
     # Now, sort out the default header
 
     # New blank wcs with only 2 dimensions
@@ -112,16 +129,19 @@ def fix_up_some_new_wcs(filename, old_new=('.fits', '-vhel.fits')):
             hdu.header.remove('CD'+ij)
 
     # And flatten data array to 2-dimensions
+    assert(len(hdu.data.shape) == 3)
+    print('Original data array shape:', hdu.data.shape)
     hdu.data, = hdu.data
+    print('New data array shape:', hdu.data.shape)
 
     # Write a new file 
     newfilename = filename.replace(*old_new).replace('BGsub/',
                                                      'BGsub/' + wdef.wcs.name + '-')
     print('Writing', newfilename)
     hdu.writeto(newfilename, clobber=True)
-# Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:1 ends here
+# Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:3 ends here
 
-# [[file:alba-orion-west.org::*Program%20to%20add%20a%20better%20wcs%20to%20the%20spectra:%20spec_augment_wcs.py][Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:1]]
+# [[file:alba-orion-west.org::*Program%20to%20add%20a%20better%20wcs%20to%20the%20spectra:%20spec_augment_wcs.py][Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:4]]
 if __name__ == '__main__':
     try:
         fn = sys.argv[1]
@@ -130,4 +150,4 @@ if __name__ == '__main__':
         sys.exit()
 
     fix_up_some_new_wcs(fn)
-# Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:1 ends here
+# Program\ to\ add\ a\ better\ wcs\ to\ the\ spectra:\ spec_augment_wcs\.py:4 ends here

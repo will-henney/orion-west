@@ -1,0 +1,143 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(83.617737,-5.4193917) # point=circle color=red tag={Red Bow NW}
+point(83.616258,-5.4180528) # point=circle color=red tag={Red Bow NW}
+point(83.614708,-5.4161778) # point=circle color=red tag={Red Bow NW}
+point(83.6135,-5.4148361) # point=circle color=red tag={Red Bow NW}
+point(83.612154,-5.4132306) # point=circle color=red tag={Red Bow NW}
+point(83.611883,-5.4112194) # point=circle color=red tag={Red Bow NW}
+point(83.61175,-5.4087417) # point=circle color=red tag={Red Bow NW}
+point(83.61175,-5.4061306) # point=circle color=red tag={Red Bow NW}
+point(83.612963,-5.4041194) # point=circle color=red tag={Red Bow NW}
+point(83.614508,-5.4018444) # point=circle color=red tag={Red Bow NW}
+point(83.615517,-5.3997) # point=circle color=red tag={Red Bow NW}
+point(83.616192,-5.3970889) # point=circle color=red tag={Red Bow NW}
+point(83.6172,-5.3952139) # point=circle color=red tag={Red Bow NW}
+point(83.618479,-5.3933389) # point=circle color=red tag={Red Bow NW}
+point(83.688496,-5.3669139) # point=circle color=red tag={Red Bow NE}
+point(83.684462,-5.3683861) # point=circle color=red tag={Red Bow NE}
+point(83.686546,-5.3675833) # point=circle color=red tag={Red Bow NE}
+point(83.682175,-5.3688556) # point=circle color=red tag={Red Bow NE}
+point(83.67975,-5.3695917) # point=circle color=red tag={Red Bow NE}
+point(83.677733,-5.3704639) # point=circle color=red tag={Red Bow NE}
+point(83.675246,-5.3715333) # point=circle color=red tag={Red Bow NE}
+point(83.673292,-5.3725389) # point=circle color=red tag={Red Bow NE}
+point(83.671479,-5.3734083) # point=circle color=red tag={Red Bow NE}
+point(83.669929,-5.3744806) # point=circle color=red tag={Red Bow NE}
+point(83.66845,-5.3754861) # point=circle color=red tag={Red Bow NE}
+point(83.666633,-5.3767583) # point=circle color=red tag={Red Bow NE}
+point(83.665354,-5.3779639) # point=circle color=red tag={Red Bow NE}
+point(83.663538,-5.3793694) # point=circle color=red tag={Red Bow NE}
+point(83.662396,-5.3806444) # point=circle color=red tag={Red Bow NE}
+point(83.661317,-5.3816472) # point=circle color=red tag={Red Bow NE}
+point(83.659771,-5.3827861) # point=circle color=red tag={Red Bow NE}
+point(83.657888,-5.383925) # point=circle color=red tag={Red Bow NE}
+point(83.656408,-5.3851972) # point=circle color=red tag={Red Bow NE}
+point(83.654925,-5.3866722) # point=circle color=red tag={Red Bow NE}
+point(83.653446,-5.3882111) # point=circle color=red tag={Red Bow NE}
+point(83.651763,-5.3894167) # point=circle color=red tag={Red Bow NE}
+point(83.650217,-5.3905556) # point=circle color=red tag={Red Bow NE}
+point(83.648804,-5.3914917) # point=circle color=red tag={Red Bow NE}
+point(83.647258,-5.3931) # point=circle color=red tag={Red Bow NE}
+point(83.645304,-5.3945056) # point=circle color=red tag={Red Bow NE}
+point(83.642683,-5.3975194) # point=circle color=red tag={Red Bow NE}
+point(83.641133,-5.4010694) # point=circle color=red tag={Red Bow NE}
+point(83.641538,-5.4050222) # point=circle color=red tag={Red Bow NE}
+point(83.642679,-5.4066306) # point=circle color=red tag={Red Bow NE}
+point(83.643287,-5.4073667) # point=circle color=red tag={Red Bow NE}
+point(83.643958,-5.4081694) # point=circle color=red tag={Red Bow NE}
+point(83.644362,-5.4090417) # point=circle color=red tag={Red Bow NE}
+point(83.645033,-5.4104472) # point=circle color=red tag={Red Bow NE}
+point(83.646313,-5.4121222) # point=circle color=red tag={Red Bow NE}
+point(83.676942,-5.4544278) # point=circle color=red tag={Red Bow SE}
+point(83.675058,-5.4524861) # point=circle color=red tag={Red Bow SE}
+point(83.673513,-5.450475) # point=circle color=red tag={Red Bow SE}
+point(83.671225,-5.4486) # point=circle color=red tag={Red Bow SE}
+point(83.669271,-5.4467917) # point=circle color=red tag={Red Bow SE}
+point(83.66665,-5.4449167) # point=circle color=red tag={Red Bow SE}
+point(83.663888,-5.4432417) # point=circle color=red tag={Red Bow SE}
+point(83.661333,-5.4421028) # point=circle color=red tag={Red Bow SE}
+point(83.658979,-5.4403611) # point=circle color=red tag={Red Bow SE}
+point(83.6577,-5.4388194) # point=circle color=red tag={Red Bow SE}
+point(83.656825,-5.4357389) # point=circle color=red tag={Red Bow SE}
+point(83.657767,-5.4332611) # point=circle color=red tag={Red Bow SE}
+point(83.659179,-5.4307833) # point=circle color=red tag={Red Bow SE}
+point(83.662275,-5.4289083) # point=circle color=red tag={Red Bow SE}
+point(83.657496,-5.4398917) # point=circle color=red tag={Red Bow SW}
+point(83.655279,-5.4396917) # point=circle color=red tag={Red Bow SW}
+point(83.652654,-5.4396917) # point=circle color=red tag={Red Bow SW}
+point(83.650433,-5.4390222) # point=circle color=red tag={Red Bow SW}
+point(83.647742,-5.4386861) # point=circle color=red tag={Red Bow SW}
+point(83.645454,-5.43835) # point=circle color=red tag={Red Bow SW}
+point(83.643033,-5.4375472) # point=circle color=red tag={Red Bow SW}
+point(83.641079,-5.4368111) # point=circle color=red tag={Red Bow SW}
+point(83.639129,-5.4355361) # point=circle color=red tag={Red Bow SW}
+point(83.637313,-5.4343306) # point=circle color=red tag={Red Bow SW}
+point(83.635562,-5.4335944) # point=circle color=red tag={Red Bow SW}
+point(83.63395,-5.4328583) # point=circle color=red tag={Red Bow SW}
+point(83.632538,-5.4319861) # point=circle color=red tag={Red Bow SW}
+point(83.630988,-5.4310472) # point=circle color=red tag={Red Bow SW}
+point(83.629713,-5.4296417) # point=circle color=red tag={Red Bow SW}
+point(83.628904,-5.4278333) # point=circle color=red tag={Red Bow SW}
+point(83.628029,-5.4267611) # point=circle color=red tag={Red Bow SW}
+point(83.62655,-5.4251528) # point=circle color=red tag={Red Bow SW}
+point(83.625875,-5.4244167) # point=circle color=red tag={Red Bow SW}
+point(83.624529,-5.4235472) # point=circle color=red tag={Red Bow SW}
+point(83.624196,-5.4226083) # point=circle color=red tag={Red Bow SW}
+point(83.623992,-5.421) # point=circle color=red tag={Red Bow SW}
+point(83.623521,-5.4199278) # point=circle color=red tag={Red Bow SW}
+point(83.623521,-5.4182556) # point=circle color=red text={Red Bow SW} tag={Red Bow SW}
+point(83.625204,-5.4157778) # point=circle color=red tag={Red Bow SW}
+point(83.627292,-5.4137) # point=circle color=red tag={Red Bow SW}
+ellipse(83.601759,-5.4317968,4.6077957",5.7597432",359.99999) # color=red width=2
+ellipse(83.605135,-5.4377572,9.7182626",4.6365857",50) # color=red width=2
+ellipse(83.613209,-5.4291972,6.9222915",4.4885939",30) # color=#ff8800
+ellipse(83.608429,-5.4399972,7.4876674",4.8957813",50) # color=yellow width=2
+ellipse(83.610799,-5.4374378,5.039777",10.223545",359.99999) # color=#ff8800 width=2
+ellipse(83.605818,-5.4308766,13.535399",10.223544",40) # width=2
+ellipse(83.616666,-5.4307989,4.1758148",5.3277625",359.99999)
+ellipse(83.615421,-5.4275989,3.1678596",4.463801",359.99999) # color=cyan
+ellipse(83.620283,-5.4233596,3.4558469",5.4717562",359.99999)
+ellipse(83.633299,-5.4404402,5.7597447",8.4956214",359.99999) # color=#ff8800
+ellipse(83.622048,-5.432601,7.3299815",51.720219",50)
+ellipse(83.61349,-5.441118,4.4638004",8.9276033",359.99999)
+ellipse(83.610517,-5.4436775,4.3198085",6.191724",359.99999)
+ellipse(83.616699,-5.4494921,6.6523937",33.140015",35)
+ellipse(83.602258,-5.4617077,9.0919118",4.2240909",60) # color=#ff8800
+ellipse(83.600729,-5.4160913,7.2572781",8.1212379",359.99999) # color=red
+ellipse(83.61852,-5.4158536,3.4558467",4.1470151",359.99999) # color=white
+ellipse(83.604873,-5.435627,5.0109774",3.2830534",359.99999) # color=cyan
+ellipse(83.614037,-5.4108133,6.0477318",7.6028611",359.99999) # color=#ff8800
+ellipse(83.618858,-5.4121099,12.786632",3.9742217",359.99999) # color=#ff8800
+ellipse(83.608728,-5.4488269,7.7756549",7.4300685",359.99999) # color=blue
+ellipse(83.649423,-5.4224769,6.2320257",10.10997",50)
+ellipse(83.611793,-5.4036859,7.623665",14.782929",60) # color=#ff8800
+ellipse(83.618364,-5.3855236,5.7500022",19.499999",359.99999) # color=yellow width=2
+ellipse(83.639431,-5.3685813,6.500002",17.749999",359.99999) # color=yellow width=2
+ellipse(83.664817,-5.4281667,30.750001",11.999996",175) # color=blue width=2
+ellipse(83.621782,-5.3896907,8.2500007",6.499999",359.99999) # color=#ff8800 width=2
+ellipse(83.657425,-5.4039991,4.7500007",5.9999995",359.99999) # color=blue
+ellipse(83.668865,-5.3969163,4.7500006",5.2499995",359.99999) # color=blue
+ellipse(83.66189,-5.3909438,5.0000007",5.9999994",359.99999) # color=blue
+ellipse(83.660356,-5.3785826,11.750001",10.749999",359.99999) # color=blue
+ellipse(83.668795,-5.3834441,4.7500005",4.7499995",359.99999) # color=blue
+ellipse(83.6674,-5.4001107,4.2500008",7.2499995",359.99999) # color=cyan
+ellipse(83.659587,-5.4031659,7.2500008",6.7499992",359.99999) # color=cyan
+ellipse(83.690139,-5.3901111,6.5000006",5.2499993",359.99999) # color=cyan
+ellipse(83.669423,-5.3747636,23.000001",6.2499974",359.99999) # color=cyan
+ellipse(83.657214,-5.4239297,5.2500006",5.4999994",359.99999) # color=cyan
+ellipse(83.656588,-5.3914297,9.7500011",9.2499989",359.99999) # color=cyan
+ellipse(83.669353,-5.3917774,21.750001",5.9999975",359.99999) # color=cyan
+ellipse(83.638521,-5.4002478,7.2500006",5.4999992",359.99999) # color=cyan
+ellipse(83.670679,-5.3610831,4.0000004",3.4999995",359.99999) # color=white
+ellipse(83.657494,-5.4095547,6.0000015",13.249999",359.99999) # color=red
+ellipse(83.637962,-5.4148311,5.250001",8.2499994",359.99999)
+ellipse(83.65575,-5.4158046,3.9996649",7.2500428",359.99999) # color=cyan
+ellipse(83.770776,-5.4060086,20.750001",5.9999976",359.99999) # color=yellow
+ellipse(83.609432,-5.4166336,15.000001",11.249998",359.99999)
+ellipse(83.772806,-5.455036,10.000001",4.9999988",359.99999) # color=white
+ellipse(83.773504,-5.464897,5.5000014",12.499999",359.99999) # color=blue
+ellipse(83.670539,-5.3787219,4.0000004",3.4999995",359.99999) # color=white
+ellipse(83.608731,-5.4425362,3.5000005",3.9999996",359.99999) # color=white
+ellipse(83.607489,-5.4622687,6.6523937",33.140015",35) # color=#ff8800

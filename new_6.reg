@@ -1,0 +1,26 @@
+# Region file format: DS9 version 4.1
+# Filename: hlsp_orion_hst_acs_strip1r_f658n_v1_drz.fits[SCI]
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(05:34:37.929,-05:24:17.92) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.708,-05:24:46.07) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.389,-05:24:13.14) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.663,-05:24:41.66) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.413,-05:24:30.48) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.369,-05:24:34.50) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.700,-05:24:57.06) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.936,-05:24:51.52) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.284,-05:24:55.97) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.593,-05:24:11.99) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.744,-05:24:35.86) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.476,-05:24:38.26) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.891,-05:24:31.66) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.025,-05:24:27.46) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.186,-05:24:25.26) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.400,-05:24:23.06) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.728,-05:24:21.72) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.554,-05:24:24.72) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:37.447,-05:24:27.32) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.130,-05:24:15.52) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:38.808,-05:24:10.79) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:39.143,-05:24:10.59) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}

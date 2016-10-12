@@ -1,0 +1,16 @@
+# Region file format: DS9 version 4.1
+# Filename: new-slits-ha+010+030-multibin.fits[SCALED]
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(05:34:24.921,-05:25:31.49) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:24.613,-05:25:35.06) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:24.399,-05:25:40.07) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:24.082,-05:26:18.46) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:23.965,-05:26:13.75) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:23.894,-05:26:09.00) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:23.904,-05:25:55.75) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:24.255,-05:25:43.67) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:24.070,-05:25:47.67) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:23.953,-05:25:51.92) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:23.827,-05:26:04.25) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}
+point(05:34:23.894,-05:26:00.25) # point=circle color=red font="helvetica 10 normal roman" tag={Red Bow SW}

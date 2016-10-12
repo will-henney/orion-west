@@ -1,0 +1,75 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(5:34:24.355,-5:26:02.41) # point=circle
+point(5:34:24.274,-5:26:00.61) # point=circle
+point(5:34:24.220,-5:25:57.79) # point=circle
+point(5:34:24.167,-5:25:56.19) # point=circle
+point(5:34:24.032,-5:25:54.38) # point=circle
+point(5:34:24.005,-5:25:52.17) # point=circle
+point(5:34:24.072,-5:25:47.95) # point=circle
+point(5:34:24.167,-5:25:42.92) # point=circle
+point(5:34:24.274,-5:25:38.90) # point=circle
+point(5:34:24.341,-5:25:33.88) # point=circle
+point(5:34:24.409,-5:25:29.06) # point=circle font="helvetica 14 bold roman" text={A}
+point(5:34:25.294,-5:26:25.36) # point=circle color=red
+point(5:34:25.210,-5:26:24.28) # point=circle color=red
+point(5:34:25.132,-5:26:23.03) # point=circle color=red
+point(5:34:25.054,-5:26:22.03) # point=circle color=red
+point(5:34:24.976,-5:26:20.69) # point=circle color=red
+point(5:34:24.931,-5:26:18.36) # point=circle color=red
+point(5:34:24.914,-5:26:16.11) # point=circle color=red
+point(5:34:24.931,-5:26:13.36) # point=circle color=red
+point(5:34:25.004,-5:26:10.44) # point=circle color=red
+point(5:34:25.004,-5:26:08.36) # point=circle color=red font="helvetica 14 bold roman" text={B}
+point(5:34:25.734,-5:26:31.51) # point=circle color=blue
+point(5:34:25.628,-5:26:30.43) # point=circle color=blue
+point(5:34:25.539,-5:26:28.60) # point=circle color=blue
+point(5:34:25.477,-5:26:26.18) # point=circle color=blue
+point(5:34:25.421,-5:26:23.85) # point=circle color=blue
+point(5:34:25.371,-5:26:21.77) # point=circle color=blue
+point(5:34:25.310,-5:26:19.10) # point=circle color=blue
+point(5:34:25.248,-5:26:16.68) # point=circle color=blue
+point(5:34:25.187,-5:26:13.52) # point=circle color=blue font="helvetica 14 bold roman" text={C}
+point(5:34:26.332,-5:26:36.30) # point=circle color=black
+point(5:34:26.225,-5:26:37.50) # point=circle color=black
+point(5:34:26.151,-5:26:37.80) # point=circle color=black
+point(5:34:26.058,-5:26:37.80) # point=circle color=black
+point(5:34:26.024,-5:26:36.10) # point=circle color=black
+point(5:34:25.964,-5:26:33.40) # point=circle color=black
+point(5:34:25.884,-5:26:30.50) # point=circle color=black
+point(5:34:25.830,-5:26:27.00) # point=circle color=black
+point(5:34:25.823,-5:26:22.70) # point=circle color=black font="helvetica 14 bold roman" text={D}
+point(5:34:26.399,-5:26:20.70) # point=circle color=magenta
+point(5:34:26.325,-5:26:18.50) # point=circle color=magenta
+point(5:34:26.292,-5:26:16.20) # point=circle color=magenta
+point(5:34:26.265,-5:26:13.60) # point=circle color=magenta
+point(5:34:26.285,-5:26:09.50) # point=circle color=magenta
+point(5:34:26.346,-5:26:07.20) # point=circle color=magenta
+point(5:34:26.406,-5:26:04.00) # point=circle color=magenta
+point(5:34:26.486,-5:26:02.10) # point=circle color=magenta font="helvetica 14 bold roman" text={E}
+point(5:34:26.466,-5:27:12.90) # point=circle color=cyan font="helvetica 14 bold roman" text={F}
+point(5:34:26.326,-5:27:12.00) # point=circle color=cyan
+point(5:34:26.192,-5:27:11.10) # point=circle color=cyan
+point(5:34:26.051,-5:27:08.50) # point=circle color=cyan
+point(5:34:25.944,-5:27:05.20) # point=circle color=cyan
+point(5:34:25.857,-5:27:00.70) # point=circle color=cyan
+point(5:34:25.823,-5:26:57.20) # point=circle color=cyan
+point(5:34:25.897,-5:26:53.80) # point=circle color=cyan
+point(5:34:25.917,-5:26:50.00) # point=circle color=cyan
+point(5:34:25.971,-5:26:45.50) # point=circle color=cyan
+point(5:34:26.058,-5:26:42.40) # point=circle color=cyan
+point(5:34:25.730,-5:26:55.30) # point=circle color=cyan
+point(5:34:25.656,-5:26:50.10) # point=circle color=cyan
+point(5:34:25.569,-5:26:45.70) # point=circle color=cyan
+point(5:34:25.515,-5:26:41.00) # point=circle color=cyan
+point(5:34:25.495,-5:26:35.40) # point=circle color=cyan
+ellipse(5:34:24.422,-5:25:54.47,6.86876",6.34305",0) # width=2 text={4244-554}
+ellipse(5:34:25.232,-5:26:15.93,9.71826",4.63659",50) # color=red width=2 text={4252-616}
+ellipse(5:34:25.396,-5:25:51.16,13.5354",10.2235",40) # width=2 text={4254-551}
+ellipse(5:34:26.015,-5:26:12.36,4.87343",3.39783",20) # color=blue width=2 text={4260-612}
+ellipse(5:34:26.078,-5:26:25.50,2.99377",6.74959",0) # color=black text={4261-626}
+ellipse(5:34:26.549,-5:26:30.12,3.77532",6.73375",0) # color=black text={4265-630}
+ellipse(5:34:26.642,-5:26:14.66,3.37821",8.64448",340) # color=magenta width=2 text={4266-615}
+ellipse(5:34:27.292,-5:26:39.26,7.70064",2.51808",70) # color=cyan text={4273-639}
+ellipse(5:34:27.702,-5:27:13.76,3.80146",21.9482",0) # color=cyan text={4273-704}

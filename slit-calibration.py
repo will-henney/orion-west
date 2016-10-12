@@ -26,10 +26,26 @@ file_templates = {
         '2006-02': 'Work/SPM2005/pp{}.fits',
         '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spec{}.fits',
         '2007-01': 'Work/SPM2007/Reduced/spec{}-transf.fits',
+        '2007-sii': 'Work/SPM2007/Reduced/spec{}-transf.fits',
+        '2007-oiii': 'Work/SPM2007/Reduced/spec{}-transf.fits',
         '2010-01': 'Dropbox/SPMJAN10/reducciones/spm{}h.fits',
+        '2010-sii': 'Dropbox/SPMJAN10/reducciones/spm{}h.fits',
+        '2010-oiii': 'Dropbox/SPMJAN10/reducciones/spm{}h.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_bcr.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}_bcrx.fits',
         '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}o_bcrx.fits',
+    },
+    'siis' : {
+        '2007-sii': 'Work/SPM2007/Reduced/spec{}-siis.fits',
+        '2010-sii': 'Dropbox/SPMJAN10/reducciones/spec{}-siis.fits',
+    },
+    'siil' : {
+        '2007-sii': 'Work/SPM2007/Reduced/spec{}-siil.fits',
+        '2010-sii': 'Dropbox/SPMJAN10/reducciones/spec{}-siil.fits',
+    },
+    'oiii' : {
+        '2007-oiii': 'Work/SPM2007/Reduced/spec{}-oiii.fits',
+        '2010-oiii': 'Dropbox/SPMJAN10/reducciones/spec{}-oiii.fits',
     },
     'ha' : {
         '2006-02': 'Work/SPM2007/Reduced/HH505/slits/SPMha/spec{}-halpha.fits',
@@ -53,7 +69,11 @@ file_templates = {
         '2006-02': 'Dropbox/Papers/LL-Objects/feb2006/pp{}-ardec.fits',
         '2007-01b': 'Work/SPM2007/Reduced/HH505/slits/reducciones/spm{}-ardec.fits',
         '2007-01': 'Work/SPM2007/Reduced/spm{}-ardec.fits',
+        '2007-sii': 'Work/SPM2007/Reduced/spm{}-ardec.fits',
+        '2007-oiii': 'Work/SPM2007/Reduced/spm{}-ardec.fits',
         '2010-01': 'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits',
+        '2010-sii': 'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits',
+        '2010-oiii': 'Dropbox/SPMJAN10/reducciones/posiciones/spm{}-ardec.fits',
         '2013-02': 'Dropbox/SPMFEB13/WesternShocks/spm{}_ardec.fits',
         '2013-12': 'Dropbox/papers/LL-Objects/SPMDIC13/spm{}-ardec.fits',
         '2015-02': 'Dropbox/SPMFEB15/archivos/spm{}-ardec.fits',
@@ -87,13 +107,13 @@ def slit_profile(ra, dec, image, wcs):
     return np.array([image[j, i] for i, j in zip(ii, jj)])
 # Construct\ the\ synthetic\ slit\ from\ the\ reference\ image:1 ends here
 
-# [[file:alba-orion-west.org::*Construct%20the%20synthetic%20slit%20from%20the%20reference%20image][Construct\ the\ synthetic\ slit\ from\ the\ reference\ image:1]]
+# [[file:alba-orion-west.org::*Construct%20the%20synthetic%20slit%20from%20the%20reference%20image][Construct\ the\ synthetic\ slit\ from\ the\ reference\ image:2]]
 wfi_dir = '/Users/will/Work/OrionTreasury/wfi'
 photom, = fits.open(os.path.join(wfi_dir, 'Orion_H_A_deep.fits'))
 wphot = WCS(photom.header)
-# Construct\ the\ synthetic\ slit\ from\ the\ reference\ image:1 ends here
+# Construct\ the\ synthetic\ slit\ from\ the\ reference\ image:2 ends here
 
-# [[nil][Find\ the\ world\ coordinates\ of\ each\ pixel\ along\ the\ slit:1]]
+# [[id:1D9200A9-45BA-4128-894B-4D4DF84FC2F2][Find\ the\ world\ coordinates\ of\ each\ pixel\ along\ the\ slit:1]]
 def find_slit_coords(db, hdr, shdr):
     """Find the coordinates of all the pixels along a spectrograph slit
 
@@ -124,7 +144,7 @@ def find_slit_coords(db, hdr, shdr):
         except KeyError:
             image_binning = hdr['CCDXBIN']
             spec_binning = shdr['CCDXBIN']
-          
+
         # correct for difference in binning between the image+slit and the spectrum
         iarr *= spec_binning/image_binning
     elif jstring == '2':
@@ -138,7 +158,7 @@ def find_slit_coords(db, hdr, shdr):
         except KeyError:
             image_binning = hdr['CCDYBIN']
             spec_binning = shdr['CCDYBIN']
-          
+
         jarr *= spec_binning/image_binning
     else:
         raise ValueError('Slit axis (saxis) must be 1 or 2')
@@ -247,7 +267,7 @@ def make_slit_wcs(db, slit_coords, spechdu):
     return w
 # Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1 ends here
 
-# [[file:alba-orion-west.org::*Package%20up%20the%20slit%20coordinates%20for%20use%20in%20a%20FITS%20header][Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1]]
+# [[file:alba-orion-west.org::*Package%20up%20the%20slit%20coordinates%20for%20use%20in%20a%20FITS%20header][Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:2]]
 def fixup4ds9(w):
     w.wcs.ctype  = ['LINEAR', 'LINEAR', 'LINEAR']
     # w.wcs.cdelt[1:] *= 3600
@@ -255,7 +275,7 @@ def fixup4ds9(w):
     w.wcs.crval[1], w.wcs.crval[2] = 0.0, 0.0
     w.wcs.name = 'TopoWavDS9'
     return w
-# Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:1 ends here
+# Package\ up\ the\ slit\ coordinates\ for\ use\ in\ a\ FITS\ header:2 ends here
 
 # [[file:alba-orion-west.org::*Fit%20Chebyshev%20polynomials%20to%20along-slit%20variation][Fit\ Chebyshev\ polynomials\ to\ along-slit\ variation:1]]
 def fit_cheb(x, y, npoly=3, mask=None):
@@ -286,7 +306,7 @@ def make_three_plots(spec, calib, prefix, niirat=None):
         ratio_fit = fit_cheb(ypix, ratio, mask=mask)
     except:
         ratio_fit = np.ones_like(ypix)
-      
+
     alpha = 0.8
 
     # First, plot two profiles against each other to check for zero-point offsets
@@ -340,7 +360,7 @@ def extract_profile(data, wcs, wavrest, dw=7.0):
     return data[:, lineslice].sum(axis=1)
 # Remove\ background\ and\ sum\ over\ wavelength\ across\ line:1 ends here
 
-# [[file:alba-orion-west.org::*Remove%20background%20and%20sum%20over%20wavelength%20across%20line][Remove\ background\ and\ sum\ over\ wavelength\ across\ line:1]]
+# [[file:alba-orion-west.org::*Remove%20background%20and%20sum%20over%20wavelength%20across%20line][Remove\ background\ and\ sum\ over\ wavelength\ across\ line:2]]
 def wavs2slice(wavs, wcs):
     """Convert a wavelength interval `wavs` (length-2 sequence) to a slice of the relevant axis`"""
     assert len(wavs) == 2
@@ -377,45 +397,71 @@ def remove_bg_and_regularize(data, wcs, wavrest, dwbg_in=7.0, dwbg_out=10.0):
     print('Background weights:', weight_blu, weight_red)
     bg = (bgblu*weight_blu + bgred*weight_red)/(weight_blu + weight_red)
     return data - bg[:, None]
-# Remove\ background\ and\ sum\ over\ wavelength\ across\ line:1 ends here
+# Remove\ background\ and\ sum\ over\ wavelength\ across\ line:2 ends here
 
-# [[nil][Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1]]
+# [[id:C7D141C2-85FF-427D-AF2D-DCC34B14E1A4][Loop\ over\ the\ slit\ positions\ and\ do\ the\ stuff:1]]
+# Emission lines included in each type of full spectrum
+linesets  = {
+    'sii' : ['siil', 'siis'],
+    'oiii': ['oiii'],
+    'default': ['ha', 'nii'],
+}
+
+restwavs = {
+    'ha': 6562.79,
+    'nii': 6583.45,
+    'siis': 6716.44,
+    'siil': 6730.816,
+    'oiii': 5006.84,
+}
+
 for row in tab:
+    if row['Dataset'].endswith('sii'):
+        lineset = linesets['sii']
+    elif row['Dataset'].endswith('oiii'):
+        lineset = linesets['oiii']
+    else:
+        lineset = linesets['default']
+    
     full_id = row['Dataset'] + '-' + row['imid']
     if not full_id.startswith(selector_pattern):
         continue
     print(row)
     imslitfile = find_fits_filepath(row, 'image')
-    specfile = find_fits_filepath(row, 'fullspec')
-    hafile = find_fits_filepath(row, 'ha')
-    niifile = find_fits_filepath(row, 'nii')
+
+
+    line_hdus = []
+    for line_id in lineset:
+        line_hdus.append(fits.open(find_fits_filepath(row, line_id))[0])
+    
     imhdu = fits.open(imslitfile)[0]
-    spechdu = fits.open(specfile)[0]
-    hahdu = fits.open(hafile)[0]
-    niihdu = fits.open(niifile)[0]
 
     # World coordinates along slit
-    slit_coords = find_slit_coords(row, imhdu.header, hahdu.header)
+    slit_coords = find_slit_coords(row, imhdu.header, line_hdus[0].header)
 
     # Find synthetic profile from calibration image
     calib_profile = slit_profile(slit_coords['RA'], slit_coords['Dec'],
                                  photom.data, wphot)
 
-    # Find actual profile along slit from spectrum
-    wavaxis = row['saxis'] - 1  # This always seems to be true
-    ha_profile = extract_profile(hahdu.data, WCS(hahdu.header), 6562.79)
-    # Take the nii/ha calibration correction factor  from the table
-    nii_profile = row['r(nii)']*extract_profile(niihdu.data, WCS(niihdu.header), 6583.45)
-    spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
-    plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
-    ratio = make_three_plots(spec_profile, calib_profile, plt_prefix, niirat=nii_profile/ha_profile)
+    ratio = None
+    if lineset == ['ha', 'nii']:
+        # This part is too difficult to generalise to other lines for the moment
+        hahdu, niihdu = line_hdus
+        # Find actual profile along slit from spectrum
+        wavaxis = row['saxis'] - 1  # This always seems to be true
+        ha_profile = extract_profile(hahdu.data, WCS(hahdu.header), 6562.79)
+        # Take the nii/ha calibration correction factor  from the table
+        nii_profile = row['r(nii)']*extract_profile(niihdu.data, WCS(niihdu.header), 6583.45)
+        spec_profile = (ha_profile+1.333*nii_profile)/row['norm']
+        plt_prefix = 'plots/{:03d}-{}-calib'.format(row.index, full_id)
+        ratio = make_three_plots(spec_profile, calib_profile, plt_prefix, niirat=nii_profile/ha_profile)
 
     #
     # Save calibrated spectra to files
     #
 
-    for hdu, lineid, restwav  in [[hahdu, 'ha', 6562.79],
-                                  [niihdu, 'nii', 6583.45]]:
+    for lineid, hdu in zip(lineset, line_hdus):
+        restwav = restwavs[lineid]
         print('Saving', lineid, 'calibrated spectrum')
         # Apply basic calibration zero-point and scale
         hdu.data = remove_bg_and_regularize(hdu.data, WCS(hdu.header), restwav)/row['norm']
@@ -423,7 +469,8 @@ for row in tab:
         # This is now done by the bg subtraction function
 
         # Apply polynomial correction along slit
-        hdu.data /= ratio[:, None]
+        if ratio is not None:
+            hdu.data /= ratio[:, None]
         # Extend in the third dimension (degenerate axis perp to slit)
         hdu.data = hdu.data[None, :, :]
 
