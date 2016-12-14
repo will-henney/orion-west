@@ -991,6 +991,8 @@ for group in 'slow', 'fast', 'ultra':
   + Format: =polygon(x1, y1, x2 y2, ...)=
   + Use a combination of =rasterio= and =shapely= 
 
+
+
 **** DONE Retrofit knot assignments to the PV boxes
 CLOSED: [2016-12-12 Mon 19:16]
 + Actually, we should already have this automatically
