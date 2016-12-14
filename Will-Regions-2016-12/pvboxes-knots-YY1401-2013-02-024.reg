@@ -1,0 +1,3 @@
+global color=white font="helvetica 5 normal"
+image
+box(37.0,300.3,18.1,18.4,0.0) # text={4392-231 (-70)}

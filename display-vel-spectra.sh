@@ -1,6 +1,6 @@
 files=$(find $PWD/Calibrated/BGsub -name "$1-vhel.fits")
 ds9=${2:-ds9}
-xpaset -p $ds9 view buttons no
+regprefix=Will-Regions-2016-12/pvboxes-
 for path in $files; do
     f=${path##/*/} # just the filename
     if [ ${f:0:1} == "Y" ]; then
@@ -21,8 +21,13 @@ for path in $files; do
     xpaset -p $ds9 contour color blue
     xpaset -p $ds9 contour loadlevels $PWD/ha-contours.lev
     xpaset -p $ds9 contour yes
+
+    regfile=${regprefix}$(basename $f .fits).reg
+    if [ -f $regfile ]; then
+        xpaset -p $ds9 region load $PWD/$regfile
+    fi
 done
 xpaset -p $ds9 contour close
-xpaset -p $ds9 frame 1
+xpaset -p $ds9 frame next
 xpaset -p $ds9 match frame wcs
 xpaset -p $ds9 lock frame wcs

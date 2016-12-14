@@ -1,0 +1,217 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+image
+line(431.8,1179.7,431.9,1195.9) # line=0 0 color=#5d6 width=3 text={-38} tag={Fast 017 (-40)}
+line(445.1,1186,445.3,1202.2) # line=0 0 color=#5d7 width=3 text={-40} tag={Fast 017 (-40)}
+line(448.7,1187.2,448.8,1200.9) # line=0 0 color=#5d5 width=3 text={-37} tag={Fast 017 (-40)}
+line(1146,1403.5,1147.7,1453.6) # line=0 0 color=#5bd text={-59} dash=1 tag={Fast 003 (-65)}
+line(1141.5,1270.9,1142.9,1311.5) # line=0 0 color=#57d text={-68} dash=1 tag={Fast 005 (-70)}
+line(1159.7,1399.9,1160.5,1425.6) # line=0 0 color=#57d text={-69} tag={Fast 003 (-65)}
+line(1155.7,1275.7,1156.2,1292.4) # line=0 0 color=#65d text={-76} dash=1 tag={Fast 005 (-70)}
+line(1157.7,1401.7,1158.2,1430.3) # line=0 0 color=#58d text={-65} tag={Fast 003 (-65)}
+line(1162.1,1276.9,1162.3,1297.2) # line=0 0 color=#56d text={-71} tag={Fast 005 (-70)}
+line(1168,1402.3,1168.3,1420.2) # line=0 0 color=#58d text={-67} tag={Fast 003 (-65)}
+line(1166.1,1273.9,1166.4,1293.6) # line=0 0 color=#55d text={-74} tag={Fast 005 (-70)}
+line(1170,1316.9,1171.5,1419.6) # line=0 0 color=#58d text={-65} dash=1 tag={Fast 003 (-65)}
+line(1169,1250.6,1169.7,1299) # line=0 0 color=#56d text={-70} tag={Fast 005 (-70)}
+line(1166.2,1072,1166.6,1094.1) # line=0 0 color=#55d text={-72} dash=1 tag={Fast 018 (-70)}
+line(1176.2,1318.1,1177.8,1423.2) # line=0 0 color=#59d text={-64} dash=1 tag={Fast 003 (-65)}
+line(1174.7,1218.9,1175.9,1298.4) # line=0 0 color=#55d text={-73} dash=1 tag={Fast 005 (-70)}
+line(1172.4,1064.9,1173,1101.3) # line=0 0 color=#56d text={-70} dash=1 tag={Fast 018 (-70)}
+line(1179,1223.7,1180.1,1293.6) # line=0 0 color=#56d text={-71} dash=1 tag={Fast 005 (-70)}
+line(1176.6,1073.8,1176.9,1096.5) # line=0 0 color=#56d text={-71} dash=1 tag={Fast 018 (-70)}
+line(1183.9,1396.9,1184.3,1429.1) # line=0 0 color=#55d text={-72} dash=1 tag={Fast 001 (-70)}
+line(1182.9,1324.6,1183.3,1354.5) # line=0 0 color=#58d text={-67} tag={Fast 003 (-65)}
+line(1182,1254.8,1182.4,1287.6) # line=0 0 color=#55d text={-72} tag={Fast 005 (-70)}
+line(1181.3,1208.8,1181.8,1245.2) # line=0 0 color=#57d text={-69} tag={Fast 005 (-70)}
+line(1189.8,1319.8,1190.3,1363.1) # line=0 0 color=#59d text={-64} tag={Fast 003 (-65)}
+line(1188.4,1216.6,1188.8,1247.5) # line=0 0 color=#56d text={-70} tag={Fast 005 (-70)}
+line(1195.1,1401.3,1195.8,1424) # line=0 0 color=#56d text={-70} tag={Fast 001 (-70)}
+line(1192.6,1321.8,1193.5,1349.7) # line=0 0 color=#57d text={-68} tag={Fast 003 (-65)}
+line(1190.9,1270.2,1191.7,1296) # line=0 0 color=#57d text={-68} tag={Fast 006 (-65)}
+line(1190.2,1248.6,1190.7,1263) # line=0 0 color=#56d text={-71} tag={Fast 005 (-70)}
+line(1189.3,1220.7,1189.9,1238.2) # line=0 0 color=#55d text={-72} tag={Fast 005 (-70)}
+line(1197.2,1324.9,1197.7,1359) # line=0 0 color=#5dd text={-53} dash=1 tag={Fast 004 (-50)}
+line(1196.6,1275.4,1197,1309.5) # line=0 0 color=#58d text={-65} tag={Fast 006 (-65)}
+line(1195.9,1217.6,1196.4,1259.9) # line=0 0 color=#58d text={-65} tag={Fast 008 (-65)}
+line(1209.5,1401.3,1210.2,1423) # line=0 0 color=#56d text={-71} dash=1 tag={Fast 001 (-70)}
+line(1206,1284.7,1207.3,1328) # line=0 0 color=#5bd text={-60} tag={Fast 007 (-60)}
+line(1204.4,1230,1205.2,1256.8) # line=0 0 color=#58d text={-66} tag={Fast 008 (-65)}
+line(1223.7,1438.4,1224.4,1461.1) # line=0 0 color=#57d text={-69} dash=1 tag={Fast 001 (-70)}
+line(1222.2,1380.7,1223,1411.6) # line=0 0 color=#55d text={-73} tag={Fast 001 (-70)}
+line(1218.1,1232.1,1219.5,1281.6) # line=0 0 color=#5ad text={-61} tag={Fast 007 (-60)}
+line(1216.9,1186.7,1217.3,1201.1) # line=0 0 color=#56d text={-71} dash=1 tag={Fast 012 (-70)}
+line(1214.8,1110.3,1215.3,1129.9) # line=0 0 color=#55d text={-73} dash=1 tag={Fast 014 (-70)}
+line(1235.1,1354.9,1236.9,1410.6) # line=0 0 color=#56d text={-70} dash=1 tag={Fast 001 (-70)}
+line(1232.9,1285.7,1233.8,1314.6) # line=0 0 color=#57d text={-68} tag={Fast 010 (-70)}
+line(1231.8,1251.7,1232.7,1278.5) # line=0 0 color=#5cd text={-57} tag={Fast 007 (-60)}
+line(1230.7,1214.5,1231.6,1244.4) # line=0 0 color=#58d text={-65} dash=1 tag={Fast 011 (-65)}
+line(1255,1401.3,1255.6,1423) # line=0 0 color=#5cd text={-57} dash=1 tag={Fast 002 (-60)}
+line(1251.7,1287.8,1252.1,1302.2) # line=0 0 color=#65d width=2 text={-76} tag={Fast 010 (-70)}
+line(1251.1,1270.2,1251.6,1284.7) # line=0 0 color=#5bd width=2 text={-59} tag={Fast 009 (-60)}
+line(1250.2,1237.2,1250.8,1257.8) # line=0 0 color=#5cd text={-57} tag={Fast 007 (-60)}
+line(1249.3,1208.3,1249.7,1220.7) # line=0 0 color=#5ad width=2 text={-62} tag={Fast 011 (-65)}
+line(1247.3,1137.1,1248.4,1176.3) # line=0 0 color=#5ad text={-62} tag={Fast 013 (-60)}
+line(1257.9,1180.5,1258.5,1219.7) # line=0 0 color=#57d text={-68} tag={Fast 011 (-65)}
+line(1258.7,1232.1,1259.8,1298.1) # line=0 0 color=#5dd text={-54} tag={Fast 007 (-60)}
+line(1255.7,1045.3,1256.2,1073.1) # line=0 0 color=#58d text={-67} tag={Fast 019 (-70)}
+line(1393.3,1209.4,1391.4,1244.4) # line=0 0 color=#59d text={-63} tag={Fast 022 (-65)}
+line(1394.6,1185.6,1393.6,1203.2) # line=0 0 color=#5d7 text={-41} tag={Fast 023 (-40)}
+line(1406.1,976.1,1404.6,1004) # line=0 0 color=#5ad text={-61} dash=1 tag={Fast 026 (-60)}
+line(1506.7,1348.5,1506.1,1358.6) # line=0 0 color=#5d8 width=2 text={-42} tag={Fast 082 (-40)}
+line(1509.2,1301.6,1508.4,1317.4) # line=0 0 color=#5dd width=3 text={-55} tag={Fast 081 (-55)}
+line(1517.8,1144.9,1516.9,1162.3) # line=0 0 color=#59d text={-64} tag={Fast 077 (-60)}
+line(1522.6,1058.3,1521.8,1072.7) # line=0 0 color=#56d width=2 text={-70} tag={Fast 030 (-70)}
+line(1524.3,1027.3,1523.5,1041) # line=0 0 color=#57d width=2 text={-68} tag={Fast 032 (-70)}
+line(1526.4,989,1525.6,1002.7) # line=0 0 color=#5ad width=2 text={-61} tag={Fast 034 (-60)}
+line(1533.9,1139.1,1532.7,1158.6) # line=0 0 color=#5ad width=2 text={-61} tag={Fast 077 (-60)}
+line(1540.4,1029.4,1538.8,1056.1) # line=0 0 color=#5ad text={-61} tag={Fast 055 (-60)}
+line(1533.9,1316,1533.3,1325.4) # line=0 0 color=#5d7 width=4 text={-40} tag={Fast 080 (-40)}
+line(1544.5,1131.9,1543.6,1148.5) # line=0 0 color=#5dd text={-55} tag={Fast 078 (-55)}
+line(1550.1,1034.5,1548.6,1060.5) # line=0 0 color=#5dd width=2 text={-56} tag={Fast 055 (-60)}
+line(1552.2,999.1,1550.8,1023.7) # line=0 0 color=#59d width=2 text={-64} tag={Fast 056 (-65)}
+line(1557.9,900.9,1555.1,948.6) # line=0 0 color=#5db text={-49} tag={Fast 051 (-50)}
+line(1561.7,834.5,1559.7,868.5) # line=0 0 color=#5db text={-49} tag={Fast 045 (-45)}
+line(1554.2,1125.6,1552.5,1155.2) # line=0 0 color=#5cd text={-58} tag={Fast 078 (-55)}
+line(1559.1,1039,1558.2,1054.1) # line=0 0 color=#5dd text={-54} tag={Fast 055 (-60)}
+line(1560.9,1007.2,1560.1,1020.9) # line=0 0 color=#5dd width=2 text={-53} tag={Fast 057 (-55)}
+line(1565.9,919.1,1563.4,963.9) # line=0 0 color=#5db width=2 text={-50} tag={Fast 051 (-50)}
+line(1570.9,831.8,1568.9,867.9) # line=0 0 color=#5d8 text={-42} tag={Fast 045 (-45)}
+line(1553.5,1126.3,1552.1,1149.4) # line=0 0 color=#5cd text={-58} tag={Fast 078 (-55)}
+line(1558.7,1036.1,1557.8,1051.9) # line=0 0 color=#5db text={-50} dash=1 tag={Fast 055 (-60)}
+line(1560.7,1002.1,1559.7,1019.5) # line=0 0 color=#5dc width=2 text={-51} tag={Fast 057 (-55)}
+line(1565.8,914.8,1563,962.4) # line=0 0 color=#5da width=2 text={-48} tag={Fast 051 (-50)}
+line(1570.6,831.8,1568.5,868.6) # line=0 0 color=#5d9 text={-44} tag={Fast 045 (-45)}
+line(1562.7,1140.7,1561.5,1162.4) # line=0 0 color=#5dd width=2 text={-56} tag={Fast 078 (-55)}
+line(1564.1,1116.2,1563.1,1134.2) # line=0 0 color=#5d8 width=2 text={-42} tag={Fast 076 (-50)}
+line(1570,1014.4,1569,1031.7) # line=0 0 color=#5cd width=3 text={-57} tag={Fast 057 (-55)}
+line(1572.7,966,1571.8,981.9) # line=0 0 color=#59d width=2 text={-63} tag={Fast 052 (-65)}
+line(1574.7,932.1,1573.1,959.5) # line=0 0 color=#5da width=3 text={-48} tag={Fast 051 (-50)}
+line(1576.6,898.9,1575.2,922.7) # line=0 0 color=#5ad text={-61} tag={Fast 048 (-60)}
+line(1581,822.4,1577.3,885.9) # line=0 0 color=#5dc text={-52} tag={Fast 044 (-50)}
+line(1567.9,1210.7,1566,1244) # line=0 0 color=#5d7 text={-40} tag={Fast 079 (-50)}
+line(1571.7,1144.3,1570.5,1165.3) # line=0 0 color=#5dd width=2 text={-56} tag={Fast 078 (-55)}
+line(1579.4,1010.1,1578.1,1031.7) # line=0 0 color=#5cd width=3 text={-58} tag={Fast 057 (-55)}
+line(1582.5,955.2,1581.5,972.5) # line=0 0 color=#5dd width=3 text={-53} tag={Fast 053 (-50)}
+line(1583.7,934.3,1582.5,955.9) # line=0 0 color=#5d8 width=2 text={-43} tag={Fast 051 (-50)}
+line(1585.1,909,1583.9,930.7) # line=0 0 color=#5bd width=2 text={-60} tag={Fast 048 (-60)}
+line(1577.4,1200.6,1576.2,1222.3) # line=0 0 color=#5da width=2 text={-47} tag={Fast 079 (-50)}
+line(1580.8,1138.6,1579.6,1159.5) # line=0 0 color=#5bd width=2 text={-59} tag={Fast 078 (-55)}
+line(1588.5,997.8,1586.9,1026) # line=0 0 color=#5ad width=3 text={-62} tag={Fast 058 (-60)}
+line(1591.3,945.5,1589.6,976.5) # line=0 0 color=#5dc width=4 text={-52} tag={Fast 053 (-50)}
+line(1592.4,926.7,1591.6,940.4) # line=0 0 color=#5ad width=3 text={-62} tag={Fast 048 (-60)}
+line(1595,879.4,1593.4,908.3) # line=0 0 color=#5da width=2 text={-47} tag={Fast 046 (-45)}
+line(1596.5,850.6,1595.1,876.5) # line=0 0 color=#5dd width=2 text={-54} tag={Fast 042 (-55)}
+line(1600.1,785.6,1598.1,823.1) # line=0 0 color=#5bd text={-59} tag={Fast 041 (-60)}
+line(1593.2,911.6,1592.5,924.6) # line=0 0 color=#5dd width=3 text={-53} tag={Fast 049 (-50)}
+line(1589.2,1187.6,1587.5,1216.5) # line=0 0 color=#5dd width=2 text={-54} tag={Fast 079 (-50)}
+line(1601.3,980.5,1598.8,1024.5) # line=0 0 color=#5bd width=2 text={-59} tag={Fast 059 (-60)}
+line(1602.6,958.8,1601.9,971.8) # line=0 0 color=#5da width=3 text={-48} tag={Fast 053 (-50)}
+line(1603.6,941.5,1603,953) # line=0 0 color=#5dc width=3 text={-52} tag={Fast 050 (-55)} 
+line(1604.8,922,1604.1,934.3) # line=0 0 color=#5da width=3 text={-48} tag={Fast 049 (-50)}
+line(1593.5,1189.8,1592,1216.5) # line=0 0 color=#5dc width=2 text={-52} tag={Fast 079 (-50)}
+line(1599,1092.4,1597.1,1126.3) # line=0 0 color=#5d7 width=2 text={-40} tag={Fast 075 (-40)}
+line(1604.3,997.8,1602.7,1026) # line=0 0 color=#5dd width=3 text={-56} tag={Fast 059 (-60)}
+line(1605.4,977.6,1604.5,994.9) # line=0 0 color=#59d width=2 text={-63} tag={Fast 068 (-65)}
+line(1607.5,941.5,1605.9,968.9) # line=0 0 color=#5bd width=3 text={-60} tag={Fast 071 (-60)}
+line(1614.2,822.4,1613.6,833.2) # line=0 0 color=#5dd width=2 text={-54} tag={Fast 042 (-55)}
+line(1618.1,752.4,1614.6,814.5) # line=0 0 color=#5ad text={-61} tag={Fast 041 (-60)}
+line(1601,1186.9,1599.4,1212.9) # line=0 0 color=#5cd width=2 text={-58} tag={Fast 079 (-50)}
+line(1612.7,984.8,1610.7,1020.2) # line=0 0 color=#58d width=3 text={-65} tag={Fast 068 (-65)}
+line(1614.1,961.4,1613.3,974.7) # line=0 0 color=#5bd width=3 text={-59} tag={Fast 071 (-60)}
+line(1615.7,934.3,1614.6,952.3) # line=0 0 color=#5dd width=3 text={-56} tag={Fast 072 (-60)}
+line(1620.5,852.7,1619.9,861.4) # line=0 0 color=#5cd text={-57} tag={Fast 043 (-55)}
+line(1625.6,765,1624.6,782) # line=0 0 color=#5dd width=2 text={-54} tag={Fast 039 (-55)}
+line(1627.4,734,1625.5,765.7) # line=0 0 color=#5dd width=2 text={-56} tag={Fast 039 (-55)}
+line(1620.2,1001.4,1619.1,1020.2) # line=0 0 color=#59d width=3 text={-63} tag={Fast 068 (-65)}
+line(1622.4,963.9,1621.4,981.9) # line=0 0 color=#5dd width=3 text={-56} tag={Fast 070 (-55)}
+line(1623.6,944.4,1622.6,961) # line=0 0 color=#57d width=2 text={-69} tag={Fast 073 (-65)}
+line(1612.6,1184,1611.8,1198.5) # line=0 0 color=#5da text={-47} tag={Fast 079 (-50)}
+line(1616.4,1116.2,1615.4,1135) # line=0 0 color=#5da text={-47} tag={Fast 074 (-50)}
+line(1621.3,1029.6,1620.4,1045.4) # line=0 0 color=#57d width=2 text={-68} tag={Fast 067 (-70)}
+line(1622.9,1002.1,1621.6,1024.5) # line=0 0 color=#5ad width=3 text={-62} tag={Fast 068 (-65)}
+line(1623.7,986.3,1622.8,1002.9) # line=0 0 color=#57d width=3 text={-68} tag={Fast 069 (-70)}
+line(1625,964.6,1624.1,980.5) # line=0 0 color=#5cd width=3 text={-57} tag={Fast 070 (-55)}
+line(1626.6,935.7,1625.5,955.9) # line=0 0 color=#59d width=3 text={-63} tag={Fast 073 (-65)}
+line(1629.7,880.1,1629.1,891) # line=0 0 color=#55d text={-73} tag={Fast 047 (-70)}
+line(1631.6,847.7,1630.6,864.3) # line=0 0 color=#5dd text={-56} tag={Fast 043 (-55)}
+line(1638.1,731.4,1636,769) # line=0 0 color=#5dc width=2 text={-52} tag={Fast 039 (-55)}
+line(1636,769.7,1635.3,782) # line=0 0 color=#55d text={-72} tag={Fast 040 (-70)}
+line(1631.7,1069.3,1630.5,1090.9) # line=0 0 color=#5cd text={-57} tag={Fast 064 (-60)}
+line(1633.9,1030.3,1632.9,1049.1) # line=0 0 color=#57d width=3 text={-69} tag={Fast 067 (-70)}
+line(1635,1010.8,1634.1,1027.4) # line=0 0 color=#58d width=3 text={-66} tag={Fast 068 (-65)}
+line(1636.2,990.6,1635.2,1008.6) # line=0 0 color=#57d width=3 text={-68} tag={Fast 069 (-70)}
+line(1648.9,767.5,1647.6,789.9) # line=0 0 color=#59d text={-63} tag={Fast 038 (-60)}
+line(1646.7,1031.7,1645.8,1048.3) # line=0 0 color=#58d width=3 text={-66} tag={Fast 067 (-70)}
+line(1647.6,1015.9,1646.9,1028.1) # line=0 0 color=#5ad width=2 text={-62} tag={Fast 068 (-65)}
+line(1648.3,1002.9,1647.7,1013.7) # line=0 0 color=#5ad width=3 text={-61} tag={Fast 083 (-60)}
+line(1660.9,779.8,1658.6,819.5) # line=0 0 color=#5ad text={-61} tag={Fast 038 (-60)}
+line(1655.7,1057.7,1654.5,1079.4) # line=0 0 color=#58d text={-67} tag={Fast 060 (-65)}
+line(1674.9,729.3,1673.2,758.2) # line=0 0 color=#5ad text={-61} tag={Fast 038 (-60)}
+line(1617,937.7,1609,937.6) # line=0 0 color=#5bd width=4 text={-59} tag={Fast 072 (-60)}
+line(1605.4,937.6,1592.6,937.5) # line=0 0 color=#5cd width=3 text={-57} tag={Fast 050 (-55)}
+line(1583.4,937.4,1563.3,937.2) # line=0 0 color=#5da width=2 text={-48} tag={Fast 051 (-50)}
+line(1551.1,937.1,1538.9,937) # line=0 0 color=#5d9 text={-46} tag={Fast 051 (-50)}
+line(1435.1,936.2,1414.4,936) # line=0 0 color=#5bd width=2 text={-60} tag={Fast 027 (-65)}
+line(1613.9,956.7,1603.5,956.6) # line=0 0 color=#5cd width=3 text={-57} tag={Fast 071 (-60)}
+line(1596.2,956.6,1575.5,956.4) # line=0 0 color=#5db width=3 text={-50} tag={Fast 053 (-50)}
+line(1574.2,956.4,1550.5,956.2) # line=0 0 color=#5d9 width=2 text={-44} tag={Fast 051 (-50)}
+line(1430.3,955.3,1415,955.2) # line=0 0 color=#56d text={-70} tag={Fast 027 (-65)}
+line(1490.7,955.8,1455.9,955.5) # line=0 0 color=#5cd text={-58} dash=1 tag={Fast 037 (-60)}
+line(1626.7,972.6,1605.4,972.4) # line=0 0 color=#59d width=3 text={-63} tag={Fast 071 (-60)}
+line(1602.3,972.4,1583.4,972.3) # line=0 0 color=#5dc width=4 text={-52} tag={Fast 053 (-50)}
+line(1576.7,972.2,1564.5,972.1) # line=0 0 color=#58d width=2 text={-66} tag={Fast 052 (-65)}
+line(1519.9,971.8,1509,971.8) # line=0 0 color=#5dd text={-55} tag={Fast 035 (-55)}
+line(1490.1,971.6,1473,971.5) # line=0 0 color=#5d9 text={-46} tag={Fast 036 (-45)}
+line(1646.2,1001.2,1626.7,1001.1) # line=0 0 color=#58d width=3 text={-65} tag={Fast 069 (-70)}
+line(1623.1,1001.1,1606,1001) # line=0 0 color=#58d width=3 text={-67} tag={Fast 068 (-65)}
+line(1601.1,1000.9,1585.8,1000.8) # line=0 0 color=#5cd width=3 text={-57} tag={Fast 059 (-60)}
+line(1561.4,1000.7,1544.4,1000.5) # line=0 0 color=#5cd text={-58} tag={Fast 056 (-65)}
+line(1535.2,1000.5,1507.1,1000.3) # line=0 0 color=#5bd text={-59} tag={Fast 034 (-60)}
+line(1502.9,1000.3,1487,1000.2) # line=0 0 color=#5cd text={-57} tag={Fast 035 (-55)}
+line(1646.9,1020.1,1609.6,1019.8) # line=0 0 color=#57d width=3 text={-68} tag={Fast 068 (-65)}
+line(1598,1019.7,1582.8,1019.6) # line=0 0 color=#59d width=3 text={-64} tag={Fast 058 (-60)}
+line(1581,1019.5,1557.8,1019.4) # line=0 0 color=#5dd width=3 text={-55} tag={Fast 057 (-55)}
+line(1552.9,1019.3,1538.9,1019.2) # line=0 0 color=#58d width=2 text={-67} tag={Fast 056 (-65)}
+line(1530.3,1019.1,1502.9,1018.9) # line=0 0 color=#58d text={-65} tag={Fast 033 (-65)}
+line(1493.7,1018.9,1477.2,1018.7) # line=0 0 color=#58d text={-66} tag={Fast 031 (-65)}
+line(1709.6,1061.6,1687.6,1061.4) # line=0 0 color=#5d9 text={-44} tag={Fast 061 (-40)}
+line(1664.4,1061.2,1649.8,1061) # line=0 0 color=#59d text={-63} tag={Fast 060 (-65)}
+line(1556.4,1060.1,1543,1060) # line=0 0 color=#5bd text={-59} tag={Fast 055 (-60)}
+line(1528.4,1059.9,1516.8,1059.8) # line=0 0 color=#56d width=2 text={-70} tag={Fast 030 (-70)}
+line(1513.7,1059.7,1504,1059.6) # line=0 0 color=#5dd text={-55} tag={Fast 029 (-50)}
+line(1467.3,1059.3,1450.9,1059.1) # line=0 0 color=#5bd text={-59} tag={Fast 028 (-55)}
+line(1264.8,1057.4,1248.3,1057.2) # line=0 0 color=#57d text={-69} tag={Fast 019 (-70)}
+line(1712.6,1071.2,1686.4,1070.9) # line=0 0 color=#5d5 text={-36} tag={Fast 061 (-40)}
+line(1667.5,1070.7,1642.4,1070.5) # line=0 0 color=#59d text={-64} tag={Fast 060 (-65)}
+line(1525.9,1069.4,1510.7,1069.2) # line=0 0 color=#58d text={-66} tag={Fast 030 (-70)}
+line(1488.1,1069,1475.3,1068.9) # line=0 0 color=#5dd text={-53} tag={Fast 029 (-50)}
+line(1472.8,1068.8,1450.9,1068.6) # line=0 0 color=#5bd text={-59} tag={Fast 028 (-55)}
+line(1417.3,1068.3,1403.3,1068.1) # line=0 0 color=#56d text={-71} dash=1 tag={Fast 025 (-70)}
+line(1261.7,1066.7,1248.3,1066.6) # line=0 0 color=#56d text={-70} tag={Fast 019 (-70)}
+line(1239.8,1066.5,1227.6,1066.4) # line=0 0 color=#5db text={-49} tag={Fast 020 (-50)}
+line(1700.4,1088.8,1689.4,1088.7) # line=0 0 color=#5d7 text={-40} tag={Fast 062 (-40)}
+line(1677.8,1088.6,1658.9,1088.4) # line=0 0 color=#5db text={-50} tag={Fast 063 (-50)}
+line(1645.5,1088.2,1620.5,1088) # line=0 0 color=#5ad text={-61} dash=1 tag={Fast 064 (-60)}
+line(1615.6,1087.9,1592.4,1087.6) # line=0 0 color=#59d text={-64} dash=1 tag={Fast 065 (-65)}
+line(1588.8,1087.6,1557.6,1087.3) # line=0 0 color=#5dd text={-53} dash=1 tag={Fast 066 (-55)}
+line(1482.6,1086.4,1464.3,1086.2) # line=0 0 color=#5cd text={-57} tag={Fast 028 (-55)}
+line(1459.4,1086.2,1447.2,1086) # line=0 0 color=#5d9 text={-46} tag={Fast 029 (-50)}
+line(1384.4,1085.3,1367.9,1085.1) # line=0 0 color=#5cd text={-57} dash=1 tag={Fast 024 (-60)}
+line(1309.3,1084.5,1295.9,1084.3) # line=0 0 color=#5d8 width=2 text={-43} tag={Fast 021 (-45)}
+line(1276.4,1084.1,1255.6,1083.9) # line=0 0 color=#5db text={-49} tag={Fast 020 (-50)}
+line(1180,1083.1,1163.5,1082.9) # line=0 0 color=#55d text={-73} tag={Fast 018 (-70)}
+line(1602.2,1112,1583.9,1112.1) # line=0 0 color=#5d9 width=2 text={-44} tag={Fast 075 (-40)}
+line(1480.8,1112.7,1447.8,1113) # line=0 0 color=#5dd text={-53} tag={Fast 028 (-55)}
+line(1275.2,1114.1,1257.5,1114.2) # line=0 0 color=#55d text={-73} tag={Fast 015 (-70)}
+line(1239.2,1114.3,1200.7,1114.6) # line=0 0 color=#55d text={-73} tag={Fast 014 (-70)}
+line(1626,1120.1,1608.9,1120.1) # line=0 0 color=#5dd text={-55} tag={Fast 074 (-50)}
+line(1604,1120.2,1592.4,1120.2) # line=0 0 color=#5d9 width=2 text={-44} tag={Fast 075 (-40)}
+line(1568,1120.3,1553.4,1120.4) # line=0 0 color=#5d6 text={-39} tag={Fast 076 (-50)}
+line(1475.3,1120.8,1440.5,1121) # line=0 0 color=#5dd text={-53} tag={Fast 028 (-55)}
+line(1283.1,1121.7,1253.8,1121.9) # line=0 0 color=#59d text={-64} tag={Fast 015 (-70)}
+line(1239.2,1122,1216,1122.1) # line=0 0 color=#59d text={-64} tag={Fast 014 (-70)}
+line(1256.2,1294.6,1150.5,1290.4) # line=0 0 color=#5cd text={-58} tag={Fast 007 (-60)}
+line(1004.2,1307.4,1038.3,1307.2) # line=0 0 color=#57d width=2 text={-68} tag={Fast 016 (-70)}
+line(1038.9,1319.9,991.5,1318.4) # line=0 0 color=#58d text={-66} tag={Fast 016 (-70)}
+line(1232,1401.9,1212.5,1401.7) # line=0 0 color=#65d text={-76} tag={Fast 001 (-70)}

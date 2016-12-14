@@ -1,0 +1,34 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+line(83.670085,-5.3835049,83.670057,-5.3817688) # line=0 0 color=#d55 text={-116} dash=1 tag={Ultra 001 (-120)}
+line(83.670795,-5.430116,83.670753,-5.4278799) # line=0 0 color=#b5d text={-87} tag={Ultra 006 (-80)}
+line(83.669666,-5.3849077,83.669625,-5.3825049) # line=0 0 color=#d55 text={-117} dash=1 tag={Ultra 001 (-120)}
+line(83.670362,-5.4311993,83.670293,-5.4262132) # line=0 0 color=#65d text={-75} dash=1 tag={Ultra 006 (-80)}
+line(83.669483,-5.430616,83.6694,-5.4253938) # line=0 0 color=#95d text={-81} tag={Ultra 006 (-80)}
+line(83.668911,-5.4299493,83.668856,-5.4261298) # line=0 0 color=#a5d text={-85} tag={Ultra 006 (-80)}
+line(83.668493,-5.4301159,83.668437,-5.4262965) # line=0 0 color=#a5d text={-84} tag={Ultra 006 (-80)}
+line(83.667502,-5.4299909,83.667461,-5.4268381) # line=0 0 color=#95d text={-82} tag={Ultra 006 (-80)}
+line(83.667921,-5.429852,83.667837,-5.426977) # line=0 0 color=#95d text={-82} tag={Ultra 006 (-80)}
+line(83.666442,-5.4299909,83.666414,-5.4274075) # line=0 0 color=#95d text={-81} tag={Ultra 006 (-80)}
+line(83.665814,-5.4306992,83.665689,-5.4268381) # line=0 0 color=#85d text={-80} tag={Ultra 006 (-80)}
+line(83.662774,-5.3921574,83.662691,-5.3890046) # line=0 0 color=#a5d text={-85} dash=1 tag={Ultra 002 (-85)}
+line(83.663819,-5.4302685,83.663749,-5.4279769) # line=0 0 color=#a5d text={-84} tag={Ultra 006 (-80)}
+line(83.662131,-5.4302824,83.662033,-5.4274073) # line=0 0 color=#b5d text={-86} tag={Ultra 006 (-80)}
+line(83.6587,-5.4057683,83.658658,-5.4039072) # line=0 0 color=#95d text={-83} tag={Ultra 003 (-85)}
+line(83.659494,-5.4328517,83.659257,-5.4245461) # line=0 0 color=#95d text={-83} tag={Ultra 006 (-80)}
+line(83.615282,-5.4293062,83.615408,-5.4271951) # line=0 0 color=#55d width=2 text={-74} tag={Ultra 008 (-75)}
+line(83.615366,-5.4291951,83.615464,-5.4275979) # line=0 0 color=#75d width=2 text={-78} tag={Ultra 008 (-75)}
+line(83.606142,-5.4388189,83.606268,-5.4367217) # line=0 0 color=#d59 text={-101} tag={Ultra 011 (-90)}
+line(83.604482,-5.4368186,83.60458,-5.4352075) # line=0 0 color=#65d width=2 text={-76} tag={Ultra 010 (-80)}
+line(83.602906,-5.4331101,83.603004,-5.431499) # line=0 0 color=#d5b text={-96} tag={Ultra 009 (-100)}
+line(83.605822,-5.4384022,83.607259,-5.4384162) # line=0 0 color=#b5d width=2 text={-86} tag={Ultra 011 (-90)}
+line(83.603938,-5.4361936,83.605822,-5.4362077) # line=0 0 color=#85d width=2 text={-79} tag={Ultra 010 (-80)}
+line(83.601735,-5.432221,83.603353,-5.4322351) # line=0 0 color=#d5a text={-98} tag={Ultra 009 (-100)}
+line(83.655867,-5.4325876,83.659354,-5.4326156) # line=0 0 color=#55d text={-74} tag={Ultra 006 (-80)}
+line(83.659871,-5.4326156,83.662675,-5.4326296) # line=0 0 color=#d59 text={-101} dash=1 tag={Ultra 007 (-100)}
+line(83.655351,-5.430032,83.65782,-5.430046) # line=0 0 color=#d58 text={-104} dash=1 tag={Ultra 007 (-100)}
+line(83.659271,-5.43006,83.664461,-5.4301019) # line=0 0 color=#75d text={-77} tag={Ultra 006 (-80)}
+line(83.665842,-5.4245325,83.668828,-5.4245604) # line=0 0 color=#d5d text={-92} dash=1 tag={Ultra 004 (-90)}
+line(83.652477,-5.4230874,83.65436,-5.4231153) # line=0 0 color=#d5b text={-96} dash=1 tag={Ultra 005 (-95)}
+line(83.666777,-5.4232409,83.669512,-5.4232549) # line=0 0 color=#d5c text={-95} dash=1 tag={Ultra 004 (-90)}

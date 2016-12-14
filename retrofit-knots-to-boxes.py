@@ -1,0 +1,2 @@
+import boxbar_utils
+boxbar_utils.retrofit_knots_on_boxes()

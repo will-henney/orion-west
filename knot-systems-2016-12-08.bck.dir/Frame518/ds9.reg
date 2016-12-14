@@ -1,0 +1,93 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+# vector(83.697811,-5.3838423,384.7055",331.86048) vector=1 color=cyan font="helvetica 20 normal roman" text={PA243 flow} dash=1
+# vector(83.672104,-5.427925,249.15276",356.547) vector=1 color=cyan font="helvetica 20 normal roman" text={PA267 flow} dash=1
+ellipse(83.612888,-5.4110556,5.7466699",7.2029801",0) # color=#2c9 text={4271-440 (-60)}
+ellipse(83.610892,-5.4042028,14.681179",6.9313482",325) # color=#2c9 text={4266-415 (-60)}
+ellipse(83.618858,-5.4122222,16",8",0) # color=#2c9 text={4285-444 (-60)}
+ellipse(83.633579,-5.4404389,12",6.0000001",290) # color=#2aa width=2 text={4320-626 (-65)}
+ellipse(83.607488,-5.4622694,30",6",300) # color=#2c9 width=2 text={4258-744 (-60)}
+ellipse(83.602258,-5.4617083,10",4",60) # color=#2c9 width=2 text={4245-742 (-60)}
+ellipse(83.605417,-5.4485139,3",3",50) # color=#28d text={4253-655 (-75)} dash=1
+ellipse(83.606088,-5.4525694,6",4",0) # color=#2c9 text={4253-709 (-60)} dash=1
+ellipse(83.621783,-5.3896917,4",4",0) # color=#2c9 width=3 text={4292-323 (-60)}
+ellipse(83.612092,-5.4301,11",6",150) # color=#2aa width=4 text={4269-548 (-65)} dash=1
+ellipse(83.605817,-5.4308778,6",4",40) # width=2 text={4254-551}
+ellipse(83.601346,-5.4230556,10",6",0) # color=#28d text={4243-523 (-75)} dash=1
+ellipse(83.620283,-5.4233583,3.45585",5.4717599",0) # color=#29c width=2 text={4289-524 (-70)}
+ellipse(83.620283,-5.4273861,4",4",0) # color=#2aa text={4289-539 (-65)} dash=1
+point(83.613133,-5.4309448) # point=cross color=yellow
+point(83.61404,-5.4280977) # point=cross color=yellow
+point(83.61411,-5.430806) # point=cross color=yellow
+point(83.610343,-5.4332361) # point=cross color=yellow
+point(83.613203,-5.4280976) # point=cross color=yellow
+ellipse(83.617054,-5.4263083,9.2942874",5.7283798",290) # color=#2c9 text={4281-535 (-60)} dash=1
+ellipse(83.667371,-5.4232222,4",4",0) # color=#a2a text={4402-524 (-100)} dash=1
+ellipse(83.664817,-5.4281667,24",6",175) # color=#82d width=4 text={4396-541 (-90)}
+ellipse(83.618888,-5.4159972,3",3",0) # color=white text={4285-458 (star)} dash=1
+ellipse(83.668767,-5.421,4",4",0) # color=#44d text={4405-516 (-80)} dash=1
+ellipse(83.656933,-5.4239305,5.2499999",5.5000001",0) # color=#29c width=2 text={4377-526 (-70)}
+ellipse(83.610129,-5.4520528,6.0094613",3.9462232",336) # color=#2d8 width=3 text={4264-707 (-50)} dash=1
+ellipse(83.61375,-5.4526083,8",8",0) # color=#2d8 width=3 text={4273-709 (-50)} dash=1
+ellipse(83.629658,-5.4210833,4",4",0) # color=#2d8 text={4311-516 (-50)} dash=1
+ellipse(83.6584,-5.4287222,4.3564108",12",180) # color=#82d width=2 text={4380-543 (-90)} dash=1
+ellipse(83.65635,-5.4289167,4",4",0) # color=#a2c text={4375-544 (-95)} dash=1
+ellipse(83.656596,-5.4340333,11.176114",5.2851078",295) # color=#28d text={4376-603 (-75)} dash=1
+ellipse(83.627537,-5.4191833,18",4",110) # color=#2c9 text={4306-509 (-60)} dash=1
+ellipse(83.65575,-5.4158056,3.9996601",7.25004",0) # color=cyan text={4374-457 (-65)}
+ellipse(83.607058,-5.4154556,6.0000001",6.0000001",0) # color=#2d8 text={4257-456 (-55)} dash=1
+ellipse(83.599733,-5.4203861,4",4",0) # color=#2d8 text={4239-513 (-50)} dash=1
+ellipse(83.635833,-5.4236111,6.0000001",4",90) # color=#28d text={4326-525 (-75)} dash=1
+ellipse(83.628762,-5.4235444,6.0000001",4",45) # color=#28d text={4309-525 (-75)} dash=1
+ellipse(83.624441,-5.4154878,6",4",90) # color=#28d text={4326-525 (-75)} dash=1
+ellipse(83.624575,-5.429725,4",4",0) # color=#28d text={4299-547 (-75)} dash=1
+ellipse(83.616667,-5.4308,3",6.0000001",0) # color=#28d width=2 text={4280-551 (-75)}
+ellipse(83.615421,-5.4278778,3",4",0) # color=#28d width=3 text={4277-539 (-75)}
+ellipse(83.615188,-5.4301806,3",3.5",0) # color=#2c9 text={4276-549 (-60)} dash=1
+point(83.610413,-5.4295556) # point=cross color=yellow
+point(83.611598,-5.4324029) # point=cross color=yellow
+point(83.611669,-5.4292085) # point=cross color=yellow
+line(83.602946,-5.4334444,83.602946,-5.4312222) # line=0 0 color=magenta text={-100}
+line(83.602669,-5.431985,83.60267,-5.4303184) # line=0 0 color=yellow width=3 text={-65}
+line(83.603089,-5.4278184,83.603089,-5.4254573) # line=0 0 width=3 text={-70}
+line(83.604584,-5.4304575,83.604583,-5.4282353) # line=0 0 width=3 text={-70}
+ellipse(83.604871,-5.4356278,5.01098",3.28305",0) # color=cyan text={4252-608}
+line(83.604621,-5.4372639,83.604621,-5.4351806) # line=0 0 color=cyan text={-80W}
+line(83.606646,-5.4322634,83.606646,-5.4289301) # line=0 0 color=yellow width=4 text={-65}
+line(83.60639,-5.42893,83.60639,-5.4254578) # line=0 0 text={-76}
+line(83.606504,-5.4372639,83.606504,-5.4354583) # line=0 0 color=yellow width=2 text={-62W}
+line(83.606296,-5.4404583,83.606296,-5.438375) # line=0 0 color=yellow width=3 text={-65WW}
+line(83.60764,-5.4414306,83.60764,-5.4393472) # line=0 0 color=yellow width=4 text={-60W}
+line(83.607779,-5.4393472,83.607779,-5.4375417) # line=0 0 color=red width=2 text={-50WW}
+line(83.607585,-5.4324024,83.607581,-5.4293468) # line=0 0 color=yellow width=3 text={-68}
+line(83.60783,-5.4351802,83.60783,-5.4324024) # line=0 0 width=2 text={-73}
+line(83.607583,-5.4369167,83.607579,-5.4344167) # line=0 0 color=yellow width=3 text={-67WW}
+line(83.607829,-5.4293472,83.607829,-5.4274028) # line=0 0 text={-72}
+line(83.606458,-5.4349028,83.606457,-5.4324022) # line=0 0 width=2 text={-72}
+ellipse(83.60875,-5.4417081,3",3",0) # color=white text={4261-630 (star)} dash=1
+line(83.608895,-5.4425415,83.608895,-5.4411526) # line=0 0 color=red width=2 text={-40(N)}
+line(83.608896,-5.4414303,83.608896,-5.4379581) # line=0 0 color=yellow width=4 text={-62W}
+line(83.608876,-5.4379581,83.608876,-5.4358748) # line=0 0 color=yellow width=2 text={-60W}
+line(83.608876,-5.4351804,83.608877,-5.4289304) # line=0 0 color=yellow width=2 text={-60}
+line(83.610221,-5.4504583,83.610221,-5.4462917) # line=0 0 color=red text={-50W} dash=1
+line(83.610417,-5.444625,83.610417,-5.4415694) # line=0 0 color=yellow width=2 text={-62W}
+line(83.610417,-5.4403194,83.610418,-5.4349028) # line=0 0 color=red width=4 text={-55}
+line(83.611667,-5.4549028,83.611667,-5.4469861) # line=0 0 color=red text={-50W} dash=1
+line(83.611951,-5.4446252,83.611951,-5.4418474) # line=0 0 color=yellow width=2 text={-61}
+line(83.612223,-5.4410139,83.612223,-5.4354584) # line=0 0 color=red width=3 text={-55}
+line(83.6125,-5.4360139,83.6125,-5.4324028) # line=0 0 color=yellow text={-63} dash=1
+line(83.612917,-5.4462917,83.612917,-5.4428194) # line=0 0 color=yellow text={-62}
+line(83.613333,-5.442125,83.613333,-5.4372639) # line=0 0 color=red width=2 text={-52}
+line(83.613542,-5.4407361,83.613542,-5.4344861) # line=0 0 color=yellow text={-66}
+line(83.612917,-5.4511531,83.612917,-5.4476809) # line=0 0 color=red text={-52W} dash=1
+line(83.614583,-5.4442083,83.614583,-5.4379583) # line=0 0 color=red width=2 text={-53}
+line(83.615625,-5.444209,83.615625,-5.4400417) # line=0 0 color=red text={-51} dash=1
+line(83.62,-5.4344861,83.62,-5.4317083) # line=0 0 color=yellow text={-63}
+line(83.604722,-5.4342076,83.604721,-5.4307353) # line=0 0 width=4 text={-71}
+line(83.604863,-5.4275409,83.604862,-5.4251798) # line=0 0 width=2 text={-73}
+line(83.605833,-5.4393472,83.605833,-5.4365) # line=0 0 color=magenta text={-100} dash=1
+line(83.626318,-5.4297658,83.624364,-5.4297656) # line=0 0 text={-76}
+line(83.622969,-5.4297654,83.61976,-5.429765) # line=0 0 text={-70} dash=1
+line(83.617807,-5.4297648,83.616412,-5.4297646) # line=0 0 text={-75}
+line(83.616482,-5.4297647,83.615087,-5.4297645) # line=0 0 text={-75}
