@@ -1,0 +1,5 @@
+global color=green font="helvetica 10 normal"
+image
+ellipse(70.3,150.2,10.0,5.7,0) # text={4257-626 (-10)}
+ellipse(55.3,248.8,10.0,45.5,0) # text={4281-615 (-40)}
+ellipse(70.3,195.7,10.0,32.2,0) # text={4265-605 (-10)}

@@ -1,0 +1,61 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+ellipse(5:34:26.665,-5:26:16.18,6.62208",12.3556",345) # color=red width=4 text={4267-616 (-55)} tag={Fast blue}
+# vector(5:34:47.475,-5:23:01.83,384.705",331.86) vector=1 color=cyan font="helvetica 20 normal roman" text={PA243 flow} dash=1 tag={Flows}
+# vector(5:34:41.305,-5:25:40.53,249.153",356.547) vector=1 color=cyan font="helvetica 20 normal roman" text={PA267 flow} dash=1 tag={Flows}
+ellipse(5:34:27.093,-5:24:39.80,5.74667",7.20298",0) # color=red text={4271-440 (-60)} tag={Fast blue}
+ellipse(5:34:26.614,-5:24:15.13,14.6812",6.93135",325) # color=red text={4266-415 (-60)} tag={Fast blue}
+ellipse(5:34:28.526,-5:24:44.00,16",8",0) # color=red text={4285-444 (-60)} tag={Fast blue}
+ellipse(5:34:32.059,-5:26:25.58,12",6",290) # color=red width=2 text={4320-626 (-65)} tag={Fast blue}
+ellipse(5:34:25.797,-5:27:44.17,30",6",300) # color=red width=2 text={4258-744 (-60)} tag={Fast blue}
+ellipse(5:34:24.542,-5:27:42.15,10",4",60) # color=red width=2 text={4245-742 (-60)} tag={Fast blue}
+ellipse(5:34:25.300,-5:26:54.65,3",3",50) # color=red text={4253-655 (-75)} dash=1 tag={Fast blue}
+ellipse(5:34:25.461,-5:27:09.25,6",4",0) # color=red text={4253-709 (-60)} dash=1 tag={Fast blue}
+ellipse(5:34:29.228,-5:23:22.89,4",4",0) # color=red width=3 text={4292-323 (-60)} tag={Fast blue}
+ellipse(5:34:26.902,-5:25:48.36,11",6",150) # color=red width=4 text={4269-548 (-65)} dash=1 tag={Fast blue}
+ellipse(5:34:25.438,-5:25:48.91,12.0589",4.92741",30) # color=red width=3 text={4254-549 (-70)} tag={Fast blue}
+ellipse(5:34:24.323,-5:25:23.00,10",6",0) # color=red text={4243-523 (-75)} dash=1 tag={Fast blue}
+ellipse(5:34:28.868,-5:25:24.09,3.45585",5.47176",0) # color=red width=2 text={4289-524 (-70)} tag={Fast blue}
+ellipse(5:34:28.868,-5:25:38.59,4",4",0) # color=red text={4289-539 (-65)} dash=1 tag={Fast blue}
+ellipse(5:34:28.093,-5:25:34.71,9.29429",5.72838",290) # color=red text={4281-535 (-60)} dash=1 tag={Fast blue}
+ellipse(5:34:40.169,-5:25:23.60,4",4",0) # color=red text={4402-524 (-100)} dash=1 tag={Fast blue}
+ellipse(5:34:39.556,-5:25:41.40,24",6",175) # color=red width=4 text={4396-541 (-90)} tag={Fast blue}
+ellipse(5:34:28.533,-5:24:57.59,3",3",0) # color=white text={4285-458 (star)} dash=1 tag={Stars}
+ellipse(5:34:40.504,-5:25:15.60,4",4",0) # color=red text={4405-516 (-80)} dash=1 tag={Fast blue}
+ellipse(5:34:37.664,-5:25:26.15,5.25",5.5",0) # color=red width=2 text={4377-526 (-70)} tag={Fast blue}
+ellipse(5:34:26.431,-5:27:07.39,6.00946",3.94622",336) # color=red width=3 text={4264-707 (-50)} dash=1 tag={Fast blue}
+ellipse(5:34:27.300,-5:27:09.39,8",8",0) # color=red width=3 text={4273-709 (-50)} dash=1 tag={Fast blue}
+ellipse(5:34:31.118,-5:25:15.90,4",4",0) # color=red text={4311-516 (-50)} dash=1 tag={Fast blue}
+ellipse(5:34:38.016,-5:25:43.40,4.35641",12",180) # color=red width=2 text={4380-543 (-90)} dash=1 tag={Fast blue}
+ellipse(5:34:37.524,-5:25:44.10,4",4",0) # color=red text={4375-544 (-95)} dash=1 tag={Fast blue}
+ellipse(5:34:37.583,-5:26:02.52,11.1761",5.28511",295) # color=red text={4376-603 (-75)} dash=1 tag={Fast blue}
+ellipse(5:34:30.609,-5:25:09.06,18",4",110) # color=red text={4306-509 (-60)} dash=1 tag={Fast blue}
+ellipse(5:34:37.380,-5:24:56.90,3.99966",7.25004",0) # color=cyan text={4374-457 (-65)} tag={Fast blue}
+ellipse(5:34:25.694,-5:24:55.64,6",6",0) # color=red text={4257-456 (-55)} dash=1 tag={Fast blue}
+ellipse(5:34:23.936,-5:25:13.39,4",4",0) # color=red text={4239-513 (-50)} dash=1 tag={Fast blue}
+ellipse(5:34:32.600,-5:25:25.00,6",4",90) # color=red text={4326-525 (-75)} dash=1 tag={Fast blue}
+ellipse(5:34:30.903,-5:25:24.76,6",4",45) # color=red text={4309-525 (-75)} dash=1 tag={Fast blue}
+ellipse(5:34:29.866,-5:24:55.76,6",4",90) # color=red text={4326-525 (-75)} dash=1 tag={Fast blue}
+ellipse(5:34:29.898,-5:25:47.01,4",4",0) # color=red text={4299-547 (-75)} dash=1 tag={Fast blue}
+ellipse(5:34:28.000,-5:25:50.88,3",6",0) # color=red width=2 text={4280-551 (-75)} tag={Fast blue}
+ellipse(5:34:27.701,-5:25:40.36,3",4",0) # color=red width=3 text={4277-539 (-75)} tag={Fast blue}
+ellipse(5:34:27.645,-5:25:48.65,3",3.5",0) # color=red text={4276-549 (-60)} dash=1 tag={Fast blue}
+ellipse(5:34:25.090,-5:26:10.27,4.03156",3.65412",0) # color=red width=2 text={4251-610 (-80)} tag={Fast blue}
+ellipse(5:34:26.100,-5:26:30.15,3",3",0) # color=white text={4261-630 (star)} dash=1 tag={Stars}
+ellipse(5:34:26.770,-5:26:56.30,6.56122",10.4897",345) # color=red text={4268-656 (-50)} dash=1 tag={Fast blue}
+ellipse(5:34:27.496,-5:26:25.92,6",13",345) # color=red text={4275-626 (-50)} tag={Fast blue}
+ellipse(5:34:27.248,-5:26:15.15,3.47069",11.1051",0) # color=red text={4272-615 (-65)} tag={Fast blue}
+ellipse(5:34:25.650,-5:26:14.31,3.47069",11.1051",10) # color=red width=3 text={4257-614 (-65)} tag={Fast blue}
+ellipse(5:34:25.892,-5:26:18.34,3",3",0) # color=red width=2 text={4259-618 (-50)} tag={Fast blue}
+ellipse(5:34:25.342,-5:25:37.33,11.6678",6.4961",20) # color=red width=3 text={4257-614 (-70)} tag={Fast blue}
+ellipse(5:34:28.800,-5:25:58.87,3.28862",4.6274",0) # color=red text={4288-559 (-60)} dash=1 tag={Fast blue}
+ellipse(5:34:24.604,-5:25:56.73,5.1437",4.29502",0) # color=red width=2 text={4246-557 (-100)} tag={Fast blue}
+ellipse(5:34:25.467,-5:26:16.32,3.29563",5.47089",0) # color=red text={4255-616 (-100)} tag={Fast blue}
+ellipse(5:34:26.238,-5:26:29.35,3.71036",3.14485",0) # color=red width=3 text={4262-629 (-50)} tag={Fast blue}
+ellipse(5:34:26.808,-5:26:36.99,4.81867",8.52141",340) # color=red width=2 text={4268-637 (-60)} tag={Fast blue}
+ellipse(5:34:25.963,-5:26:24.74,3.85936",8.92252",30) # color=red width=4 text={4260-625 (-60)} tag={Fast blue}
+ellipse(5:34:25.007,-5:25:56.71,6.84586",5.6897",0) # color=red width=4 text={4250-557 (-70)} tag={Fast blue}
+ellipse(5:34:24.632,-5:25:51.83,2.62332",3.68939",0) # color=red width=2 text={4246-552 (-65)} tag={Fast blue}
+ellipse(5:34:25.852,-5:26:00.59,6.84586",5.6897",0) # color=red width=2 text={4259-601 (-70)} tag={Fast blue}
+ellipse(5:34:26.347,-5:25:54.40,4.8056",11.3264",340) # color=red text={4263-554 (-60)} tag={Fast blue}

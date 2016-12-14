@@ -1,0 +1,70 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+line(5:34:24.707,-5:26:00.40,5:34:24.707,-5:25:52.40) # line=0 0 color=magenta text={-100} tag={Bars}
+line(5:34:24.641,-5:25:55.15,5:34:24.641,-5:25:49.15) # line=0 0 color=yellow width=3 text={-65} tag={Bars}
+line(5:34:24.741,-5:25:40.15,5:34:24.741,-5:25:31.65) # line=0 0 width=3 text={-70} tag={Bars}
+line(5:34:25.100,-5:25:49.65,5:34:25.100,-5:25:41.65) # line=0 0 width=3 text={-70} tag={Bars}
+line(5:34:25.109,-5:26:14.15,5:34:25.109,-5:26:06.65) # line=0 0 color=cyan text={-80W} tag={Bars}
+line(5:34:25.595,-5:25:56.15,5:34:25.595,-5:25:44.15) # line=0 0 color=yellow width=4 text={-65} tag={Bars}
+line(5:34:25.534,-5:25:44.15,5:34:25.534,-5:25:31.65) # line=0 0 text={-76} tag={Bars}
+line(5:34:25.561,-5:26:14.15,5:34:25.561,-5:26:07.65) # line=0 0 color=yellow width=2 text={-62W} tag={Bars}
+line(5:34:25.511,-5:26:25.65,5:34:25.511,-5:26:18.15) # line=0 0 color=yellow width=3 text={-65WW} tag={Bars}
+line(5:34:25.834,-5:26:29.15,5:34:25.834,-5:26:21.65) # line=0 0 color=yellow width=4 text={-60W} tag={Bars}
+line(5:34:25.867,-5:26:21.65,5:34:25.867,-5:26:15.15) # line=0 0 color=red width=2 text={-50WW} tag={Bars}
+line(5:34:25.820,-5:25:56.65,5:34:25.819,-5:25:45.65) # line=0 0 color=yellow width=3 text={-68} tag={Bars}
+line(5:34:25.879,-5:26:06.65,5:34:25.879,-5:25:56.65) # line=0 0 width=2 text={-73} tag={Bars}
+line(5:34:25.820,-5:26:12.90,5:34:25.819,-5:26:03.90) # line=0 0 color=yellow width=3 text={-67WW} tag={Bars}
+line(5:34:25.879,-5:25:45.65,5:34:25.879,-5:25:38.65) # line=0 0 text={-72} tag={Bars}
+line(5:34:25.550,-5:26:05.65,5:34:25.550,-5:25:56.65) # line=0 0 width=2 text={-72} tag={Bars}
+line(5:34:26.135,-5:26:33.15,5:34:26.135,-5:26:28.15) # line=0 0 color=red width=2 text={-40(N)} tag={Bars}
+line(5:34:26.135,-5:26:29.15,5:34:26.135,-5:26:16.65) # line=0 0 color=yellow width=4 text={-62W} tag={Bars}
+line(5:34:26.130,-5:26:16.65,5:34:26.130,-5:26:09.15) # line=0 0 color=yellow width=2 text={-60W} tag={Bars}
+line(5:34:26.130,-5:26:06.65,5:34:26.130,-5:25:44.15) # line=0 0 color=yellow width=2 text={-60} tag={Bars}
+line(5:34:26.453,-5:27:01.65,5:34:26.453,-5:26:46.65) # line=0 0 color=red text={-50W} dash=1 tag={Bars}
+line(5:34:26.500,-5:26:40.65,5:34:26.500,-5:26:29.65) # line=0 0 color=yellow width=2 text={-62W} tag={Bars}
+line(5:34:26.500,-5:26:25.15,5:34:26.500,-5:26:05.65) # line=0 0 color=red width=4 text={-55} tag={Bars}
+line(5:34:26.800,-5:27:17.65,5:34:26.800,-5:26:49.15) # line=0 0 color=red text={-50W} dash=1 tag={Bars}
+line(5:34:26.868,-5:26:40.65,5:34:26.868,-5:26:30.65) # line=0 0 color=yellow width=2 text={-61} tag={Bars}
+line(5:34:26.934,-5:26:27.65,5:34:26.934,-5:26:07.65) # line=0 0 color=red width=3 text={-55} tag={Bars}
+line(5:34:27.000,-5:26:09.65,5:34:27.000,-5:25:56.65) # line=0 0 color=yellow text={-63} dash=1 tag={Bars}
+line(5:34:27.100,-5:26:46.65,5:34:27.100,-5:26:34.15) # line=0 0 color=yellow text={-62} tag={Bars}
+line(5:34:27.200,-5:26:31.65,5:34:27.200,-5:26:14.15) # line=0 0 color=red width=2 text={-52} tag={Bars}
+line(5:34:27.250,-5:26:26.65,5:34:27.250,-5:26:04.15) # line=0 0 color=yellow text={-66} tag={Bars}
+line(5:34:27.100,-5:27:04.15,5:34:27.100,-5:26:51.65) # line=0 0 color=red text={-52W} dash=1 tag={Bars}
+line(5:34:27.500,-5:26:39.15,5:34:27.500,-5:26:16.65) # line=0 0 color=red width=2 text={-53} tag={Bars}
+line(5:34:27.750,-5:26:39.15,5:34:27.750,-5:26:24.15) # line=0 0 color=red text={-51} dash=1 tag={Bars}
+line(5:34:28.800,-5:26:04.15,5:34:28.800,-5:25:54.15) # line=0 0 color=yellow text={-63} tag={Bars}
+line(5:34:25.133,-5:26:03.15,5:34:25.133,-5:25:50.65) # line=0 0 width=4 text={-71} tag={Bars}
+line(5:34:25.167,-5:25:39.15,5:34:25.167,-5:25:30.65) # line=0 0 width=2 text={-73} tag={Bars}
+line(5:34:25.450,-5:26:21.65,5:34:25.450,-5:26:11.40) # line=0 0 color=magenta text={-100} dash=1 tag={Bars}
+line(5:34:30.316,-5:25:47.16,5:34:29.847,-5:25:47.16) # line=0 0 text={-76} tag={Bars}
+line(5:34:29.513,-5:25:47.16,5:34:28.742,-5:25:47.15) # line=0 0 text={-70} dash=1 tag={Bars}
+line(5:34:28.274,-5:25:47.15,5:34:27.939,-5:25:47.15) # line=0 0 text={-75} tag={Bars}
+line(5:34:27.671,-5:25:47.15,5:34:26.834,-5:25:47.15) # line=0 0 color=yellow width=3 text={-60} tag={Bars}
+line(5:34:26.834,-5:25:48.15,5:34:26.231,-5:25:48.15) # line=0 0 color=yellow width=2 text={-67} tag={Bars}
+line(5:34:25.997,-5:25:47.15,5:34:24.758,-5:25:47.15) # line=0 0 width=3 text={-71} tag={Bars}
+line(5:34:30.015,-5:25:56.65,5:34:29.680,-5:25:56.65) # line=0 0 color=yellow text={-60} tag={Bars}
+line(5:34:29.010,-5:25:56.65,5:34:28.542,-5:25:56.65) # line=0 0 color=red text={-55} dash=1 tag={Bars}
+line(5:34:28.240,-5:25:56.65,5:34:27.570,-5:25:56.65) # line=0 0 color=yellow text={-60} dash=1 tag={Bars}
+line(5:34:26.834,-5:25:56.65,5:34:26.332,-5:25:56.65) # line=0 0 color=yellow width=2 text={-60} tag={Bars}
+line(5:34:26.265,-5:25:57.28,5:34:25.595,-5:25:57.27) # line=0 0 width=3 text={-70} tag={Bars}
+line(5:34:25.394,-5:25:56.65,5:34:24.590,-5:25:56.65) # line=0 0 color=yellow width=4 text={-69} tag={Bars}
+line(5:34:24.892,-5:25:57.65,5:34:24.256,-5:25:57.65) # line=0 0 color=magenta text={-100} tag={Bars}
+line(5:34:25.327,-5:26:10.52,5:34:24.825,-5:26:10.52) # line=0 0 color=cyan text={-80} tag={Bars}
+line(5:34:26.131,-5:26:10.65,5:34:25.327,-5:26:10.65) # line=0 0 color=yellow width=3 text={-65W} tag={Bars}
+line(5:34:26.968,-5:26:10.65,5:34:26.164,-5:26:10.65) # line=0 0 color=red width=4 text={-55} tag={Bars}
+line(5:34:27.537,-5:26:10.65,5:34:27.035,-5:26:10.65) # line=0 0 color=yellow text={-65G} tag={Bars}
+line(5:34:29.144,-5:26:10.65,5:34:29.044,-5:26:10.65) # line=0 0 color=red text={-50} dash=1 tag={Bars}
+line(5:34:26.331,-5:26:18.52,5:34:25.461,-5:26:18.52) # line=0 0 text={-74} tag={Bars}
+line(5:34:25.762,-5:26:17.77,5:34:25.394,-5:26:17.77) # line=0 0 color=magenta text={-100} tag={Bars}
+line(5:34:26.164,-5:26:17.90,5:34:25.729,-5:26:17.90) # line=0 0 color=red width=3 text={-47} tag={Bars}
+line(5:34:27.001,-5:26:18.52,5:34:26.264,-5:26:18.52) # line=0 0 color=red width=3 text={-57} tag={Bars}
+line(5:34:27.537,-5:26:17.90,5:34:27.068,-5:26:17.90) # line=0 0 color=red text={-50} tag={Bars}
+line(5:34:28.006,-5:26:18.40,5:34:27.604,-5:26:18.40) # line=0 0 color=red text={-40} dash=1 tag={Bars}
+line(5:34:31.019,-5:26:18.53,5:34:29.881,-5:26:18.53) # line=0 0 color=yellow text={-60W} dash=1 tag={Bars}
+line(5:34:26.063,-5:26:29.02,5:34:25.628,-5:26:29.02) # line=0 0 color=yellow width=3 text={-60} tag={Bars}
+line(5:34:26.599,-5:26:28.90,5:34:26.097,-5:26:28.90) # line=0 0 color=red width=3 text={-58} tag={Bars}
+line(5:34:28.441,-5:26:28.90,5:34:27.872,-5:26:28.90) # line=0 0 color=red text={-48} dash=1 tag={Bars}
+line(5:34:27.763,-5:26:28.90,5:34:26.926,-5:26:28.90) # line=0 0 color=red text={-52} tag={Bars}
+line(5:34:26.331,-5:26:29.77,5:34:26.063,-5:26:29.77) # line=0 0 color=#e84 text={+80} dash=1 tag={Bars}

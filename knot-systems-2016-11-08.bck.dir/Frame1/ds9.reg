@@ -1,0 +1,9 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+# vector(83.689954,-5.3892944,349.2018",333.338) vector=1 color=cyan width=4 font="helvetica 20 normal roman" text={PA243 flow}
+# vector(83.725717,-5.3714062,239.55552",333.338) vector=1 color=blue dash=1
+# vector(83.721246,-5.3955049,6.7889926",270) vector=1
+# vector(83.697812,-5.3838417,384.7032",331.86) vector=1 color=cyan font="helvetica 20 normal roman" text={PA242} dash=1
+# vector(83.670175,-5.3783556,444.9276",305.431) vector=1 color=cyan width=2 font="helvetica 20 normal roman" text={PA 215 - HH505}
+# vector(83.670175,-5.3783566,81.349939",304.8622) vector=1

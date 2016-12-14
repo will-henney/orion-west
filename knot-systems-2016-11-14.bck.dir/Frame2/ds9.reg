@@ -1,0 +1,55 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+# vector(83.689954,-5.3892944,349.2018",333.338) vector=1 color=cyan width=4 font="helvetica 20 normal roman" text={PA243 flow}
+ellipse(83.770775,-5.4060083,20.75",6",0) # color=yellow text={050-422}
+ellipse(83.600729,-5.4160917,7.25728",8.12124",0) # color=red text={4242-458}
+ellipse(83.601758,-5.4317972,6.86876",6.34305",0) # color=red width=2 text={4244-554}
+ellipse(83.602258,-5.4617083,9.09191",4.22409",60) # color=magenta text={4245-742}
+ellipse(83.604871,-5.4356278,5.01098",3.28305",0) # color=cyan text={4252-608}
+ellipse(83.605133,-5.4377583,9.71826",4.63659",50) # color=red width=2 text={4252-616}
+ellipse(83.605817,-5.4308778,13.5354",10.2235",40) # width=2 text={4254-551}
+ellipse(83.607488,-5.4622694,6.65239",33.14",35) # color=magenta text={4258-744}
+ellipse(83.608396,-5.4367667,4.87343",3.39783",20) # color=yellow width=2 text={4260-612}
+ellipse(83.608771,-5.3977111,3.625",7",0) # color=red width=2 text={4261-352}
+ellipse(83.608875,-5.4061472,8.00045",4.99409",90) # text={4261-422}
+ellipse(83.608658,-5.4404167,2.99377",6.74959",0) # color=white text={4261-626}
+ellipse(83.609433,-5.4166333,15",11.25",0) # text={4263-460}
+ellipse(83.610621,-5.4417,3.77532",6.73375",0) # text={4265-630}
+ellipse(83.611008,-5.4374056,3.37821",8.64448",340) # color=magenta width=2 text={4266-615}
+ellipse(83.611592,-5.4037861,11.6844",7.97583",110) # color=magenta text={4268-414}
+ellipse(83.612888,-5.4110556,5.74667",7.20298",0) # color=magenta text={4271-440}
+ellipse(83.613208,-5.4291972,6.92229",4.48859",30) # color=magenta text={4272-545}
+ellipse(83.613458,-5.4394806,4.0609",7.125",0) # color=red text={4272-622}
+ellipse(83.613717,-5.4442389,7.70064",2.51808",70) # color=magenta text={4273-639}
+ellipse(83.615425,-5.4538222,3.80146",21.9482",0) # text={4273-704}
+ellipse(83.615421,-5.4276,3.16786",4.4638",0) # color=cyan text={4277-539}
+ellipse(83.616667,-5.4308,4.17581",5.32776",0) # text={4280-551}
+ellipse(83.618362,-5.3855222,5.75",19.5",0) # color=yellow width=2 text={4284-308}
+ellipse(83.618858,-5.4121111,12.7866",3.97422",0) # color=magenta text={4285-444}
+ellipse(83.620283,-5.4233583,3.45585",5.47176",0) # text={4289-524}
+ellipse(83.62045,-5.4462889,3.625",8.25",0) # color=cyan text={4289-647}
+ellipse(83.621783,-5.3896917,8.25",6.5",0) # color=magenta width=2 text={4292-323}
+ellipse(83.62205,-5.4326,7.32998",51.7202",50) # text={4293-557}
+ellipse(83.6333,-5.4404389,5.75974",8.49562",0) # color=magenta text={4320-626}
+ellipse(83.637963,-5.4148306,5.25",8.25",0) # text={4331-453}
+ellipse(83.638521,-5.4002472,7.25",5.5",0) # color=cyan text={4332-401}
+ellipse(83.639008,-5.4333028,3.625",7.25",0) # color=red text={4334-560}
+ellipse(83.639429,-5.3685806,6.5",17.75",0) # color=yellow width=2 text={4335-207}
+ellipse(83.649425,-5.4224778,6.23203",10.11",50) # text={4359-521}
+ellipse(83.65575,-5.4158056,3.99966",7.25004",0) # color=cyan text={4374-457}
+ellipse(83.656588,-5.3914306,6.24712",7.00326",0) # color=cyan text={4376-329}
+ellipse(83.657212,-5.4239306,5.25",5.5",0) # color=cyan text={4377-526}
+ellipse(83.657496,-5.4095556,6",13.25",0) # color=red text={4378-434}
+ellipse(83.658679,-5.4028194,7",5.0031",0) # color=blue text={4381-411}
+ellipse(83.659762,-5.3951444,8.61779",7.57356",30) # color=red text={4383-343}
+ellipse(83.660354,-5.3785833,11.75",10.75",0) # color=blue text={4385-243}
+ellipse(83.661892,-5.3909444,5",6",0) # color=blue text={4389-327}
+ellipse(83.664817,-5.4281667,30.75",12",175) # color=blue width=2 text={4396-541}
+ellipse(83.6674,-5.4001111,4.25",7.25",0) # color=cyan text={4402-400}
+ellipse(83.668867,-5.3969167,4.75",5.25",0) # color=blue text={4405-349}
+ellipse(83.669354,-5.3917778,21.75",6",0) # color=cyan text={4406-330}
+ellipse(83.669425,-5.3747639,23",6.25",0) # color=cyan text={4407-229}
+ellipse(83.670538,-5.3787222,4",3.5",0) # color=white text={4409-243}
+ellipse(83.690137,-5.3901111,6.5",5.25",0) # color=cyan text={4456-324}
+# vector(83.670175,-5.3783556,444.9276",305.431) vector=1 color=cyan width=2 text={PA 215 - HH505}

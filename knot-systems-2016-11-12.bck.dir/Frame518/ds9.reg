@@ -1,0 +1,15 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+# vector(83.697811,-5.3838423,384.7055",331.86048) vector=1 color=cyan font="helvetica 20 normal roman" text={PA243 flow} dash=1
+# vector(83.672104,-5.427925,249.15276",356.547) vector=1 color=cyan font="helvetica 20 normal roman" text={PA267 flow} dash=1
+ellipse(83.612888,-5.4110556,5.7466699",7.2029801",0) # color=#2c9 text={4271-440 (-60)}
+ellipse(83.610892,-5.4042028,14.681179",6.9313482",325) # color=#2c9 text={4266-415 (-60)}
+ellipse(83.618858,-5.4122222,16",8",0) # color=#2c9 text={4285-444 (-60)}
+ellipse(83.633579,-5.4404389,12",6.0000001",290) # color=#2aa width=2 text={4320-626 (-65)}
+ellipse(83.607488,-5.4622694,30",6",300) # color=#2c9 width=2 text={4258-744 (-60)}
+ellipse(83.602258,-5.4617083,10",4",60) # color=#2c9 width=2 text={4245-742 (-60)}
+ellipse(83.605417,-5.4485139,3",3",50) # color=#28d text={4253-655 (-75)} dash=1
+ellipse(83.606088,-5.4525694,6",4",0) # color=#2c9 text={4253-709 (-60)} dash=1
+ellipse(83.608625,-5.4484444,6.0000001",6.0000001",0) # color=#28d text={4261-654 (-75)} dash=1
+ellipse(83.621783,-5.3896917,4",4",0) # color=#2c9 width=3 text={4292-323 (-60)}

@@ -12,3 +12,5 @@ wfpc2-mosaic*.fits
 /AlbaFits
 __pycache__
 ltxpng
+*-knot-fit-*.png
+

@@ -1,0 +1,35 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+point(83.610411,-5.4437917) # point=x
+point(83.608876,-5.4430276) # point=x
+point(83.607551,-5.4402496) # point=x
+point(83.608319,-5.441708) # point=x
+point(83.608598,-5.4396247) # point=x color=yellow
+point(83.611319,-5.436014) # point=x width=4
+point(83.611319,-5.432264) # point=x width=2
+point(83.604622,-5.4383048) # point=x
+point(83.606924,-5.4380967) # point=x color=yellow
+point(83.603855,-5.4364297) # point=x
+point(83.608878,-5.4351109) # point=x
+ellipse(83.607017,-5.4405361,20.874506",4.2420197",50) # color=#e82 width=4 text={4257-626 (-10)} dash=1
+ellipse(83.607854,-5.4390083,8.1701179",3.0486756",50) # color=#e82 text={4259-620 (-10)} dash=1
+ellipse(83.610417,-5.4347222,10",10",0) # color=#e82 width=2 text={4265-605 (-10)} dash=1
+point(83.601344,-5.432471) # point=x
+point(83.601344,-5.4348321) # point=x
+point(83.601414,-5.429971) # point=x
+point(83.60553,-5.4294855) # point=x
+point(83.603018,-5.4324712) # point=x
+point(83.603438,-5.4242768) # point=x
+point(83.604692,-5.4320548) # point=x
+point(83.604902,-5.4294159) # point=x
+point(83.604763,-5.4258048) # point=x
+point(83.606856,-5.4274023) # point=x color=yellow
+point(83.606785,-5.429694) # point=x color=yellow
+point(83.606716,-5.4308051) # point=x color=yellow
+ellipse(83.602525,-5.4322139,8",6",0) # color=#e82 width=4 text={4246-556 (-10)} dash=1
+ellipse(83.615417,-5.4246472,4",4",0) # color=#e82 text={4277-529 (-10)} dash=1
+ellipse(83.604271,-5.4253389,7",4",40) # color=#e82 text={4250-531 (-10)} dash=1
+ellipse(83.606346,-5.4290222,6",4",90) # color=#ca2 text={4255-544 (-20)} dash=1
+ellipse(83.621946,-5.4163833,13.057272",7.2510883",0) # color=#e82 width=4 text={4293-459 (-10)} dash=1
+ellipse(83.63155,-5.4160861,8.1701179",3.0486756",70) # color=#e82 text={4316-458 (-10)} dash=1

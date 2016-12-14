@@ -1,0 +1,49 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+# vector(83.697811,-5.3838423,384.7055",331.86048) vector=1 color=cyan font="helvetica 20 normal roman" text={PA243 flow} dash=1
+# vector(83.672104,-5.427925,249.15276",356.547) vector=1 color=cyan font="helvetica 20 normal roman" text={PA267 flow} dash=1
+ellipse(83.612888,-5.4110556,5.7466699",7.2029801",0) # color=#2c9 text={4271-440 (-60)}
+ellipse(83.610892,-5.4042028,14.681179",6.9313482",325) # color=#2c9 text={4266-415 (-60)}
+ellipse(83.618858,-5.4122222,16",8",0) # color=#2c9 text={4285-444 (-60)}
+ellipse(83.633579,-5.4404389,12",6.0000001",290) # color=#2aa width=2 text={4320-626 (-65)}
+ellipse(83.607488,-5.4622694,30",6",300) # color=#2c9 width=2 text={4258-744 (-60)}
+ellipse(83.602258,-5.4617083,10",4",60) # color=#2c9 width=2 text={4245-742 (-60)}
+ellipse(83.605417,-5.4485139,3",3",50) # color=#28d text={4253-655 (-75)} dash=1
+ellipse(83.606088,-5.4525694,6",4",0) # color=#2c9 text={4253-709 (-60)} dash=1
+ellipse(83.608625,-5.4484444,6.0000001",6.0000001",0) # color=#28d text={4261-654 (-75)} dash=1
+ellipse(83.621783,-5.3896917,4",4",0) # color=#2c9 width=3 text={4292-323 (-60)}
+ellipse(83.594101,-5.4383195,15",7",335) # color=#2c9 width=4 text={4272-544 (-60)} dash=1
+ellipse(83.613208,-5.4291972,7",3.5",30) # color=#2aa width=4 text={4272-545 (-65)}
+ellipse(83.605817,-5.4308778,13.5354",10.2235",40) # width=2 text={4254-551}
+ellipse(83.601346,-5.4230556,10",6",0) # color=#28d text={4243-523 (-75)} dash=1
+ellipse(83.620283,-5.4233583,3.45585",5.4717599",0) # color=#29c width=2 text={4289-524 (-70)}
+ellipse(83.620283,-5.4273861,4",4",0) # color=#2aa text={4289-539 (-65)} dash=1
+point(83.617947,-5.4279593) # point=cross color=yellow
+point(83.617947,-5.4251815) # point=cross color=yellow
+point(83.616971,-5.4238619) # point=cross color=yellow
+point(83.616761,-5.4281675) # point=cross color=yellow
+point(83.615506,-5.426709) # point=cross color=yellow
+ellipse(83.617054,-5.4263083,9.2942874",5.7283798",290) # color=#2c9 text={4281-535 (-60)} dash=1
+ellipse(83.667371,-5.4232222,4",4",0) # color=#a2a text={4402-524 (-100)} dash=1
+ellipse(83.664817,-5.4281667,24",6",175) # color=#82d width=4 text={4396-541 (-90)}
+ellipse(83.618888,-5.4159972,3",3",0) # color=white text={4285-458 (star)} dash=1
+ellipse(83.668767,-5.421,4",4",0) # color=#44d text={4405-516 (-80)} dash=1
+ellipse(83.656933,-5.4239305,5.2499999",5.5000001",0) # color=#29c width=2 text={4377-526 (-70)}
+ellipse(83.610129,-5.4520528,6.0094613",3.9462232",336) # color=#2d8 width=3 text={4264-707 (-50)} dash=1
+ellipse(83.61375,-5.4526083,8",8",0) # color=#2d8 width=3 text={4273-709 (-50)} dash=1
+ellipse(83.629658,-5.4210833,4",4",0) # color=#2d8 text={4311-516 (-50)} dash=1
+ellipse(83.6584,-5.4287222,4.3564108",12",180) # color=#82d width=2 text={4380-543 (-90)} dash=1
+ellipse(83.65635,-5.4289167,4",4",0) # color=#a2c text={4375-544 (-95)} dash=1
+ellipse(83.656596,-5.4340333,11.176114",5.2851078",295) # color=#28d text={4376-603 (-75)} dash=1
+ellipse(83.627537,-5.4191833,18",4",110) # color=#2c9 text={4306-509 (-60)} dash=1
+ellipse(83.65575,-5.4158056,3.9996601",7.25004",0) # color=cyan text={4374-457 (-65)}
+ellipse(83.607058,-5.4154556,6.0000001",6.0000001",0) # color=#2d8 text={4257-456 (-55)} dash=1
+ellipse(83.599733,-5.4203861,4",4",0) # color=#2d8 text={4239-513 (-50)} dash=1
+ellipse(83.635833,-5.4236111,6.0000001",4",90) # color=#28d text={4326-525 (-75)} dash=1
+ellipse(83.628762,-5.4235444,6.0000001",4",45) # color=#28d text={4309-525 (-75)} dash=1
+ellipse(83.624441,-5.4154878,6",4",90) # color=#28d text={4326-525 (-75)} dash=1
+ellipse(83.624575,-5.429725,4",4",0) # color=#28d text={4299-547 (-75)} dash=1
+ellipse(83.616667,-5.4308,3",6.0000001",0) # color=#28d width=2 text={4280-551 (-75)}
+ellipse(83.615421,-5.4278778,3",4",0) # color=#28d width=3 text={4277-539 (-75)}
+ellipse(83.615188,-5.4301806,3",3.5",0) # color=#2c9 text={4276-549 (-60)} dash=1

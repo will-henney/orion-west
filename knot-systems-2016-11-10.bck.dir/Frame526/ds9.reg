@@ -1,0 +1,5 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+# vector(83.670175,-5.3783566,81.349939",304.8622) vector=1
+# vector(83.670454,-5.3786343,20.399142",289.32318) vector=1

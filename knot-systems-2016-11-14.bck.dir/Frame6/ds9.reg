@@ -1,0 +1,6 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+# vector(83.689954,-5.3892944,349.2018",333.338) vector=1 color=#aaa font="helvetica 20 normal roman" text={PA243 flow} dash=1
+# vector(83.671138,-5.4284806,245.13768",356.346) vector=1 color=#aaa font="helvetica 20 normal roman" text={PA266 flow} dash=1
+# vector(83.6568,-5.4205972,188.51688",336.245) vector=1 color=cyan font="helvetica 20 normal roman" text={PA246 (-40 km/s) flow} dash=1
