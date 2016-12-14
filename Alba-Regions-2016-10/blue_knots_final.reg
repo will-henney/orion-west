@@ -3,7 +3,7 @@
 global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
 fk5
 ellipse(05:35:04.986,-05:24:21.63,20.75",6",0) # color=yellow font="helvetica 10 normal roman" text={050-422}
-ellipse(05:34:24.175,-05:24:57.93,7.25728",8.12124",0) # color=red font="helvetica 10 normal roman" text={4244-458}
+ellipse(05:34:24.175,-05:24:57.93,7.25728",8.12124",0) # color=red font="helvetica 10 normal roman" text={4242-458}
 ellipse(05:34:24.422,-05:25:54.47,6.86876",6.34305",0) # color=red width=2 font="helvetica 10 normal roman" text={4244-554}
 ellipse(05:34:24.542,-05:27:42.15,9.09191",4.22409",60) # color=magenta font="helvetica 10 normal roman" text={4245-742}
 ellipse(05:34:25.169,-05:26:08.26,5.01098",3.28305",0) # color=cyan font="helvetica 10 normal roman" text={4252-608}
@@ -41,7 +41,7 @@ ellipse(05:34:37.380,-05:24:56.90,3.99966",7.25004",0) # color=cyan font="helvet
 ellipse(05:34:37.581,-05:23:29.15,6.24712",7.00326",0) # color=cyan font="helvetica 10 normal roman" text={4376-329}
 ellipse(05:34:37.731,-05:25:26.15,5.25",5.5",0) # color=cyan font="helvetica 10 normal roman" text={4377-526}
 ellipse(05:34:37.799,-05:24:34.40,6",13.25",0) # color=red font="helvetica 10 normal roman" text={4378-434}
-ellipse(05:34:38.083,-05:24:10.15,7",5.0031",0) # color=blue font="helvetica 10 normal roman" text={4381-410}
+ellipse(05:34:38.083,-05:24:10.15,7",5.0031",0) # color=blue font="helvetica 10 normal roman" text={4381-411}
 ellipse(05:34:38.343,-05:23:42.52,8.61779",7.57356",30) # color=red font="helvetica 10 normal roman"  text={4383-343}
 ellipse(05:34:38.485,-05:22:42.90,11.75",10.75",0) # color=blue font="helvetica 10 normal roman" text={4385-243}
 ellipse(05:34:38.854,-05:23:27.40,5",6",0) # color=blue font="helvetica 10 normal roman" text={4389-327}

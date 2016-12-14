@@ -1,0 +1,3 @@
+global color=green font="helvetica 10 normal"
+image
+ellipse(56.1,480.5,8.0,17.7,0) # text={050-422}
