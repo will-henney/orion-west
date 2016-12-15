@@ -1,4 +1,9 @@
 *~
+*.aux
+*.fdb_latexmk
+*.fls
+will-extra-knot-material.out
+*.synctex.gz
 /.DS_Store
 /Calibrated
 /WFI-Images
