@@ -15,6 +15,8 @@
   urlcolor=blue!50!black}
 \usepackage{microtype}
 
+\graphicspath{ {../}, }
+
 \title[Will's extra material]{Extra knot material from Will for the
   Alma paper}
 
@@ -53,10 +55,26 @@ results, and interpretation from new knot measurements and fitting.
 keyword1 -- keyword2 -- keyword3
 \end{keywords}
 
+\newcommand\nii{\ensuremath{\ion{N}{ii}}}
+\newcommand\ha{\ensuremath{\mathrm{H\alpha}}}
+
 \section{Knot classification}
 \label{sec:knot-classification}
 
+\section{Knot Analysis}
+\label{sec:knot-analysis}
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{knot-dv-versus-nii-ha-ratio}
+  \caption{Correlation between [\nii]--\ha{} velocity difference,
+    \(\Delta V\), versus line ratio, \(R_{[\nii]}\), for different
+    datasets. The grayscale cloud shows the inner Huygens region of
+    the nebula, with data from the MUSE spectra of \citet{MUSE} and
+    orange dashed line indicating the trend line (obtained by
+    averaging the \(\Delta V\) values within \(R_{[\nii]}\) bins of
+    width 0.01).  }
+\end{figure}
 
 \end{document}
 
