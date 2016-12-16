@@ -2,6 +2,7 @@
 *.aux
 *.fdb_latexmk
 *.fls
+*.blg
 will-extra-knot-material.out
 *.synctex.gz
 /.DS_Store
@@ -18,4 +19,4 @@ wfpc2-mosaic*.fits
 __pycache__
 ltxpng
 Knot-Fits*
-
+/Will-Paper-2016-12/auto/
