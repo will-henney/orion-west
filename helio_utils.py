@@ -5,6 +5,7 @@ from astropy import coordinates as coord
 from astropy import units as u
 from astropy import constants as const
 from astropy.wcs import WCS
+from astropy.time import Time
 from pyslalib.slalib import sla_dcs2c, sla_evp, sla_rverot, sla_obs
 
 OBSERVATORY_ALIASES = {
@@ -26,7 +27,15 @@ def ra_dec_from_header_wcs(hdr, wcskey):
     return ra, dec
 
 def mjd_from_header(hdr):
-    return float(hdr.get('MJD-OBS'))
+    if "MJD-OBS" in hdr:
+        mjd = float(hdr.get('MJD-OBS'))
+    else:
+        mjd = float(hdr.get('MJD'))
+    return mjd
+
+def mjd_from_header_wcs(hdr, wcskey):
+    w = WCS(hdr, key=wcskey).celestial
+    return Time(w.wcs.dateobs).mjd
 
 def obs_lat_from_name(observatory):
     if observatory in OBSERVATORY_ALIASES:
@@ -44,16 +53,18 @@ def st_from_header(hdr):
         # MUSE observations have LST measured in seconds
         st = coord.Longitude(hdr['LST'], u.hour)/3600.0
     else:
-        return KeyError('Neither ST nor LST found in header')
+        # No ST found - just assume midnight
+        st = coord.Longitude(0.0, u.hour)
     return st
 
 def helio_topo_from_header(hdr, usewcs=None, observatory='SPM'):
     if usewcs is None:
         ra, dec = ra_dec_from_header(hdr)
+        mjd = mjd_from_header(hdr)
     else:
-        # Set usewcs='' to use default WCS
+        # Set usewcs=' ' to use default WCS
         ra, dec = ra_dec_from_header_wcs(hdr, wcskey=usewcs)
-    mjd = mjd_from_header(hdr)
+        mjd = mjd_from_header_wcs(hdr, wcskey=usewcs)
     st = st_from_header(hdr)
     obs_lat = obs_lat_from_name(observatory)
     return helio_topo_correction(ra, dec, mjd, st, obs_lat)

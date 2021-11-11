@@ -1,3 +1,4 @@
+
 #+OPTIONS: ':nil *:t -:t ::t <:t H:4 \n:nil ^:{} arch:headline
 #+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:t e:t
 #+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t
@@ -117,6 +118,65 @@
 + Corrected WCS is in [[file:~/Dropbox/OrionTreasury2015/jcol09010_drc_fix.wcs]]
 
 * Finishing the paper
+
+** [2017-01-18 Wed] Summary of where we are and what needs to be done
+
+** TODO [2/3] Things to do for Alba [2017-01-18 Wed]
++ [X] Region files for new knots
+  + All are in [[file:Will-Regions-2016-12/]]
+  + [X] Boxes for PV images
+    + Each box is a single velocity feature in a single slit
+      + So several boxes may contribute to each knot
+    + There is a separate region file for each slit
+    + Original ones have names such as
+      + pvboxes-YY1401-2013-02-024.reg
+    + They were done by hand in [[id:85778B48-192C-4B4F-B244-E935CBA70FD9][Put PV boxes by hand on to the PV spectra]]
+    + Final ones have names such as
+      + pvboxes-knots-XX1141-2007-01b-2061.reg
+    + They have the knot ID for each box in OW coordinate format, which was done in [[id:767A6944-B23D-40C4-A163-9EBD9D315C0D][Retrofit knot assignments to the PV boxes]]
+  + [X] Bars for the images
+    + There is one-to-one correspondence between the bars and the boxes
+    + Original files were generated automatically in [[id:3D919406-53BF-4DCF-935A-DBF9AFBA3DA6][Automatically construct bars for the maps]]
+    + One file with all features, plus one for each velocity class:
+      + bars-from-boxes-all.reg
+      + bars-from-boxes-fast.reg
+      + bars-from-boxes-slow.reg
+      + bars-from-boxes-ultra.reg
+    + Then in [[id:E39383D1-8738-4838-9845-CB07431C47BC][Combine bars by hand into knots]] they are sorted into knots, which are indicated as DS9 region groups, saved in
+      + bars-from-boxes-fast-groups.reg
+      + bars-from-boxes-slow-groups.reg
+      + bars-from-boxes-ultra-groups.reg
+    + Note that the knots in the above files have only a sequential ID, such as =Ultra 006 (-80)=
+    + All the above have coordinates in pixels (IMAGE frame), but for some uses (for example, with aplpy) it is necessary to have celestial coordinates (WCS frame), so we have also written 
+      + bars-from-boxes-fast-groups-wcs.reg
+      + bars-from-boxes-slow-groups-wcs.reg
+      + bars-from-boxes-ultra-groups-wcs.reg
+  + [X] Knots for the images
+    + These are polygons that were created to envelope the bars by routines in [[id:D2C4A57A-352D-4EE3-8A8E-33A4DA9B8D34][Utility functions for boxes and bars]]. In brief: 
+      + Find convex hull of all bars in knot
+        + This is done on the 2048x2048 pixel image
+      + Dilate it by disk of 4 pixels diameter so it is not too spindly
+      + Convert the shape to vector polygon
+      + Simplify the polygon so it only has a handful of vertices
+      + Find coordinate center of knot and convert to an OW-style ID
+      + Save as DS9 region
+    + There is one file for each velocity class (these are in IMAGE coordinates)
+      + knots-fast.reg
+      + knots-slow.reg
+      + knots-ultra.reg
+    + And we also have versions in WCS coordinates
+      + knots-fast-wcs.reg
+      + knots-slow-wcs.reg
+      + knots-ultra-wcs.reg
+
++ [X] Table of knot properties
+  + [[file:Knot-Fits-Final/all-knots-ha-table.tab]]
+  + [[file:Knot-Fits-Final/all-knots-nii-table.tab]]
+  + These are space-separated ascii tables with commented header of column names
+  + I also have fits table and VOTable versions of the same
++ [ ] Figures of my new stuff
+
+
 
 ** Will comments [2016-10-12 Wed]
 
@@ -345,6 +405,9 @@ No. The shock models are now deferred until a later paper.
 *** New method: boxes \to bars \to knots
 **** DONE Put PV boxes by hand on to the PV spectra
 CLOSED: [2016-12-02 Fri 22:58]
+:PROPERTIES:
+:ID:       85778B48-192C-4B4F-B244-E935CBA70FD9
+:END:
 + Make them more compact than before to better isolate the line
 + No labels or anything
 + Which are finished?
@@ -436,6 +499,9 @@ xpaset -p $DS9 regions load $PWD/$REGDIR/$regfile
 
 **** DONE Automatically construct bars for the maps
 CLOSED: [2016-12-08 Thu 13:01]
+:PROPERTIES:
+:ID:       3D919406-53BF-4DCF-935A-DBF9AFBA3DA6
+:END:
 + [X] Write colored bars
 + [X] Split them up into the 3 velocity classes
   + We have a small overlap between the classes:
@@ -607,6 +673,9 @@ Extracting boxes from YY1401-2013-02-024
 
 **** DONE Combine bars by hand into knots
 CLOSED: [2016-12-10 Sat 18:25]
+:PROPERTIES:
+:ID:       E39383D1-8738-4838-9845-CB07431C47BC
+:END:
 + Knots will have an ellipse representation for plotting
   + And color indicating velocity as before
 + But the boundaries can be more irregular
@@ -632,6 +701,7 @@ CLOSED: [2016-12-10 Sat 13:00]
 **** Utility functions for boxes and bars
 :PROPERTIES:
 :header-args: :tangle  boxbar_utils.py :eval no
+:ID:       D2C4A57A-352D-4EE3-8A8E-33A4DA9B8D34
 :END:
 
 Load an enormous long list of 3rd party libraries
@@ -980,6 +1050,7 @@ for group in 'slow', 'fast', 'ultra':
     knot_file = os.path.join(REGION_DIR, knot_pattern.format(group))
     boxbar_utils.convert_bars_to_knots(bar_file, knot_file)
 #+END_SRC
+
 **** TODO How to plot the knots
 + Now that they are not ellipses, we could just plot the convex hull of the end-points of the bars
   + =skimage.morphology.convex_hull_image=
@@ -988,13 +1059,16 @@ for group in 'slow', 'fast', 'ultra':
   + We could use a circle as the =selem= argument
     + =skimage.morphology.disk(radius)=
 + [X] Then we can convert back to ds9 region as polygon
-  + Format: =polygon(x1, y1, x2 y2, ...)=
+  + Format: =polygon(x1, y1, x2, y2, ...)=
   + Use a combination of =rasterio= and =shapely= 
 
 
 
 **** DONE Retrofit knot assignments to the PV boxes
 CLOSED: [2016-12-12 Mon 19:16]
+:PROPERTIES:
+:ID:       767A6944-B23D-40C4-A163-9EBD9D315C0D
+:END:
 + Actually, we should already have this automatically
   + All we have to do is add the knot ID as a label to the PV box
   + And maybe add the color too
@@ -1973,7 +2047,7 @@ Now try it with a different strategy.
 #+END_SRC
 
 
-** [1/2] Wrangling data from knot fits
+** [2/3] Wrangling data from knot fits
 *** DONE =knot_table_utils.py= - Merge knot info into big table
 CLOSED: [2016-11-30 Wed 17:49]
 :PROPERTIES:
@@ -2094,6 +2168,40 @@ CLOSED: [2016-11-30 Wed 17:49]
       return  _dataframe_from_dictlist(_dictlist_from_json_files())
 
 #+END_SRC
+*** DONE Write out big data table for Alba
+CLOSED: [2017-01-20 Fri 14:58]
+#+BEGIN_SRC python
+  import os
+  import knot_table_utils
+  import pandas as pd
+  import numpy as np
+  from astropy.table import Table
+
+  fitdir = 'Knot-Fits-Final'
+  knot_table_utils.JSON_FILE_GLOB = fitdir + '/*/*.json'
+  d = knot_table_utils.get_dataframe()
+  # Switch over the levels in the column multiindex so that we can
+  # easily extract the 'ha' and 'nii' parts
+  d = d.swaplevel(0, 1, axis =1)
+  for line in 'ha', 'nii':
+      # Use reset_index() to move the pandas dataframe index to normal
+      # columns so that the astropy table converter will pick them up
+      t = Table.from_pandas(d[line].reset_index())
+      t.meta['ID'] = fitdir
+      tabfile = os.path.join(fitdir,  'all-knots-{}-table.fits'.format(line))
+      t.write(tabfile, overwrite=True, format='fits')
+      t.write(tabfile.replace('.fits', '.xml'),
+              overwrite=True, format='votable')
+      t.write(tabfile.replace('.fits', '.tab'),
+              format='ascii.commented_header')
+
+#+END_SRC
+
+#+RESULTS:
+: None
+
+[[file:Knot-Fits-Final/all-knots-ha-table.tab]]
+
 *** TODO Merge data from all slits for given knot
 + Only use the highest quality fits
 ** Make graphs of the new knot data 
@@ -3178,11 +3286,12 @@ CLOSED: [2016-03-09 Wed 11:44]
 #+header: :var LIMTAB=rgb-limits-nii-core
 #+header: :var SPECIES="nii" SUFFIX="core" STRETCH="linear"
 #+header: :var REGIONS=""
+#+header: :var BIN="multibin"
 #+BEGIN_SRC python :return figfile :results file
   from astropy.io import fits
   import aplpy
   figfile = 'rgb-isovel-{}-{}.pdf'.format(SPECIES, SUFFIX)
-  rgbfiles = ['new-slits-{}{}-multibin.fits'.format(SPECIES, vrange)
+  rgbfiles = ['new-slits-{}{}-{}.fits'.format(SPECIES, vrange, BIN)
               for vrange in RANGES.split()]
 
   # Unpack the channel brightness limits from table
@@ -3194,7 +3303,7 @@ CLOSED: [2016-03-09 Wed 11:44]
   newfiles = [template.format(chan) for chan in channels]
   for newfn, fn in zip(newfiles, rgbfiles):
       hdu = fits.open(fn)['SCALED']
-      hdu.writeto(newfn, clobber=True)
+      fits.PrimaryHDU(header=hdu.header, data=hdu.data).writeto(newfn, overwrite=True)
 
   aplpy.make_rgb_image(newfiles, 'rgb-for-aplpy.png',
                        vmin_r=r1, vmin_g=g1, vmin_b=b1,
@@ -3222,6 +3331,14 @@ CLOSED: [2016-03-09 Wed 11:44]
 
 #+RESULTS:
 [[file:rgb-isovel-nii-core.pdf]]
+
+[2019-06-20 Thu] Do a version with bin001 instead of multibin
+
+#+call: rgb-isovel-map(STRETCH="sqrt", BIN="bin001", SUFFIX="core-bin001") :results file
+
+#+RESULTS:
+[[file:rgb-isovel-nii-core-bin001.pdf]]
+
 
 Now we have a sqrt stretch on the intensity
 #+name: rgb-limits-ha-core
@@ -3438,7 +3555,8 @@ python red-bow-finding-chart.py
 | INFO:                     | Auto-setting | resolution | to |   292.762 | dpi          | [aplpy.core] |
 | red-bow-finding-chart.pdf |              |            |    |           |              |              |
 
-*** TODO Finding chart for blue knots
+*** DONE Finding chart for blue knots
+CLOSED: [2017-01-20 Fri 15:02]
 
 #+BEGIN_SRC python :tangle blue-knot-finding-chart.py :eval no
   import sys
@@ -3469,6 +3587,107 @@ python blue-knot-finding-chart.py
 
 #+RESULTS:
 [[file:blue-knot-finding-chart.pdf]]
+
+
+*** Finding chart for new Will knots
+#+BEGIN_SRC python :tangle new-knot-finding-chart.py :eval no
+  import sys
+  import logging
+  logging.disable(logging.INFO)
+  import matplotlib
+  matplotlib.use("Agg")
+  from astropy.io import fits
+  import aplpy
+  import numpy as np
+  from matplotlib import cm, colors
+
+  try:
+      vclass = sys.argv[1]
+  except IndexError:
+      vclass = 'fast'
+
+  fn = 'WFI-Images/Orion_H_B_deep.fits'
+  figfile = sys.argv[0].replace('.py', '-{}.pdf'.format(vclass))
+  # regfile = 'Will-Regions-2016-12/knots-{}-wcs.reg'.format(vclass)
+  regfile = 'Will-Regions-2016-12/bars-from-boxes-{}-groups-wcs.reg'.format(vclass)
+  f = aplpy.FITSFigure(fn)
+  f.recenter(83.6458, -5.4167, width=0.15, height=0.15)
+  f.show_grayscale(pmin=65.0, pmax=95, stretch='sqrt')
+  f.add_grid()
+  f.grid.set_color('red')
+  f.grid.set_alpha(0.2)
+  f.show_regions(regfile)
+  f.save(figfile)
+  print(figfile, end='')
+#+END_SRC
+
+#+BEGIN_SRC bash :results output file :exports both
+python new-knot-finding-chart.py ultra
+#+END_SRC
+
+#+RESULTS:
+[[file:new-knot-finding-chart-ultra.pdf]]
+
+#+BEGIN_SRC bash :results output file :exports both
+python new-knot-finding-chart.py fast
+#+END_SRC
+
+#+RESULTS:
+[[file:new-knot-finding-chart-fast.pdf]]
+
+#+BEGIN_SRC bash :results output file :exports both
+python new-knot-finding-chart.py slow
+#+END_SRC
+
+#+RESULTS:
+[[file:new-knot-finding-chart-slow.pdf]]
+
+
+**** Color the regions according to velocity
++ If we use aplpy's =FitsFigure.show_regions=, then we have the problem that pyregions cannot deal with the colors of the form =#fff=
++ Possible plan to get round this
+  - Read the region file first with =load_regions= from [[file:boxbar_utils.py]], which removes hash from colors (see [[id:D2C4A57A-352D-4EE3-8A8E-33A4DA9B8D34][down here]])
+  - But then we have to decide between options:
+    1. Somehow work out how to represent the colors in the =pyregion.ShapeList= so that =FitsFigure.show_regions= will automatically do the right thing
+    2. Or, use =FitsFigure.show_polygons= instead, in which case we would have to do the work of extracting the coordinates and attributes from the =ShapeList=
+    3. Or even, ditch aplpy entirely and use =wcsaxes= instead. In that case, we would just use matplotlib's normal =ax.add_patch= with a =matplotlib.patches.Polygon(xy, ..., transform=ax.get_transform('world'))=
+       - Note that this is now incorporated as =astropy.visualization= 
+  - I think that 2 or 3 would be easier and more robust
+**** Re-implementation using wcsaxes
+#+BEGIN_SRC python :tangle alt-knot-finding-chart.py
+  import sys
+  import logging
+  logging.disable(logging.INFO)
+  import matplotlib
+  matplotlib.use("Agg")
+  from astropy.io import fits
+  from astropy.wcs import WCS
+  import numpy as np
+  from matplotlib import cm, colors
+
+  try:
+      vclass = sys.argv[1]
+  except IndexError:
+      vclass = 'fast'
+
+  fn = 'WFI-Images/Orion_H_B_deep.fits'
+  figfile = sys.argv[0].replace('.py', f'-{vclass}.pdf')
+  regfile = f'Will-Regions-2016-12/knots-{vclass}-wcs.reg'
+
+  hdu, = fits.open(fn)
+  wcs = WCS(hdu)
+  fig, ax = plt.subplots(projection=wcs)
+
+  f.recenter(83.6458, -5.4167, width=0.15, height=0.15)
+  f.show_grayscale(pmin=65.0, pmax=95, stretch='sqrt')
+  f.add_grid()
+  f.grid.set_color('red')
+  f.grid.set_alpha(0.2)
+  f.show_regions(regfile)
+  f.save(figfile)
+  print(figfile, end='')
+
+#+END_SRC
 
 
 * Large scale structures in Orion
